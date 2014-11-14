@@ -1,2 +1,2 @@
-pickles2_sitemap_excel
-======================
+pickles-sitemap-excel-2
+=======================
