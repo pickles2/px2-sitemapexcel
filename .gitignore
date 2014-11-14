@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+/vendor/
+composer.lock
+/tests/htdocs/.pickles/_sys/ram/
+/tests/htdocs/caches/
