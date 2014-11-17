@@ -29,7 +29,7 @@ return call_user_func( function(){
 	$conf->output_eol_coding = 'lf';
 	$conf->session_name = 'PXSID';
 	$conf->session_expire = 1800;
-	$conf->allow_pxcommands = 0; // PX Commands のウェブインターフェイスからの実行を許可
+	$conf->allow_pxcommands = 1; // PX Commands のウェブインターフェイスからの実行を許可
 
 	// commands
 	$conf->commands = new stdClass;
@@ -73,25 +73,25 @@ return call_user_func( function(){
 
 	$conf->funcs = new stdClass;
 
-	// Starting
-	$conf->funcs->starting = [
+	// funcs: Before sitemap
+	$conf->funcs->before_sitemap = [
 		 // PX=config
-		'picklesFramework2\commands\config::regist' ,
+		'picklesFramework2\commands\config::register' ,
 
 		 // PX=phpinfo
-		'picklesFramework2\commands\phpinfo::regist' ,
+		'picklesFramework2\commands\phpinfo::register' ,
 
 		// PX=clearcache
-		'picklesFramework2\commands\clearcache::regist' ,
+		'picklesFramework2\commands\clearcache::register' ,
 
 		// sitemapExcel
 		'tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec'
 	];
 
-	// Before content
+	// funcs: Before content
 	$conf->funcs->before_content = [
 		// PX=publish
-		'picklesFramework2\commands\publish::regist' ,
+		'picklesFramework2\commands\publish::register' ,
 	];
 
 
@@ -141,9 +141,9 @@ return call_user_func( function(){
 	];
 
 
-	// output filter
-	// $conf->funcs->output_filter = [
-	// ];
+	// funcs: Before output
+	$conf->funcs->before_output = [
+	];
 
 
 	return $conf;
