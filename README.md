@@ -41,6 +41,7 @@ $ composer update
 
 ### 2. config.php に、機能を追加
 
+設定ファイル config.php (通常は `./px-files/config.php`) を編集します。
 `before_sitemap` のどこか(例では最後)に、`tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec` を追加します。
 
 ```
@@ -67,7 +68,7 @@ Pickles2 の設定をJSON形式で編集している方は、config.json の該�
 
 エクセルファイルは、このリポジトリに同梱されている [sitemapexcel.xlsx](./tests/htdocs/.pickles/sitemaps/sitemapexcel.xlsx) をサンプルに作成してみてください。
 
-編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ `.pickles/sitemaps` に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(sitemap.xlsx なら、sitemap.csv)が自動的に更新されます。
+編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ(通常は `./px-files/sitemaps`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。
 
 その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
 
