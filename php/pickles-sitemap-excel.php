@@ -30,7 +30,7 @@ class pickles_sitemap_excel{
 			switch( strtolower($extension) ){
 				// case 'xls':
 				case 'xlsx':
-					if( $this->px->fs()->is_newer_a_than_b( $path_base.$basename.'.csv', $path_base.$filename ) ){
+					if( !$this->px->fs()->is_newer_a_than_b( $path_base.$basename.'.csv', $path_base.$filename ) ){
 						$import = (new pxplugin_sitemapExcel_daos_import($this->px, $this))->import($path_base.$filename, $path_base.$basename.'.csv');
 					}
 					break;

@@ -48,10 +48,8 @@ class pxplugin_sitemapExcel_daos_import{
 		$path_toppage = $this->regulize_path( $path_toppage );
 
 		// $sitemap_definition = $this->px->site()->get_sitemap_definition();
-		$sitemap_definition = array(
-			'id'=>array('num'=>0,'col'=>'A','key'=>'id','name'=>'ID'),
-			'logical_path'=>array('num'=>0,'col'=>'B','key'=>'logical_path','name'=>'logical_path'),
-		);
+		$sitemap_definition = $this->get_sitemap_definition();
+
 		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
@@ -256,6 +254,31 @@ class pxplugin_sitemapExcel_daos_import{
 		clearstatcache();
 		return $this;
 	}// import_xlsx2sitemap()
+
+	/**
+	 * サイトマップCSVの定義を取得する
+	 */
+	private function get_sitemap_definition(){
+		$col = 'A';
+		$num = 0;
+		$rtn = array();
+		$rtn['path'] = array('num'=>$num++,'col'=>$col++,'key'=>'path','name'=>'ページのパス');
+		$rtn['content'] = array('num'=>$num++,'col'=>$col++,'key'=>'content','name'=>'コンテンツファイルの格納先');
+		$rtn['id'] = array('num'=>$num++,'col'=>$col++,'key'=>'id','name'=>'ページID');
+		$rtn['title'] = array('num'=>$num++,'col'=>$col++,'key'=>'title','name'=>'ページタイトル');
+		$rtn['title_breadcrumb'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_breadcrumb','name'=>'ページタイトル(パン屑表示用)');
+		$rtn['title_h1'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_h1','name'=>'ページタイトル(H1表示用)');
+		$rtn['title_label'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_label','name'=>'ページタイトル(リンク表示用)');
+		$rtn['title_full'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_full','name'=>'ページタイトル(タイトルタグ用)');
+		$rtn['logical_path'] = array('num'=>$num++,'col'=>$col++,'key'=>'logical_path','name'=>'論理構造上のパス');
+		$rtn['list_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'list_flg','name'=>'一覧表示フラグ');
+		$rtn['layout'] = array('num'=>$num++,'col'=>$col++,'key'=>'layout','name'=>'レイアウト');
+		$rtn['orderby'] = array('num'=>$num++,'col'=>$col++,'key'=>'orderby','name'=>'表示順');
+		$rtn['keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'keywords','name'=>'metaキーワード');
+		$rtn['description'] = array('num'=>$num++,'col'=>$col++,'key'=>'description','name'=>'metaディスクリプション');
+		$rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
+		return $rtn;
+	}
 
 	/**
 	 * ページIDを自動生成する

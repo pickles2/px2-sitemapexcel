@@ -3,9 +3,8 @@
  * test for tomk79\pickles-sitemap-excel
  * 
  * $ cd (project dir)
- * $ ./vendor/phpunit/phpunit/phpunit pickles2/php/tests/pickles-sitemap-excelTest.php picklesSitemapExcel
+ * $ ./vendor/phpunit/phpunit/phpunit tests/pickles-sitemap-excelTest.php picklesSitemapExcel
  */
-// require_once( __DIR__.'/../filesystem.php' );
 
 class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 
