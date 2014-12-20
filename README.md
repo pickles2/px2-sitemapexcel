@@ -1,7 +1,7 @@
 pickles-sitemap-excel-2
 =======================
 
-*pickles-sitemap-excel-2* は、[Pickles2](https://github.com/tomk79/pickles2) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
+*pickles-sitemap-excel-2* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
 
 本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。このプラグインを導入することで、より直感的に、グラフィカルに編集することができるようになります。
 
@@ -24,8 +24,8 @@ require の項目に、"tomk79/pickles-sitemap-excel-2" を追加します。
 	〜 中略 〜
     "require": {
         "php": ">=5.3.0" ,
-        "tomk79/px-fw-2.x": "dev-master",
-        "tomk79/pickles-sitemap-excel-2": "*"
+        "tomk79/px-fw-2.x": "2.0.*",
+        "tomk79/pickles-sitemap-excel-2": "2.0.*"
     },
 	〜 中略 〜
 }
@@ -64,14 +64,22 @@ $ composer update
 Pickles2 の設定をJSON形式で編集している方は、config.json の該当箇所に追加してください。
 
 
-### 3. サイトマップディレクトリに sitemap.xlsx を設置
+### 3. サイトマップディレクトリのパーミッション設定
+
+Mac OSX や Linux系のOSではこの操作が必要な場合があります。
+
+```
+$ cd {$documentRoot}
+$ chmod -R 777 ./px-files/sitemaps
+```
+
+### 4. サイトマップディレクトリに sitemap.xlsx を設置
 
 エクセルファイルは、このリポジトリに同梱されている [sitemapexcel.xlsx](./tests/htdocs/.pickles/sitemaps/sitemapexcel.xlsx) をサンプルに作成してみてください。
 
 編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ(通常は `./px-files/sitemaps`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。
 
 その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
-
 
 
 ## ライセンス - License
@@ -84,3 +92,11 @@ MIT License
 - (C)Tomoya Koyanagi <tomk79@gmail.com>
 - website: <http://www.pxt.jp/>
 - Twitter: @tomk79 <http://twitter.com/tomk79/>
+
+## 開発者向け情報 - for Developer
+
+### テスト - Test
+
+```
+$ ./vendor/phpunit/phpunit/phpunit tests/pickles-sitemap-excelTest.php picklesSitemapExcel
+```

@@ -4,6 +4,9 @@
  */
 namespace tomk79\pickles2\sitemap_excel;
 
+/**
+ * pickles-sitemap-excel.php
+ */
 class pickles_sitemap_excel{
 	private $px;
 
