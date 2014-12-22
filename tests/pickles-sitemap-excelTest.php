@@ -8,54 +8,72 @@
 
 class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 
+	/**
+	 * サイトマップディレクトリのパス
+	 */
+	private $path_sitemaps;
+
 	public function setup(){
+		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
 	}
 
 	/**
-	 * 絶対パス解決のテスト
+	 * *.xlsx to .csv 変換のテスト
 	 */
-	public function testGetRealpath(){
+	public function testXlsx2CsvConvert(){
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('/'),
-		// 	realpath('/')
-		// );
+		clearstatcache();
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.csv' ) );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('./mktest/aaa.txt'),
-		// 	$this->fs->localize_path(realpath('.').'/mktest/aaa.txt')
-		// );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('./mktest/./aaa.txt', __DIR__),
-		// 	$this->fs->localize_path(__DIR__.'/mktest/aaa.txt')
-		// );
+		// トップページを実行
+		$output = $this->passthru( [
+			'php',
+			__DIR__.'/testData/standard/.px_execute.php' ,
+			'/' ,
+		] );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath(__DIR__.'/./mktest/../aaa.txt'),
-		// 	$this->fs->localize_path(__DIR__.'/aaa.txt')
-		// );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemapexcel.csv' );
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemapexcel.xlsx' );
+		// $this->assertTrue( $mtime_csv == $mtime_xlsx );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('C:\\mktest\\aaa.txt'),
-		// 	$this->fs->localize_path('C:/mktest/aaa.txt')
-		// );
+		clearstatcache();
+		$this->assertTrue( is_dir( __DIR__.'/testData/standard/caches/p/' ) );
+		$this->assertTrue( is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
+		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('\\\\mktest\\aaa.txt'),
-		// 	$this->fs->localize_path('//mktest/aaa.txt')
-		// );
+		// 後始末
+		$output = $this->passthru( [
+			'php',
+			__DIR__.'/testData/standard/.px_execute.php',
+			'/?PX=clearcache'
+		] );
+		clearstatcache();
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('../../../mktest/aaa.txt','/aaa/'),
-		// 	$this->fs->localize_path('/mktest/aaa.txt')
-		// );
+	}//testXlsx2CsvConvert()
 
-		// $this->assertEquals(
-		// 	$this->fs->get_realpath('/mktest/','/aaa/'),
-		// 	DIRECTORY_SEPARATOR.'mktest'.DIRECTORY_SEPARATOR
-		// );
 
-	}
+
+
+
+	/**
+	 * コマンドを実行し、標準出力値を返す
+	 * @param array $ary_command コマンドのパラメータを要素として持つ配列
+	 * @return string コマンドの標準出力値
+	 */
+	private function passthru( $ary_command ){
+		$cmd = array();
+		foreach( $ary_command as $row ){
+			$param = '"'.addslashes($row).'"';
+			array_push( $cmd, $param );
+		}
+		$cmd = implode( ' ', $cmd );
+		ob_start();
+		passthru( $cmd );
+		$bin = ob_get_clean();
+		return $bin;
+	}// passthru()
 
 }
