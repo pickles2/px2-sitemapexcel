@@ -1,9 +1,12 @@
 <?php
 /**
- * PX Plugin "sitemapExcel"
+ * PX Plugin "sitemapExcel" export
  */
 namespace tomk79\pickles2\sitemap_excel;
 
+/**
+ * PX Plugin "sitemapExcel" export
+ */
 class pxplugin_sitemapExcel_daos_export{
 
 	private $px, $plugin;
@@ -13,8 +16,9 @@ class pxplugin_sitemapExcel_daos_export{
 
 
 	/**
-	 * コンストラクタ
-	 * @param $px = PxFWコアオブジェクト
+	 * constructor
+	 * @param object $px Picklesオブジェクト
+	 * @param object $plugin プラグインオブジェクト
 	 */
 	public function __construct( $px, $plugin ){
 		$this->px = $px;
@@ -38,7 +42,8 @@ class pxplugin_sitemapExcel_daos_export{
 	/**
 	 * 現在のサイトマップをxlsxに出力する。
 	 */
-	public function export_sitemap2xlsx( $path_output ){
+	public function export( $path_output ){
+		return;//開発中
 
 		$table_definition = $this->get_table_definition();
 
@@ -438,7 +443,9 @@ class pxplugin_sitemapExcel_daos_export{
 	 * サイトマップ定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		$rtn = $this->px->site()->get_sitemap_definition();
+		// $rtn = $this->px->site()->get_sitemap_definition();
+		$rtn = $this->plugin->get_sitemap_definition();
+
 		if( !is_array(@$rtn['**delete_flg']) ){
 			$rtn['**delete_flg'] = array();
 			$rtn['**delete_flg']['name'] = '削除フラグ';
@@ -448,5 +455,3 @@ class pxplugin_sitemapExcel_daos_export{
 	}
 
 }
-
-?>
