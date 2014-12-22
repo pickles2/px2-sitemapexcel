@@ -9,8 +9,7 @@ namespace tomk79\pickles2\sitemap_excel;
  */
 class pxplugin_sitemapExcel_daos_import{
 
-	private $px;
-	private $plugin;
+	private $px, $plugin;
 	private $path_xlsx, $path_csv;
 
 

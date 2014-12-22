@@ -18,6 +18,41 @@ class pickles_sitemap_excel{
 	}
 
 	/**
+	 * Pickles sitemapExcel のバージョン情報を取得する。
+	 * 
+	 * <pre> [バージョン番号のルール]
+	 *    基本
+	 *      メジャーバージョン番号.マイナーバージョン番号.リリース番号
+	 *        例：1.0.0
+	 *        例：1.8.9
+	 *        例：12.19.129
+	 *      - 大規模な仕様の変更や追加を伴う場合にはメジャーバージョンを上げる。
+	 *      - 小規模な仕様の変更や追加の場合は、マイナーバージョンを上げる。
+	 *      - バグ修正、ドキュメント、コメント修正等の小さな変更は、リリース番号を上げる。
+	 *    開発中プレビュー版
+	 *      基本バージョンの後ろに、a(=α版)またはb(=β版)を付加し、その連番を記載する。
+	 *        例：1.0.0a1 ←最初のα版
+	 *        例：1.0.0b12 ←12回目のβ版
+	 *      開発中およびリリースバージョンの順序は次の通り
+	 *        1.0.0a1 -> 1.0.0a2 -> 1.0.0b1 ->1.0.0b2 -> 1.0.0 ->1.0.1a1 ...
+	 *    ナイトリービルド
+	 *      ビルドの手順はないので正確には "ビルド" ではないが、
+	 *      バージョン番号が振られていない、開発途中のリビジョンを
+	 *      ナイトリービルドと呼ぶ。
+	 *      ナイトリービルドの場合、バージョン情報は、
+	 *      ひとつ前のバージョン文字列の末尾に、'-nb' を付加する。
+	 *        例：1.0.0b12-nb (=1.0.0b12リリース後のナイトリービルド)
+	 *      普段の開発においてコミットする場合、
+	 *      必ずこの get_version() がこの仕様になっていることを確認すること。
+	 * </pre>
+	 * 
+	 * @return string バージョン番号を示す文字列
+	 */
+	public function get_version(){
+		return '2.0.0-nb';
+	}
+
+	/**
 	 * constructor
 	 */
 	public function __construct( $px ){
@@ -44,7 +79,7 @@ class pickles_sitemap_excel{
 					break;
 				case 'csv':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
-						$export = (new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$basename.'.xlsx' );
+						$export = (new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
 						touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
 					}
 					break;

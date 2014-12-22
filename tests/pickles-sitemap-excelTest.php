@@ -88,9 +88,9 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 
 		// XLSX を削除してみる。
 		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		// $this->assertTrue( unlink( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		// clearstatcache();
-		// $this->assertFalse( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
+		$this->assertTrue( unlink( $this->path_sitemap.'sitemapexcel.xlsx' ) );
+		clearstatcache();
+		$this->assertFalse( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
 		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.csv', 20000 ) );
 
 		// トップページを実行
@@ -107,9 +107,7 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( $mtime_xlsx === 20000 );
 
 		// XLSX を古くしてみる。
-		// $this->assertTrue( unlink( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		// clearstatcache();
-		// $this->assertFalse( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
 		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.xlsx', 1000 ) );
 		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.csv', 20000 ) );
 		clearstatcache();

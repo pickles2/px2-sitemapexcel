@@ -10,6 +10,8 @@ namespace tomk79\pickles2\sitemap_excel;
 class pxplugin_sitemapExcel_daos_export{
 
 	private $px, $plugin;
+	private $path_xlsx, $path_csv;
+	private $site;
 	private $default_cell_style_boarder = array();// 罫線の一括指定
 	private $current_row = 1;
 	private $current_col = 'A';
@@ -25,29 +27,47 @@ class pxplugin_sitemapExcel_daos_export{
 		$this->plugin = $plugin;
 	}
 
-
 	/**
-	 * PHPExcelHelper を生成する
+	 * CSVのパスを取得
 	 */
-	private function factory_PHPExcelHelper(){
-		$tmp_class_name = $this->px->load_px_plugin_class('/'.$this->command[1].'/helper/PHPExcelHelper.php');
-		if(!$tmp_class_name){
-			$this->px->error()->error_log('FAILED to load "PHPExcelHelper.php".', __FILE__, __LINE__);
-			return false;
-		}
-		$phpExcelHelper = new $tmp_class_name($this->px);
-		return $phpExcelHelper;
+	private function get_realpath_csv(){
+		return $this->path_csv;
 	}
+	/**
+	 * 出力先エクセルのパスを取得
+	 */
+	private function get_realpath_xlsx(){
+		return $this->path_xlsx;
+	}
+
+	// /**
+	//  * PHPExcelHelper を生成する
+	//  */
+	// private function factory_PHPExcelHelper(){
+	// 	$tmp_class_name = $this->px->load_px_plugin_class('/'.$this->command[1].'/helper/PHPExcelHelper.php');
+	// 	if(!$tmp_class_name){
+	// 		$this->px->error()->error_log('FAILED to load "PHPExcelHelper.php".', __FILE__, __LINE__);
+	// 		return false;
+	// 	}
+	// 	$phpExcelHelper = new $tmp_class_name($this->px);
+	// 	return $phpExcelHelper;
+	// }
 
 	/**
 	 * 現在のサイトマップをxlsxに出力する。
 	 */
-	public function export( $path_output ){
-		return;//開発中
+	public function export( $path_csv, $path_xlsx ){
+		$this->path_xlsx = $path_xlsx;
+		$this->path_csv = $path_csv;
+
+		require_once( __DIR__.'/../helper/parseSitemapCsv.php' );
+		$this->site = new pxplugin_sitemapExcel_helper_parseSitemapCsv( $this->px, $this->path_csv );
+		// return;//開発中
+		// var_dump( $site->get_sitemap() );
 
 		$table_definition = $this->get_table_definition();
 
-		$phpExcelHelper = $this->factory_PHPExcelHelper();
+		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}
@@ -63,17 +83,17 @@ class pxplugin_sitemapExcel_daos_export{
 		$objSheet->getDefaultStyle()->getFont()->setSize(12);
 
 		// 背景色指定(準備)
-		$objSheet->getDefaultStyle()->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+		$objSheet->getDefaultStyle()->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID);
 
 		// ウィンドウ枠を固定
 		$objSheet->freezePane('B'.$table_definition['row_data_start']);
 
 		$this->default_cell_style_boarder = array(// 罫線の一括指定
 		  'borders' => array(
-		    'top'     => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-		    'bottom'  => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-		    'left'    => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-		    'right'   => array('style' => PHPExcel_Style_Border::BORDER_THIN)
+		    'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+		    'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+		    'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+		    'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN)
 		  )
 		);
 
@@ -84,7 +104,7 @@ class pxplugin_sitemapExcel_daos_export{
 		foreach( $table_definition['col_define'] as $col ){
 			if($maxCol < $col['col']){ $maxCol = $col['col']; }
 		}
-		$mainColor = preg_replace( '/^\#/', '', $this->px->get_conf('colors.main') );
+		$mainColor = preg_replace( '/^\#/', '', '#333333' );
 		for( $col = 'A'; $col <= $maxCol; $col ++ ){
 			$objSheet->getStyle($col.$this->current_row)->getFill()->getStartColor()->setRGB( $mainColor );
 			$objSheet->getStyle($col.$this->current_row)->getFont()->getColor()->setRGB( $mainColor );
@@ -96,7 +116,7 @@ class pxplugin_sitemapExcel_daos_export{
 		$this->current_row ++;
 
 		// シートタイトルセル
-		$sheetTitle = '「'.$this->px->get_conf('project.name').'」 サイトマップ';
+		$sheetTitle = '「'.$this->px->conf()->name.'」 サイトマップ';
 		$objSheet->setTitle('sitemap');//←文字数制限がある。超えると落ちる。
 		$objSheet->getCell('A'.$this->current_row)->setValue($sheetTitle);
 		$objSheet->getStyle('A'.$this->current_row)->getFont()->setSize(24);
@@ -165,14 +185,15 @@ class pxplugin_sitemapExcel_daos_export{
 		$objSheet->getColumnDimension($table_definition['col_define']['title_h1']['col'])->setWidth(2);
 		$objSheet->getColumnDimension($table_definition['col_define']['title_label']['col'])->setWidth(2);
 		$objSheet->getColumnDimension($table_definition['col_define']['title_breadcrumb']['col'])->setWidth(2);
+		$objSheet->getColumnDimension($table_definition['col_define']['title_full']['col'])->setWidth(2);
 		$objSheet->getColumnDimension($table_definition['col_define']['path']['col'])->setWidth(40);
 		$objSheet->getColumnDimension($table_definition['col_define']['content']['col'])->setWidth(20);
 		$objSheet->getColumnDimension($table_definition['col_define']['list_flg']['col'])->setWidth(3);
 		$objSheet->getColumnDimension($table_definition['col_define']['layout']['col'])->setWidth(9);
-		$objSheet->getColumnDimension($table_definition['col_define']['extension']['col'])->setWidth(9);
+		// $objSheet->getColumnDimension($table_definition['col_define']['extension']['col'])->setWidth(9);
 		$objSheet->getColumnDimension($table_definition['col_define']['description']['col'])->setWidth(30);
 		$objSheet->getColumnDimension($table_definition['col_define']['keywords']['col'])->setWidth(30);
-		$objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'])->setWidth(3);
+		// $objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'])->setWidth(3);
 		$objSheet->getColumnDimension($table_definition['col_define']['orderby']['col'])->setWidth(3);
 		$objSheet->getColumnDimension($table_definition['col_define']['category_top_flg']['col'])->setWidth(3);
 
@@ -197,11 +218,11 @@ class pxplugin_sitemapExcel_daos_export{
 
 		$objPHPExcel->setActiveSheetIndex(0);//メインのセルを選択しなおし。
 
-		$phpExcelHelper->save($objPHPExcel, $path_output, 'Excel2007');
+		$phpExcelHelper->save($objPHPExcel, $path_xlsx, 'Excel2007');
 
 		clearstatcache();
 
-		return is_file($path_output);
+		return is_file($path_xlsx);
 	}
 
 	/**
@@ -216,9 +237,10 @@ class pxplugin_sitemapExcel_daos_export{
 		}
 
 		// sitemapExcelのバージョン情報を記載
-		$sitemapExcel_info = $this->px->load_px_plugin_class( '/sitemapExcel/register/info.php' );
-		$sitemapExcel_info = new $sitemapExcel_info($this->px);
-		array_push( $config, 'version='.urlencode( $sitemapExcel_info->get_version() ) );
+		// $sitemapExcel_info = $this->px->load_px_plugin_class( '/sitemapExcel/register/info.php' );
+		// $sitemapExcel_info = new $sitemapExcel_info($this->px);
+		// array_push( $config, 'version='.urlencode( $sitemapExcel_info->get_version() ) );
+		array_push( $config, 'version='.urlencode( $this->plugin->get_version() ) );
 
 		$rtn = implode('&', $config);
 		return $rtn;
@@ -234,7 +256,7 @@ class pxplugin_sitemapExcel_daos_export{
 		}
 
 		$max_depth = 0;
-		foreach( $this->px->site()->get_sitemap() as $page_info ){
+		foreach( $this->site->get_sitemap() as $page_info ){
 			$tmp_breadcrumb = explode('>',$page_info['logical_path']);
 			if( $max_depth < count($tmp_breadcrumb) ){
 				$max_depth = count($tmp_breadcrumb);
@@ -251,7 +273,7 @@ class pxplugin_sitemapExcel_daos_export{
 		if(!is_string($page_id)){return false;}
 		$sitemap_definition = $this->get_sitemap_definition();
 		$table_definition = $this->get_table_definition();
-		$page_info = $this->px->site()->get_page_info($page_id);
+		$page_info = $this->site->get_page_info($page_id);
 		if(!is_array($page_info)){
 			return false;
 		}
@@ -279,17 +301,17 @@ class pxplugin_sitemapExcel_daos_export{
 					for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
 						$tmp_border_style = array(
 						  'borders' => array(
-						    'top'     => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-						    'bottom'  => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-						    'left'    => array('style' => PHPExcel_Style_Border::BORDER_THIN),
-						    'right'   => array('style' => PHPExcel_Style_Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
+						    'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+						    'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+						    'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+						    'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
 						  ) );
 						if($i != 0){
-							$tmp_border_style['borders']['left']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+							$tmp_border_style['borders']['left']['style'] = \PHPExcel_Style_Border::BORDER_THIN;
 							$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');
 						}
 						if($i == $this->get_max_depth()){
-							$tmp_border_style['borders']['right']['style'] = PHPExcel_Style_Border::BORDER_THIN;
+							$tmp_border_style['borders']['right']['style'] = \PHPExcel_Style_Border::BORDER_THIN;
 						}
 						$objSheet->getStyle($tmp_col.$this->current_row)->applyFromArray( $tmp_border_style );
 						$tmp_col ++;
@@ -359,9 +381,9 @@ class pxplugin_sitemapExcel_daos_export{
 		}
 		$this->current_row ++;
 
-		$children = $this->px->site()->get_children($page_id, array('filter'=>false));
+		$children = $this->site->get_children($page_id, array('filter'=>false));
 		foreach( $children as $child ){
-			$page_info = $this->px->site()->get_page_info($child);
+			$page_info = $this->site->get_page_info($child);
 			if(!strlen($page_info['id'])){
 				$this->px->error()->error_log('ページIDがセットされていません。', __FILE__, __LINE__);
 				continue;
@@ -424,6 +446,7 @@ class pxplugin_sitemapExcel_daos_export{
 		$rtn['col_define']['title_h1'] = array( 'col'=>($current_col++) );
 		$rtn['col_define']['title_label'] = array( 'col'=>($current_col++) );
 		$rtn['col_define']['title_breadcrumb'] = array( 'col'=>($current_col++) );
+		$rtn['col_define']['title_full'] = array( 'col'=>($current_col++) );
 
 		$sitemap_definition = $this->get_sitemap_definition();
 		foreach($sitemap_definition as $def_row){
@@ -443,7 +466,7 @@ class pxplugin_sitemapExcel_daos_export{
 	 * サイトマップ定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		// $rtn = $this->px->site()->get_sitemap_definition();
+		// $rtn = $this->site->get_sitemap_definition();
 		$rtn = $this->plugin->get_sitemap_definition();
 
 		if( !is_array(@$rtn['**delete_flg']) ){
