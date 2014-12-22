@@ -13,7 +13,16 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 	 */
 	private $path_sitemaps;
 
+	/**
+	 * テスト用のファイル更新日タイムスタンプ
+	 */
+	private $test_timestamp;
+
+	/**
+	 * setup
+	 */
 	public function setup(){
+		$this->test_timestamp = @mktime(0, 0, 0, 1, 1, 2000);
 		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
 	}
 
@@ -23,11 +32,11 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 	public function testXlsx2CsvConvert(){
 
 		// CSV を削除してみる。
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.csv' ) );
-		$this->assertTrue( unlink( $this->path_sitemap.'sitemapexcel.csv' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertTrue( unlink( $this->path_sitemap.'sitemap.csv' ) );
 		clearstatcache();
-		$this->assertFalse( is_file( $this->path_sitemap.'sitemapexcel.csv' ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.xlsx', 20000 ) );
+		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.xlsx', $this->test_timestamp ) );
 
 		// トップページを実行
 		$output = $this->passthru( [
@@ -37,18 +46,18 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		] );
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemapexcel.csv' );// CSVは復活しているはず。
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemapexcel.xlsx' );
-		$this->assertTrue( $mtime_csv === 20000 );
-		$this->assertTrue( $mtime_xlsx === 20000 );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$this->assertTrue( $mtime_csv === $this->test_timestamp );
+		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
 		// CSV を古くしてみる。
 		clearstatcache();
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.csv' ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.csv', 1000 ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.xlsx', 20000 ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.csv', 1000 ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.xlsx', $this->test_timestamp ) );
 		clearstatcache();
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.csv' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.csv' ) );
 
 
 		// トップページを実行
@@ -59,10 +68,10 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		] );
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemapexcel.csv' );// CSVは復活しているはず。
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemapexcel.xlsx' );
-		$this->assertTrue( $mtime_csv === 20000 );
-		$this->assertTrue( $mtime_xlsx === 20000 );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$this->assertTrue( $mtime_csv === $this->test_timestamp );
+		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
 		clearstatcache();
 		$this->assertTrue( is_dir( __DIR__.'/testData/standard/caches/p/' ) );
@@ -87,11 +96,11 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 	public function testCsv2XlsxConvert(){
 
 		// XLSX を削除してみる。
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		$this->assertTrue( unlink( $this->path_sitemap.'sitemapexcel.xlsx' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( unlink( $this->path_sitemap.'sitemap.xlsx' ) );
 		clearstatcache();
-		$this->assertFalse( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.csv', 20000 ) );
+		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.csv', $this->test_timestamp ) );
 
 		// トップページを実行
 		$output = $this->passthru( [
@@ -101,17 +110,17 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		] );
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemapexcel.csv' );// CSVは復活しているはず。
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemapexcel.xlsx' );
-		$this->assertTrue( $mtime_csv === 20000 );
-		$this->assertTrue( $mtime_xlsx === 20000 );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$this->assertTrue( $mtime_csv === $this->test_timestamp );
+		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
 		// XLSX を古くしてみる。
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.xlsx', 1000 ) );
-		$this->assertTrue( touch( $this->path_sitemap.'sitemapexcel.csv', 20000 ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.xlsx', 1000 ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.csv', $this->test_timestamp ) );
 		clearstatcache();
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemapexcel.xlsx' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
 
 
 		// トップページを実行
@@ -122,10 +131,10 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		] );
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemapexcel.csv' );
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemapexcel.xlsx' );// XLSXは復活しているはず。
-		$this->assertTrue( $mtime_csv === 20000 );
-		$this->assertTrue( $mtime_xlsx === 20000 );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );// XLSXは復活しているはず。
+		$this->assertTrue( $mtime_csv === $this->test_timestamp );
+		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
 		clearstatcache();
 		$this->assertTrue( is_dir( __DIR__.'/testData/standard/caches/p/' ) );

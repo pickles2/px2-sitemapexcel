@@ -75,11 +75,11 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ### 4. サイトマップディレクトリに sitemap.xlsx を設置
 
-エクセルファイルは、このリポジトリに同梱されている [sitemapexcel.xlsx](./tests/htdocs/.pickles/sitemaps/sitemapexcel.xlsx) をサンプルに作成してみてください。
+エクセルファイルは、このリポジトリに同梱されている [sitemap.xlsx](./tests/testData/standard/px-files/sitemaps/sitemap.xlsx) をサンプルに作成してみてください。
 
-編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ(通常は `./px-files/sitemaps`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。
+編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ(通常は `./px-files/sitemaps`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
 
-その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
+逆に、XLSXファイルよりも新しいCSVファイルがある場合は、XLSXファイルがCSVファイルの内容に従って更新されます。
 
 
 ## ライセンス - License

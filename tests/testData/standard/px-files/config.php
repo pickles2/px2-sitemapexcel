@@ -5,7 +5,7 @@ return call_user_func( function(){
 	$conf = new stdClass;
 
 	// project
-	$conf->name = 'pickles-sitemap-excel TEST'; // サイト名
+	$conf->name = 'Pickles 2'; // サイト名
 	$conf->domain = null; // ドメイン
 	$conf->path_controot = '/'; // コンテンツルートディレクトリ
 

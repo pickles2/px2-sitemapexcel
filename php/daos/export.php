@@ -40,19 +40,6 @@ class pxplugin_sitemapExcel_daos_export{
 		return $this->path_xlsx;
 	}
 
-	// /**
-	//  * PHPExcelHelper を生成する
-	//  */
-	// private function factory_PHPExcelHelper(){
-	// 	$tmp_class_name = $this->px->load_px_plugin_class('/'.$this->command[1].'/helper/PHPExcelHelper.php');
-	// 	if(!$tmp_class_name){
-	// 		$this->px->error()->error_log('FAILED to load "PHPExcelHelper.php".', __FILE__, __LINE__);
-	// 		return false;
-	// 	}
-	// 	$phpExcelHelper = new $tmp_class_name($this->px);
-	// 	return $phpExcelHelper;
-	// }
-
 	/**
 	 * 現在のサイトマップをxlsxに出力する。
 	 */
@@ -121,7 +108,7 @@ class pxplugin_sitemapExcel_daos_export{
 		$objSheet->getCell('A'.$this->current_row)->setValue($sheetTitle);
 		$objSheet->getStyle('A'.$this->current_row)->getFont()->setSize(24);
 		$this->current_row ++;
-		$objSheet->getCell('A'.$this->current_row)->setValue('Exported: '.date('Y-m-d H:i:s'));
+		$objSheet->getCell('A'.$this->current_row)->setValue('Exported: '.@date('Y-m-d H:i:s', filemtime($this->path_csv)));
 
 		// 定義行
 		$this->current_row = $table_definition['row_definition'] - 1;
