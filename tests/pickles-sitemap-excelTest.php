@@ -19,11 +19,17 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 	private $test_timestamp;
 
 	/**
+	 * ファイルシステムユーティリティ
+	 */
+	private $fs;
+
+	/**
 	 * setup
 	 */
 	public function setup(){
 		$this->test_timestamp = @mktime(0, 0, 0, 1, 1, 2000);
 		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
+		$this->fs = new \tomk79\filesystem();
 	}
 
 	/**
@@ -32,10 +38,19 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 	public function testXlsx2CsvConvert(){
 
 		// CSV を削除してみる。
-		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.csv' ) );
-		$this->assertTrue( unlink( $this->path_sitemap.'sitemap.csv' ) );
+		clearstatcache();
+		$this->assertTrue( @unlink( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertTrue( @unlink( $this->path_sitemap.'sitemap.xlsx' ) );
+
 		clearstatcache();
 		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+
+		clearstatcache();
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+
+		clearstatcache();
 		$this->assertTrue( touch( $this->path_sitemap.'sitemap.xlsx', $this->test_timestamp ) );
 
 		// トップページを実行

@@ -47,10 +47,12 @@ class pxplugin_sitemapExcel_daos_export{
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
 
+		// ↓疑似サイトマップオブジェクト
+		// 　sitemapExcel実行時点で、
+		// 　本物の$siteはスタンバイされていないので、
+		// 　偽物でエミュレートする必要があった。
 		require_once( __DIR__.'/../helper/parseSitemapCsv.php' );
 		$this->site = new pxplugin_sitemapExcel_helper_parseSitemapCsv( $this->px, $this->path_csv );
-		// return;//開発中
-		// var_dump( $site->get_sitemap() );
 
 		$table_definition = $this->get_table_definition();
 
@@ -76,12 +78,12 @@ class pxplugin_sitemapExcel_daos_export{
 		$objSheet->freezePane('B'.$table_definition['row_data_start']);
 
 		$this->default_cell_style_boarder = array(// 罫線の一括指定
-		  'borders' => array(
-		    'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-		    'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-		    'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-		    'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN)
-		  )
+			'borders' => array(
+				'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+				'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+				'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+				'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN)
+			)
 		);
 
 		// 設定セル
@@ -169,20 +171,20 @@ class pxplugin_sitemapExcel_daos_export{
 				$objSheet->getColumnDimension($tmp_col)->setWidth(3);
 			}
 		}
-		$objSheet->getColumnDimension($table_definition['col_define']['title_h1']['col'])->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_label']['col'])->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_breadcrumb']['col'])->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_full']['col'])->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['path']['col'])->setWidth(40);
-		$objSheet->getColumnDimension($table_definition['col_define']['content']['col'])->setWidth(20);
-		$objSheet->getColumnDimension($table_definition['col_define']['list_flg']['col'])->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['layout']['col'])->setWidth(9);
-		// $objSheet->getColumnDimension($table_definition['col_define']['extension']['col'])->setWidth(9);
-		$objSheet->getColumnDimension($table_definition['col_define']['description']['col'])->setWidth(30);
-		$objSheet->getColumnDimension($table_definition['col_define']['keywords']['col'])->setWidth(30);
-		// $objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'])->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['orderby']['col'])->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['category_top_flg']['col'])->setWidth(3);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['title_h1']['col'])->setWidth(2);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['title_label']['col'])->setWidth(2);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['title_breadcrumb']['col'])->setWidth(2);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['title_full']['col'])->setWidth(2);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['path']['col'])->setWidth(40);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['content']['col'])->setWidth(20);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['list_flg']['col'])->setWidth(3);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['layout']['col'])->setWidth(9);
+		// $objSheet->getColumnDimension(@$table_definition['col_define']['extension']['col'])->setWidth(9);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['description']['col'])->setWidth(30);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['keywords']['col'])->setWidth(30);
+		// $objSheet->getColumnDimension(@$table_definition['col_define']['auth_level']['col'])->setWidth(3);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['orderby']['col'])->setWidth(3);
+		$objSheet->getColumnDimension(@$table_definition['col_define']['category_top_flg']['col'])->setWidth(3);
 
 		// 行移動
 		$this->current_row = $table_definition['row_data_start'];
@@ -224,9 +226,6 @@ class pxplugin_sitemapExcel_daos_export{
 		}
 
 		// sitemapExcelのバージョン情報を記載
-		// $sitemapExcel_info = $this->px->load_px_plugin_class( '/sitemapExcel/register/info.php' );
-		// $sitemapExcel_info = new $sitemapExcel_info($this->px);
-		// array_push( $config, 'version='.urlencode( $sitemapExcel_info->get_version() ) );
 		array_push( $config, 'version='.urlencode( $this->plugin->get_version() ) );
 
 		$rtn = implode('&', $config);
@@ -287,12 +286,13 @@ class pxplugin_sitemapExcel_daos_export{
 					$tmp_col = $def_row['col'];
 					for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
 						$tmp_border_style = array(
-						  'borders' => array(
-						    'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-						    'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-						    'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-						    'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
-						  ) );
+							'borders' => array(
+								'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+								'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+								'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
+								'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
+							)
+						);
 						if($i != 0){
 							$tmp_border_style['borders']['left']['style'] = \PHPExcel_Style_Border::BORDER_THIN;
 							$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');

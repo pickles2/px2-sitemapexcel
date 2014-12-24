@@ -50,7 +50,7 @@ class pxplugin_sitemapExcel_daos_import{
 		}
 		$path_toppage = $this->regulize_path( $path_toppage );
 
-		// $sitemap_definition = $this->px->site()->get_sitemap_definition();
+		// サイトマップCSVの定義を取得
 		$sitemap_definition = $this->get_sitemap_definition();
 
 		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
@@ -170,9 +170,15 @@ class pxplugin_sitemapExcel_daos_import{
 
 			// 省略されたIDを自動的に付与
 			if(!strlen($tmp_page_info['id'])){
-				// トップページは空白でなければならない。
 				if( $path_toppage != $tmp_page_info['path'] ){
-					$tmp_page_info['id'] = $this->generate_auto_page_id();
+					// トップページは空白でなければならない。
+					if( preg_match( '/^alias\\:/', $tmp_page_info['path'] ) ){
+						// エイリアスだったら自動付与
+						$tmp_page_info['id'] = $this->generate_auto_page_id();
+					}elseif( count($alias_title_list) ){
+						// 隠れエイリアスだったら自動付与
+						$tmp_page_info['id'] = $this->generate_auto_page_id();
+					}
 				}
 			}
 
@@ -197,14 +203,20 @@ class pxplugin_sitemapExcel_daos_import{
 					$tmp_breadcrumb[$i] = $last_breadcrumb[$i];
 				}
 			}
-			$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
-			$tmp_page_info['logical_path'] = preg_replace('/^\>/s', '', $tmp_page_info['logical_path']);
+			$tmp_page_info['logical_path'] = '';
+			if( count($tmp_breadcrumb) >= 2 ){
+				$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
+				$tmp_page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $tmp_page_info['logical_path']);
+			}
 
 
 			// 今回のパンくずとパンくずの深さを記録
 			$logical_path_last_depth = $logical_path_depth;
 			$last_breadcrumb = $tmp_breadcrumb;
-			$last_page_id = $tmp_page_info['id'];
+			$last_page_id = $tmp_page_info['path'];
+			if( preg_match( '/^alias\\:/', $tmp_page_info['path'] ) ){
+				$last_page_id = $tmp_page_info['id'];
+			}
 
 			$page_info = array();
 			foreach($sitemap_definition as $row){
@@ -225,8 +237,11 @@ class pxplugin_sitemapExcel_daos_import{
 						$page_info['path'] = 'alias:'.$page_info['path'];
 					}
 					array_push($tmp_breadcrumb, $tmp_last_page_id);
-					$page_info['logical_path'] = implode('>', $tmp_breadcrumb);
-					$page_info['logical_path'] = preg_replace('/^\>/s', '', $page_info['logical_path']);
+					$page_info['logical_path'] = '';
+					if( count($tmp_breadcrumb) >= 2 ){
+						$page_info['logical_path'] = implode('>', $tmp_breadcrumb);
+						$page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $page_info['logical_path']);
+					}
 					$page_info['id'] = $this->generate_auto_page_id();
 					$page_info['title'] = $row;
 
@@ -263,24 +278,6 @@ class pxplugin_sitemapExcel_daos_import{
 	 */
 	private function get_sitemap_definition(){
 		$rtn = $this->plugin->get_sitemap_definition();
-		// $col = 'A';
-		// $num = 0;
-		// $rtn = array();
-		// $rtn['path'] = array('num'=>$num++,'col'=>$col++,'key'=>'path','name'=>'ページのパス');
-		// $rtn['content'] = array('num'=>$num++,'col'=>$col++,'key'=>'content','name'=>'コンテンツファイルの格納先');
-		// $rtn['id'] = array('num'=>$num++,'col'=>$col++,'key'=>'id','name'=>'ページID');
-		// $rtn['title'] = array('num'=>$num++,'col'=>$col++,'key'=>'title','name'=>'ページタイトル');
-		// $rtn['title_breadcrumb'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_breadcrumb','name'=>'ページタイトル(パン屑表示用)');
-		// $rtn['title_h1'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_h1','name'=>'ページタイトル(H1表示用)');
-		// $rtn['title_label'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_label','name'=>'ページタイトル(リンク表示用)');
-		// $rtn['title_full'] = array('num'=>$num++,'col'=>$col++,'key'=>'title_full','name'=>'ページタイトル(タイトルタグ用)');
-		// $rtn['logical_path'] = array('num'=>$num++,'col'=>$col++,'key'=>'logical_path','name'=>'論理構造上のパス');
-		// $rtn['list_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'list_flg','name'=>'一覧表示フラグ');
-		// $rtn['layout'] = array('num'=>$num++,'col'=>$col++,'key'=>'layout','name'=>'レイアウト');
-		// $rtn['orderby'] = array('num'=>$num++,'col'=>$col++,'key'=>'orderby','name'=>'表示順');
-		// $rtn['keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'keywords','name'=>'metaキーワード');
-		// $rtn['description'] = array('num'=>$num++,'col'=>$col++,'key'=>'description','name'=>'metaディスクリプション');
-		// $rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
 		return $rtn;
 	}
 
