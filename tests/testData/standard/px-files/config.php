@@ -90,6 +90,9 @@ return call_user_func( function(){
 
 	// funcs: Before content
 	$conf->funcs->before_content = [
+		// PX=api
+		'picklesFramework2\commands\api::register' ,
+
 		// PX=publish
 		'picklesFramework2\commands\publish::register' ,
 	];

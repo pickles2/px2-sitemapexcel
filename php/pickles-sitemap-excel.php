@@ -73,13 +73,13 @@ class pickles_sitemap_excel{
 				// case 'xls':
 				case 'xlsx':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
-						$import = (new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
+						$import = @(new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
 						touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
 					}
 					break;
 				case 'csv':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
-						$export = (new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
+						$export = @(new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
 						touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
 					}
 					break;
