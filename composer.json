@@ -1,5 +1,5 @@
 {
-    "name": "tomk79/pickles-sitemap-excel-2",
+    "name": "tomk79/px2-sitemapexcel",
     "description": "Pickles2 に、サイトマップをグラフィカルなエクセル形式(xlsx)で編集できる機能を追加します。",
     "keywords": ["pickles"],
     "license": "MIT",
