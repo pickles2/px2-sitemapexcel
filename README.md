@@ -100,5 +100,5 @@ MIT License
 ### テスト - Test
 
 ```
-$ ./vendor/phpunit/phpunit/phpunit tests/pickles-sitemap-excelTest.php picklesSitemapExcel
+$ php ./vendor/phpunit/phpunit/phpunit
 ```

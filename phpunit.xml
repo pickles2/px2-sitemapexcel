@@ -1,0 +1,7 @@
+<phpunit>
+	<testsuites>
+		<testsuite>
+			<file>tests/pickles-sitemap-excelTest.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

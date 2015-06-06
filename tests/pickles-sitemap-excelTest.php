@@ -1,9 +1,6 @@
 <?php
 /**
  * test for tomk79\pickles-sitemap-excel
- * 
- * $ cd (project dir)
- * $ ./vendor/phpunit/phpunit/phpunit tests/pickles-sitemap-excelTest.php picklesSitemapExcel
  */
 
 class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
