@@ -106,10 +106,15 @@ class pxplugin_sitemapExcel_daos_import{
 		$logical_path_last_depth = 0;
 		$xlsx_row = $table_definition['row_data_start'];
 		$xlsx_row --;
+
 		while(1){
 			set_time_limit(30);
 			$xlsx_row ++;
 
+			if( $xlsx_row > $table_definition['tbl_highest_row'] ){
+				// エクセルの最終行に達していたら、終了。
+				break;
+			}
 			if( $objSheet->getCell('A'.$xlsx_row)->getCalculatedValue() == 'EndOfData' ){
 				// A列が 'EndOfData' だったら、終了。
 				break;
@@ -154,7 +159,8 @@ class pxplugin_sitemapExcel_daos_import{
 			if(!@strlen( $tmp_page_info['path'] )){
 				if(!@strlen( $tmp_page_info['title'] )){
 					// pathもtitleも空白なら終わったものと思う。
-					break;
+					// 	→スキップする に変更
+					continue;
 				}
 				$tmp_page_info['path'] = 'alias:/_tbd.html';//pathがなくてもtitleがあれば、仮の値を入れて通す。
 			}
@@ -311,6 +317,11 @@ class pxplugin_sitemapExcel_daos_import{
 		$objSheet = $objPHPExcel->getActiveSheet();
 
 		parse_str( $objSheet->getCell('A1')->getCalculatedValue(), $rtn );
+
+		$rtn['tbl_highest_row'] = $objSheet->getHighestRow(); // e.g. 10
+		$rtn['tbl_highest_col_name'] = $objSheet->getHighestColumn(); // e.g 'F'
+		$rtn['tbl_highest_col'] = \PHPExcel_Cell::columnIndexFromString( $rtn['tbl_highest_col_name'] ); // e.g. 5
+
 		$rtn['row_definition'] = @intval($rtn['row_definition']);
 		$rtn['row_data_start'] = @intval($rtn['row_data_start']);
 		if( !@strlen($rtn['skip_empty_col']) ){

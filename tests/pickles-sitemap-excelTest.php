@@ -27,6 +27,7 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->test_timestamp = @mktime(0, 0, 0, 1, 1, 2000);
 		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
 		$this->fs = new \tomk79\filesystem();
+		mb_internal_encoding('utf-8');
 	}
 
 	/**
@@ -44,7 +45,7 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
 
 		clearstatcache();
-		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
 		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
 
 		clearstatcache();
@@ -91,11 +92,9 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
 
 		// 後始末
-		$output = $this->passthru( [
-			'php',
-			__DIR__.'/testData/standard/.px_execute.php',
-			'/?PX=clearcache'
-		] );
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/' ] );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/?PX=clearcache' ] );
 		clearstatcache();
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
@@ -154,16 +153,61 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
 
 		// 後始末
-		$output = $this->passthru( [
-			'php',
-			__DIR__.'/testData/standard/.px_execute.php',
-			'/?PX=clearcache'
-		] );
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/' ] );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/?PX=clearcache' ] );
 		clearstatcache();
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
 
 	}//testCsv2XlsxConvert()
+
+
+	/**
+	 * EndOfDataの記載がないエクセルファイルの変換テスト
+	 */
+	public function testEndlessXlsx(){
+
+		clearstatcache();
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_endless.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+
+		$this->assertTrue( @unlink( $this->path_sitemap.'sitemap.csv' ) );
+		$this->assertTrue( touch( $this->path_sitemap.'sitemap.xlsx', $this->test_timestamp ) );
+
+
+		// トップページを実行
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/' ] );
+
+		clearstatcache();
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$this->assertTrue( $mtime_csv === $this->test_timestamp );
+		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
+
+		clearstatcache();
+		$this->assertTrue( is_dir( __DIR__.'/testData/standard/caches/p/' ) );
+		$this->assertTrue( is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
+		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
+
+		// $csvFile = $this->fs->read_file($this->path_sitemap.'sitemap.csv');
+		// var_dump($csvFile);
+		$csvAry = $this->fs->read_csv($this->path_sitemap.'sitemap.csv');
+		// var_dump($csvAry);
+		$this->assertEquals( 'サンプルページ1', $csvAry[2][3] );
+		$this->assertEquals( 'サンプルページ5', $csvAry[11][3] );
+		$this->assertEquals( 'ヘルプ', $csvAry[17][3] );
+
+
+		// 後始末
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/' ] );
+		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/?PX=clearcache' ] );
+		clearstatcache();
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
+
+	}//testEndlessXlsx()
 
 
 
