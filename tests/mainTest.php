@@ -1,9 +1,9 @@
 <?php
 /**
- * test for tomk79\pickles-sitemap-excel
+ * test for tomk79\px2-sitemapexcel
  */
 
-class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
+class mainTest extends PHPUnit_Framework_TestCase{
 
 	/**
 	 * サイトマップディレクトリのパス
@@ -91,6 +91,14 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
 		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
 
+		// 値をチェック
+		$sitemapAry = include( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' );
+		// var_dump($sitemapAry);
+		$this->assertTrue( is_array( $sitemapAry ) );
+		$this->assertEquals( $sitemapAry['/sample_pages/page5/5-1-1-1-2.html']['title'], 'サンプルページ5-1-1-1-2' );
+		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_1'], 'test1' );
+		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_2'], 'test2' );
+
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
 		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/' ] );
@@ -111,6 +119,7 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( unlink( $this->path_sitemap.'sitemap.xlsx' ) );
 		clearstatcache();
 		$this->assertFalse( is_file( $this->path_sitemap.'sitemap.xlsx' ) );
+		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_custom.csv', $this->path_sitemap.'sitemap.csv' ) );
 		$this->assertTrue( touch( $this->path_sitemap.'sitemap.csv', $this->test_timestamp ) );
 
 		// トップページを実行
@@ -151,6 +160,13 @@ class picklesSitemapExcelTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_dir( __DIR__.'/testData/standard/caches/p/' ) );
 		$this->assertTrue( is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
 		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
+
+		// 値をチェック
+		$objPHPExcel = \PHPExcel_IOFactory::load( $this->path_sitemap.'sitemap.xlsx' );
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objSheet = $objPHPExcel->getActiveSheet();
+		$this->assertEquals( $objSheet->getCell('T8')->getCalculatedValue(), 'description' );
+		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
 
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
