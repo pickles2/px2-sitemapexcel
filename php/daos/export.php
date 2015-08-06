@@ -378,7 +378,7 @@ class pxplugin_sitemapExcel_daos_export{
 			$this->mk_xlsx_body($objSheet, $page_info['id']);
 		}
 		return true;
-	}
+	}// mk_xlsx_body()
 
 	/**
 	 * 加工されたパスを戻す
@@ -461,6 +461,17 @@ class pxplugin_sitemapExcel_daos_export{
 			$rtn['**delete_flg']['name'] = '削除フラグ';
 			$rtn['**delete_flg']['key'] = '**delete_flg';
 		}
+
+		$pageInfo = $this->site->get_page_info('');
+		foreach( $rtn as $key=>$val ){
+			unset($pageInfo[$key]);
+		}
+		unset($pageInfo['**delete_flg']);
+		foreach( array_keys($pageInfo) as $key ){
+			$rtn[$key]['key'] = $key;
+			$rtn[$key]['name'] = $key;
+		}
+
 		return $rtn;
 	}
 
