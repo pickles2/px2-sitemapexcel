@@ -1,7 +1,7 @@
-px2-sitemapexcel
+pickles2/px2-sitemapexcel
 =======================
 
-*pickles-sitemap-excel-2* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
+*pickles2/px2-sitemapexcel* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
 
 本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。このプラグインを導入することで、より直感的に、グラフィカルに編集することができるようになります。
 
@@ -12,22 +12,22 @@ px2-sitemapexcel
 
 エクセルファイルの操作には、 [phpoffice/phpexcel](https://github.com/PHPOffice/PHPExcel) を利用しています。
 
-※旧名 pickles-sitemap-excel-2 から px2-sitemapexcel へ名称変更されました。
+※旧名 pickles2/px2-sitemapexcel から px2-sitemapexcel へ名称変更されました。
 
 
 ## 導入手順 - Setup
 
-### 1. composer.json に pickles-sitemap-excel-2 を追加
+### 1. composer.json に pickles2/px2-sitemapexcel を追加
 
-require の項目に、"tomk79/pickles-sitemap-excel-2" を追加します。
+require の項目に、"pickles2/px2-sitemapexcel" を追加します。
 
 ```
 {
 	〜 中略 〜
     "require": {
         "php": ">=5.3.0" ,
-        "tomk79/px-fw-2.x": "2.0.*",
-        "tomk79/pickles-sitemap-excel-2": "2.0.*"
+        "pickles2/px-fw-2.x": "2.0.*",
+        "pickles2/px2-sitemapexcel": "2.0.*"
     },
 	〜 中略 〜
 }
