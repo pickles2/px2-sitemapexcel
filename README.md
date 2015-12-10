@@ -1,6 +1,36 @@
 pickles2/px2-sitemapexcel
 =======================
 
+<table class="def">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Linux</th>
+      <th>Windows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>master</th>
+      <td align="center">
+        <a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=master"></a>
+      </td>
+      <td align="center">
+        <a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/master?svg=true"></a>
+      </td>
+    </tr>
+    <tr>
+      <th>develop</th>
+      <td align="center">
+        <a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=develop"></a>
+      </td>
+      <td align="center">
+        <a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/develop?svg=true"></a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 *pickles2/px2-sitemapexcel* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
 
 本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。このプラグインを導入することで、より直感的に、グラフィカルに編集することができるようになります。
