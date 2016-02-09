@@ -96,6 +96,12 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump($sitemapAry);
 		$this->assertTrue( is_array( $sitemapAry ) );
 		$this->assertEquals( $sitemapAry['/sample_pages/page5/5-1-1-1-2.html']['title'], 'サンプルページ5-1-1-1-2' );
+		$this->assertEquals( $sitemapAry['alias21:/sample_pages/page5/index.html']['title'], 'サンプルページ5' );
+		$this->assertEquals( $sitemapAry['alias21:/sample_pages/page5/index.html']['category_top_flg'], '1' );
+		$this->assertEquals( $sitemapAry['alias24:/sample_pages/page5/index.html']['title'], 'サンプルページ5-1-1-1' );
+		$this->assertEquals( $sitemapAry['alias24:/sample_pages/page5/index.html']['category_top_flg'], null );
+		$this->assertEquals( $sitemapAry['/sample_pages/page5/index.html']['title'], 'サンプルページ5-1-1-1-1' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page5/index.html']['category_top_flg'], null );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_1'], 'test1' );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_2'], 'test2' );
 
