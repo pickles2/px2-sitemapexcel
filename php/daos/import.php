@@ -242,6 +242,12 @@ class pxplugin_sitemapExcel_daos_import{
 						// 最後の1件以外なら
 						$page_info['path'] = 'alias:'.$page_info['path'];
 					}
+					if( $key != 0 ){
+						// 最初の1件以外なら
+						if( $page_info_base['category_top_flg'] ){
+							$page_info['category_top_flg'] = null;
+						}
+					}
 					array_push($tmp_breadcrumb, $tmp_last_page_id);
 					$page_info['logical_path'] = '';
 					if( count($tmp_breadcrumb) >= 2 ){
