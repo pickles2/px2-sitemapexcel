@@ -54,6 +54,10 @@ class pickles_sitemap_excel{
 				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
 				continue;
 			}
+			if( preg_match( '/^\\.\\~lock\\./', $filename ) ){
+				// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
+				continue;
+			}
 			$basename = $this->px->fs()->trim_extension($filename);
 			$extension = $this->px->fs()->get_extension($filename);
 			switch( strtolower($extension) ){
@@ -100,6 +104,7 @@ class pickles_sitemap_excel{
 		$rtn['keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'keywords','name'=>'metaキーワード');
 		$rtn['description'] = array('num'=>$num++,'col'=>$col++,'key'=>'description','name'=>'metaディスクリプション');
 		$rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
+		$rtn['role'] = array('num'=>$num++,'col'=>$col++,'key'=>'role','name'=>'ロール');
 		return $rtn;
 	}
 
