@@ -36,7 +36,7 @@ class pickles_sitemap_excel{
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.0.3';
+		return '2.0.4-alpha.1+nb';
 	}
 
 	/**
@@ -52,6 +52,10 @@ class pickles_sitemap_excel{
 		foreach( $sitemap_files as $filename ){
 			if( preg_match( '/^\\~\\$/', $filename ) ){
 				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
+				continue;
+			}
+			if( preg_match( '/^\\.\\~lock\\./', $filename ) ){
+				// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
 				continue;
 			}
 			$basename = $this->px->fs()->trim_extension($filename);
@@ -100,6 +104,7 @@ class pickles_sitemap_excel{
 		$rtn['keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'keywords','name'=>'metaキーワード');
 		$rtn['description'] = array('num'=>$num++,'col'=>$col++,'key'=>'description','name'=>'metaディスクリプション');
 		$rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
+		$rtn['role'] = array('num'=>$num++,'col'=>$col++,'key'=>'role','name'=>'ロール');
 		return $rtn;
 	}
 
