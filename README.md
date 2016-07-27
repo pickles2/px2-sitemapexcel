@@ -116,6 +116,10 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### px2-sitemapexcel 2.0.5 (2016年??月??日)
+
+- ???????????????
+
 ### px2-sitemapexcel 2.0.4 (2016年7月27日)
 
 - LibreOffice形式の一時ファイルをスキップするようになった。
