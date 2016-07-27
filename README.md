@@ -114,6 +114,31 @@ $ chmod -R 777 ./px-files/sitemaps
 逆に、XLSXファイルよりも新しいCSVファイルがある場合は、XLSXファイルがCSVファイルの内容に従って更新されます。
 
 
+## 更新履歴 - Change log
+
+### px2-sitemapexcel 2.0.4 (2016年7月27日)
+
+- LibreOffice形式の一時ファイルをスキップするようになった。
+- ロール列(role)に対応。
+
+### px2-sitemapexcel 2.0.3 (2016年2月9日)
+
+- 簡易表現された扉ページに category_top_flg がセットされていた場合、最上位のエイリアスにのみ設定し、下層のフラグは削除するようになった。
+
+### px2-sitemapexcel 2.0.2 (2015年8月7日)
+
+- path, title ともに空白の行を見つけた場合、終了せずにスキップして次を探すようになった。
+- export時に、sitemap.csv に定義したカスタム列が捨てられてしまう不具合を修正。
+
+### pickles-sitemap-excel 2.0.1 (2015年3月19日)
+
+- タイムゾーンの設定がされていない場合に、エラーが出力されないように制御。
+
+### pickles-sitemap-excel 2.0.0 (2014年12月24日)
+
+- First release.
+
+
 ## ライセンス - License
 
 MIT License
