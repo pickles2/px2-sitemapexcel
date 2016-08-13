@@ -136,10 +136,11 @@ class mainTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/.px_execute.php' ,
 			'/' ,
 		] );
+		// var_dump($output);
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );// xlsxは復活しているはず。
 		$this->assertTrue( $mtime_csv === $this->test_timestamp );
 		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
@@ -180,6 +181,19 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), 'test_custom_col_1' );
 		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_2' );
 		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
+
+		$this->assertEquals( $objSheet->getCell('D35')->getCalculatedValue(), 'Pickles 2 への外部リンク (1)' );
+		$this->assertEquals( $objSheet->getCell('N35')->getCalculatedValue(), 'http://pickles2.pxt.jp/' );
+		$this->assertEquals( $objSheet->getCell('D36')->getCalculatedValue(), 'Pickles 2 への外部リンク (2)' );
+		$this->assertEquals( $objSheet->getCell('N36')->getCalculatedValue(), '//pickles2.pxt.jp/' );
+		$this->assertEquals( $objSheet->getCell('D37')->getCalculatedValue(), 'Pickles 2 への外部リンク (3)' );
+		$this->assertEquals( $objSheet->getCell('N37')->getCalculatedValue(), 'http://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $objSheet->getCell('D38')->getCalculatedValue(), 'Pickles 2 への外部リンク (4)' );
+		$this->assertEquals( $objSheet->getCell('N38')->getCalculatedValue(), '//pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $objSheet->getCell('D39')->getCalculatedValue(), 'Pickles 2 への外部リンク (5)' );
+		$this->assertEquals( $objSheet->getCell('N39')->getCalculatedValue(), 'http://pickles2.pxt.jp/abc.html' );
+		$this->assertEquals( $objSheet->getCell('D40')->getCalculatedValue(), 'Pickles 2 への外部リンク (6)' );
+		$this->assertEquals( $objSheet->getCell('N40')->getCalculatedValue(), '//pickles2.pxt.jp/abc.html' );
 
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );

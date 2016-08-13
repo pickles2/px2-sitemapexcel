@@ -372,7 +372,7 @@ class pxplugin_sitemapExcel_daos_export{
 		foreach( $children as $child ){
 			$page_info = $this->site->get_page_info($child);
 			if(!strlen($page_info['id'])){
-				$this->px->error()->error_log('ページIDがセットされていません。', __FILE__, __LINE__);
+				$this->px->error('ページIDがセットされていません。');
 				continue;
 			}
 			$this->mk_xlsx_body($objSheet, $page_info['id']);
