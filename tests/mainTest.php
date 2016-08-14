@@ -140,7 +140,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 		clearstatcache();
 		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );// xlsxは復活しているはず。
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );// XLSXは復活しているはず。
 		$this->assertTrue( $mtime_csv === $this->test_timestamp );
 		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
@@ -182,6 +182,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_2' );
 		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
 
+		$this->assertEquals( $objSheet->getCell('C34')->getCalculatedValue(), 'ヘルプ' );
 		$this->assertEquals( $objSheet->getCell('D35')->getCalculatedValue(), 'Pickles 2 への外部リンク (1)' );
 		$this->assertEquals( $objSheet->getCell('N35')->getCalculatedValue(), 'http://pickles2.pxt.jp/' );
 		$this->assertEquals( $objSheet->getCell('D36')->getCalculatedValue(), 'Pickles 2 への外部リンク (2)' );

@@ -190,6 +190,7 @@ class pxplugin_sitemapExcel_daos_export{
 		$this->current_row = $table_definition['row_data_start'];
 
 		// データ行を作成する
+		// var_dump( $this->site->get_sitemap() );
 		$this->mk_xlsx_body($objSheet);
 
 		// データ行の終了を宣言
@@ -259,10 +260,13 @@ class pxplugin_sitemapExcel_daos_export{
 		if(!is_string($page_id)){return false;}
 		$sitemap_definition = $this->get_sitemap_definition();
 		$table_definition = $this->get_table_definition();
+		// var_dump($this->site->get_sitemap());
 		$page_info = $this->site->get_page_info($page_id);
 		if(!is_array($page_info)){
 			return false;
 		}
+		// var_dump($page_id);
+		// var_dump($page_info);
 
 		set_time_limit(30);
 
@@ -369,6 +373,7 @@ class pxplugin_sitemapExcel_daos_export{
 		$this->current_row ++;
 
 		$children = $this->site->get_children($page_id, array('filter'=>false));
+		// var_dump($children);
 		foreach( $children as $child ){
 			$page_info = $this->site->get_page_info($child);
 			if(!strlen($page_info['id'])){
@@ -384,12 +389,20 @@ class pxplugin_sitemapExcel_daos_export{
 	 * 加工されたパスを戻す
 	 */
 	private function repair_path($path){
-		$path = preg_replace('/^alias[0-9]*\:/si','alias:',$path);
-		$path = preg_replace('/^alias\:(javascript|https?)\:/si','$1:',$path);
-		$path = preg_replace('/^alias\:\#/si','#',$path);
-		if( preg_match('/^(?:alias\:)?\//s', $path) ){
-			$path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/s', '/$1', $path);
+		$tmp_path = $path;
+		$tmp_path = preg_replace('/^alias[0-9]*\:/si','alias:',$tmp_path);
+		$tmp_path = preg_replace('/^alias\:([a-zA-Z0-9\+]+\:|\/\/)/si','$1',$tmp_path);
+		$tmp_path = preg_replace('/^alias\:\#/si','#',$tmp_path);
+		switch( $this->px->get_path_type($tmp_path) ){
+			case 'full_url':
+			case 'javascript':
+			case 'anchor':
+				break;
+			default:
+				$tmp_path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/s', '/$1', $tmp_path);
+				break;
 		}
+		$path = $tmp_path;
 		return $path;
 	}
 
