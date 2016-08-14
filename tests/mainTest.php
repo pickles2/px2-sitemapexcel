@@ -79,6 +79,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/.px_execute.php' ,
 			'/' ,
 		] );
+		// var_dump($output);
 
 		clearstatcache();
 		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
@@ -106,6 +107,14 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry['/sample_pages/page5/index.html']['category_top_flg'], null );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_1'], 'test1' );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_2'], 'test2' );
+
+		$this->assertEquals( $sitemapAry['alias28:http://pickles2.pxt.jp/']['path'], 'alias28:http://pickles2.pxt.jp/' );
+		$this->assertEquals( $sitemapAry['alias29://pickles2.pxt.jp/']['path'], 'alias29://pickles2.pxt.jp/' );
+		$this->assertEquals( $sitemapAry['alias30:http://pickles2.pxt.jp/index.html']['path'], 'alias30:http://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $sitemapAry['alias31://pickles2.pxt.jp/index.html']['path'], 'alias31://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $sitemapAry['alias32:http://pickles2.pxt.jp/abc.html']['path'], 'alias32:http://pickles2.pxt.jp/abc.html' );
+		$this->assertEquals( $sitemapAry['alias33://pickles2.pxt.jp/abc.html']['path'], 'alias33://pickles2.pxt.jp/abc.html' );
+
 
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
