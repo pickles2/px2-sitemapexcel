@@ -185,12 +185,14 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			$this->sitemap_id_map[$tmp_array['id']] = $tmp_array['path'];
 		}
 
+		// var_dump($this->sitemap_array);
+		// var_dump($this->sitemap_id_map);
 		return true;
 	}//load_sitemap_csv();
 
 	/**
 	 * サイトマップ配列(単品)を取得する
-	 * 
+	 *
 	 * @return array (CSV単品に含まれる)全ページが含まれたサイトマップ配列
 	 */
 	public function get_sitemap(){
@@ -199,66 +201,29 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 	/**
 	 * パス文字列を受け取り、種類を判定する。
-	 * 
+	 *
 	 * @param string $path 調べるパス
-	 * @return string|bool 判定結果。
-	 * - `javascript:` から始まる場合 => 'javascript'
-	 * - `#:` から始まる場合 => 'anchor'
-	 * - `http://` などURLスキーマ名から始まる場合 => 'full_url'
-	 * - その他で `alias:` から始まる場合 => 'alias'
-	 * - `{$xxxx}` または `{*xxxx}` を含む場合 => 'dynamic'
-	 * - `/` から始まる場合 => 'normal'
-	 * - どれにも当てはまらない不明な形式の場合に、`false` を返します。
+	 * @return string|bool 判定結果。 処理結果は、 `$px->get_path_type()` に同じ。
 	 */
 	public function get_path_type( $path ) {
-		if( preg_match( '/^(?:alias[0-9]*\:)?javascript\:/i' , $path ) ) {
-			//  javascript: から始まる場合
-			//  サイトマップ上での重複を許容するために、
-			//  自動的にalias扱いとなることを考慮した正規表現。
-			$path_type = 'javascript';
-		} else if( preg_match( '/^(?:alias[0-9]*\:)?\#/' , $path ) ) {
-			//  # から始まる場合
-			//  サイトマップ上での重複を許容するために、
-			//  自動的にalias扱いとなることを考慮した正規表現。
-			$path_type = 'anchor';
-		} else if( preg_match( '/^(?:alias[0-9]*\:)?[a-zA-Z0-90-9]+\:\/\//' , $path ) ) {
-			//  http:// などURLスキーマから始まる場合
-			//  サイトマップ上での重複を許容するために、
-			//  自動的にalias扱いとなることを考慮した正規表現。
-			$path_type = 'full_url';
-		} else if( preg_match( '/^alias[0-9]*\:/' , $path ) ) {
-			//  alias:から始まる場合
-			//  サイトマップデータ上でpathは一意である必要あるので、
-			//  alias と : の間に、後から連番を降られる。
-			//  このため、数字が含まれている場合を考慮した。(@tomk79)
-			$path_type = 'alias';
-		} else if( preg_match( '/\{(?:\$|\*)(?:[a-zA-Z0-9\_\-]*)\}/' , $path ) ) {
-			//  {$xxxx} または {*xxxx} を含む場合(ダイナミックパス)
-			$path_type = 'dynamic';
-		} else if( preg_match( '/^\//' , $path ) ) {
-			//  /から始まる場合
-			$path_type = 'normal';
-		} else {
-			//  どれにも当てはまらない場合はfalseを返す
-			$path_type = false;
-		}
+		$path_type = $this->px->get_path_type($path);
 		return $path_type;
 	}//get_path_type()
 
 	/**
 	 * ページ情報を取得する。
-	 * 
+	 *
 	 * このメソッドは、指定したページの情報を連想配列で返します。対象のページは第1引数にパスまたはページIDで指定します。
-	 * 
+	 *
 	 * カレントページの情報を取得する場合は、代わりに `$px->site()->get_current_page_info()` が使用できます。
-	 * 
+	 *
 	 * パスで指定したページの情報を取得する例 :
 	 * <pre>&lt;?php
 	 * // ページ &quot;/aaa/bbb.html&quot; のページ情報を得る
 	 * $page_info = $px-&gt;site()-&gt;get_page_info('/aaa/bbb.html');
 	 * var_dump( $page_info );
 	 * ?&gt;</pre>
-	 * 
+	 *
 	 * ページIDで指定したページの情報を取得する例 :
 	 * <pre>&lt;?php
 	 * // トップページのページ情報を得る
@@ -266,7 +231,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 	 * $page_info = $px-&gt;site()-&gt;get_page_info('');
 	 * var_dump( $page_info );
 	 * ?&gt;</pre>
-	 * 
+	 *
 	 * @param string $path 取得するページのパス または ページID。省略時、カレントページから自動的に取得します。
 	 * @param string $key 取り出す単一要素のキー。省略時はすべての要素を含む連想配列が返されます。省略可。
 	 * @return mixed 単一ページ情報を格納する連想配列、`$key` が指定された場合は、その値のみ。
@@ -277,6 +242,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			//ページIDで指定された場合、パスに置き換える
 			$path = $this->sitemap_id_map[$path];
 		}
+
 		if( !preg_match( '/^(?:\/|[a-zA-Z0-9]+\:)/s', $path ) ){
 			// $path が相対パスで指定された場合
 			preg_match( '/(\/)$/s', $path, $tmp_matched );
@@ -285,20 +251,27 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			$path = $this->px->fs()->normalize_path($path);
 			unset( $tmp_matched );
 		}
-		$path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/si','/$1',$path);//directory_index を一旦省略
-
-		$tmp_path = $path;
-		if( !array_key_exists($path, $this->sitemap_id_map) || is_null( $this->sitemap_array[$path] ) ){
-			foreach( $this->px->get_directory_index() as $index_file_name ){
-				$tmp_path = preg_replace('/\/((?:\?|\#).*)?$/si','/'.$index_file_name.'$1',$path);//省略された index.html を付加。
-				if( !is_null( @$this->sitemap_array[$tmp_path] ) ){
-					break;
+		switch( $this->get_path_type($path) ){
+			case 'full_url':
+			case 'javascript':
+			case 'anchor':
+				break;
+			default:
+				$path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/si','/$1',$path);//directory_index を一旦省略
+				$tmp_path = $path;
+				if( !array_key_exists($path, $this->sitemap_id_map) || is_null( $this->sitemap_array[$path] ) ){
+					foreach( $this->px->get_directory_index() as $index_file_name ){
+						$tmp_path = preg_replace('/\/((?:\?|\#).*)?$/si','/'.$index_file_name.'$1',$path);//省略された index.html を付加。
+						if( !is_null( @$this->sitemap_array[$tmp_path] ) ){
+							break;
+						}
+					}
 				}
-			}
+				$path = $tmp_path;
+				unset($tmp_path);
+				$parsed_url = parse_url($path);
+				break;
 		}
-		$path = $tmp_path;
-		$parsed_url = parse_url($path);
-		unset($tmp_path);
 
 		if( is_null( @$this->sitemap_array[$path] ) ){
 			//  サイトマップにズバリなければ、
@@ -340,9 +313,9 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 	/**
 	 * 子階層のページの一覧を取得する。
-	 * 
+	 *
 	 * このメソッドは、指定したページの子階層のページの一覧を返します。`$path` を省略した場合は、カレントページのパスを起点に一覧を抽出します。
-	 * 
+	 *
 	 * カレントページの子階層のリンクを作成する例 :
 	 * <pre>&lt;?php
 	 * // カレントページの子階層のリンクを作成する
@@ -353,7 +326,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 	 * }
 	 * print '&lt;/ul&gt;';
 	 * ?&gt;</pre>
-	 * 
+	 *
 	 * カレントページの子階層のリンクを、list_flg を無視してすべて表示する例 :
 	 * <pre>&lt;?php
 	 * // カレントページの子階層のリンクを作成する
@@ -365,7 +338,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 	 * }
 	 * print '&lt;/ul&gt;';
 	 * ?&gt;</pre>
-	 * 
+	 *
 	 * @param string $path 起点とするページのパス または ページID。省略時、カレントページから自動的に取得します。
 	 * @param array $opt オプション(省略可)
 	 * <dl>
@@ -468,7 +441,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 	/**
 	 * ページ情報の配列を並び替える。
-	 * 
+	 *
 	 * @param string $a 比較対象1のページID
 	 * @param string $b 比較対象2のページID
 	 * @return int 並び順の前後関係 (`1`|`0`|`-1`)
@@ -492,7 +465,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 	/**
 	 * ダイナミックパス情報を得る。
-	 * 
+	 *
 	 * @param string $path 対象のパス
 	 * @return string|bool 見つかった場合に、ダイナミックパスを、見つからない場合に `false` を返します。
 	 */

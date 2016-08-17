@@ -79,6 +79,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/.px_execute.php' ,
 			'/' ,
 		] );
+		// var_dump($output);
 
 		clearstatcache();
 		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
@@ -106,6 +107,14 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry['/sample_pages/page5/index.html']['category_top_flg'], null );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_1'], 'test1' );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_2'], 'test2' );
+
+		$this->assertEquals( $sitemapAry['alias28:http://pickles2.pxt.jp/']['path'], 'alias28:http://pickles2.pxt.jp/' );
+		$this->assertEquals( $sitemapAry['alias29://pickles2.pxt.jp/']['path'], 'alias29://pickles2.pxt.jp/' );
+		$this->assertEquals( $sitemapAry['alias30:http://pickles2.pxt.jp/index.html']['path'], 'alias30:http://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $sitemapAry['alias31://pickles2.pxt.jp/index.html']['path'], 'alias31://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $sitemapAry['alias32:http://pickles2.pxt.jp/abc.html']['path'], 'alias32:http://pickles2.pxt.jp/abc.html' );
+		$this->assertEquals( $sitemapAry['alias33://pickles2.pxt.jp/abc.html']['path'], 'alias33://pickles2.pxt.jp/abc.html' );
+
 
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );
@@ -136,10 +145,11 @@ class mainTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/.px_execute.php' ,
 			'/' ,
 		] );
+		// var_dump($output);
 
 		clearstatcache();
-		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
-		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );
+		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );
+		$mtime_xlsx = filemtime( $this->path_sitemap.'sitemap.xlsx' );// XLSXは復活しているはず。
 		$this->assertTrue( $mtime_csv === $this->test_timestamp );
 		$this->assertTrue( $mtime_xlsx === $this->test_timestamp );
 
@@ -180,6 +190,20 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), 'test_custom_col_1' );
 		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_2' );
 		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
+
+		$this->assertEquals( $objSheet->getCell('C34')->getCalculatedValue(), 'ヘルプ' );
+		$this->assertEquals( $objSheet->getCell('D35')->getCalculatedValue(), 'Pickles 2 への外部リンク (1)' );
+		$this->assertEquals( $objSheet->getCell('N35')->getCalculatedValue(), 'http://pickles2.pxt.jp/' );
+		$this->assertEquals( $objSheet->getCell('D36')->getCalculatedValue(), 'Pickles 2 への外部リンク (2)' );
+		$this->assertEquals( $objSheet->getCell('N36')->getCalculatedValue(), '//pickles2.pxt.jp/' );
+		$this->assertEquals( $objSheet->getCell('D37')->getCalculatedValue(), 'Pickles 2 への外部リンク (3)' );
+		$this->assertEquals( $objSheet->getCell('N37')->getCalculatedValue(), 'http://pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $objSheet->getCell('D38')->getCalculatedValue(), 'Pickles 2 への外部リンク (4)' );
+		$this->assertEquals( $objSheet->getCell('N38')->getCalculatedValue(), '//pickles2.pxt.jp/index.html' );
+		$this->assertEquals( $objSheet->getCell('D39')->getCalculatedValue(), 'Pickles 2 への外部リンク (5)' );
+		$this->assertEquals( $objSheet->getCell('N39')->getCalculatedValue(), 'http://pickles2.pxt.jp/abc.html' );
+		$this->assertEquals( $objSheet->getCell('D40')->getCalculatedValue(), 'Pickles 2 への外部リンク (6)' );
+		$this->assertEquals( $objSheet->getCell('N40')->getCalculatedValue(), '//pickles2.pxt.jp/abc.html' );
 
 		// 後始末
 		$this->assertTrue( copy( __DIR__.'/testData/standard/px-files/test_excel_data/sitemap_sample.xlsx', $this->path_sitemap.'sitemap.xlsx' ) );

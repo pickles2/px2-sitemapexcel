@@ -305,10 +305,18 @@ class pxplugin_sitemapExcel_daos_import{
 	 * パス文字列の正規化
 	 */
 	private function regulize_path($path){
-		$parsed_url = parse_url($path);
-		$path_path = preg_replace( '/(?:\?|\#).*$/', '', $path);
-		$path_path = preg_replace( '/\/$/s', '/'.$this->px->get_directory_index_primary(), $path_path);
-		$path = $path_path.(strlen(@$parsed_url['query'])?'?'.@$parsed_url['query']:'').(strlen(@$parsed_url['fragment'])?'#'.@$parsed_url['fragment']:'');
+		switch( $this->px->get_path_type($path) ){
+			case 'full_url':
+			case 'javascript':
+			case 'anchor':
+				break;
+			default:
+				$parsed_url = parse_url($path);
+				$path_path = preg_replace( '/(?:\?|\#).*$/', '', $path);
+				$path_path = preg_replace( '/\/$/s', '/'.$this->px->get_directory_index_primary(), $path_path);
+				$path = $path_path.(strlen(@$parsed_url['query'])?'?'.@$parsed_url['query']:'').(strlen(@$parsed_url['fragment'])?'#'.@$parsed_url['fragment']:'');
+				break;
+		}
 		return $path;
 	}//regulize_path()
 

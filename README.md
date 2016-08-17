@@ -31,18 +31,30 @@ pickles2/px2-sitemapexcel
   </tbody>
 </table>
 
-*pickles2/px2-sitemapexcel* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、エクセル形式(`*.xlsx`)で編集できるようにするプラグインです。
+*pickles2/px2-sitemapexcel* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、 Excel 形式 (`*.xlsx`) で編集できるようにするプラグインです。
 
-本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。このプラグインを導入することで、より直感的に、グラフィカルに編集することができるようになります。
+本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。
+このプラグインを導入することで、より直感的でグラフィカルな Excel 形式 (`*.xlsx`) で編集することができるようになります。
 
-- `*.xlsx` 形式のサイトマップファイルを直接読み込むことができるようになります。
+- Excel 形式 (`*.xlsx`)のサイトマップファイルを直接読み込むことができるようになります。
+  - `*.xlsx` を更新すると、次のアクセス時に自動的に読み込まれ、 `*.csv` の内容が上書きされます。
+  - `*.csv` を更新した場合は、逆に `*.xlsx` が上書きされます。タイムスタンプが新しい方を正として、古い方が上書きされます。
 - ページの階層構造(`logical_path`)を、視覚的な階層構造で表現できます。
 - エクセルの 色付きセル や テキスト装飾 などの編集機能を使い、美しい表をアレンジできます。
-- セルの値として計算式を使うことができます。
+- セル値に Excel の計算式を使うことができます。
+- `*.xlsx` の `A1` のセルに、サイトマップの設定が記述されています。
+  - 設定例 :  `row_definition=8&row_data_start=9&skip_empty_col=20&version=2.0.5`
+  - *row_definition* : 定義行番号
+  - *row_data_start* : データ行の開始行番号
+  - *skip_empty_col* : 定義行に値のない列がある場合、その先を読み込む列数
+  - *version* : この `*.xlsx` ファイルを生成した *pickles2/px2-sitemapexcel* のバージョン番号
+- `A` 列に、文字列 `EndOfData` を見つけたら、それより下の行はスキャンされません。コメント欄を追加したり、ページ数のカウンターを設置するなど、自由に使えます。
+- 拡張カラム `**delete_flg` に `1` をセットすると、CSVに出力されなくなります。
+- 1枚目のシートを使用します。2枚目以降のシートは読み取りません。
 
-エクセルファイルの操作には、 [phpoffice/phpexcel](https://github.com/PHPOffice/PHPExcel) を利用しています。
+Excel ファイルの操作には、 [phpoffice/phpexcel](https://github.com/PHPOffice/PHPExcel) を利用しています。
 
-※旧名 pickles2/px2-sitemapexcel から px2-sitemapexcel へ名称変更されました。
+※旧名 pickles-sitemap-excel-2 から px2-sitemapexcel へ名称変更されました。
 
 
 ## 導入手順 - Setup
@@ -116,6 +128,12 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### px2-sitemapexcel 2.0.5 (2016年??月??日)
+
+- サイトマップCSV に `http://〜〜` , `//〜〜` が含まれているときに、xlsx へ正常に変換できない不具合を修正。
+- サイトマップXLSX に `http://〜〜/` , `//〜〜/` が含まれているとき、CSVへの変換時に `index.html` を付加してしまう不具合を修正。
+- サイトマップからIDの登録エラーを検出した際に異常終了する不具合を修正。
+
 ### px2-sitemapexcel 2.0.4 (2016年7月27日)
 
 - LibreOffice形式の一時ファイルをスキップするようになった。
@@ -146,9 +164,10 @@ MIT License
 
 ## 作者 - Author
 
-- (C)Tomoya Koyanagi <tomk79@gmail.com>
+- Tomoya Koyanagi <tomk79@gmail.com>
 - website: <http://www.pxt.jp/>
 - Twitter: @tomk79 <http://twitter.com/tomk79/>
+
 
 ## 開発者向け情報 - for Developer
 
