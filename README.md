@@ -43,7 +43,7 @@ pickles2/px2-sitemapexcel
 - エクセルの 色付きセル や テキスト装飾 などの編集機能を使い、美しい表をアレンジできます。
 - セル値に Excel の計算式を使うことができます。
 - `*.xlsx` の `A1` のセルに、サイトマップの設定が記述されています。
-  - 設定例 :  `row_definition=8&row_data_start=9&skip_empty_col=20&version=2.0.5-alpha.1`
+  - 設定例 :  `row_definition=8&row_data_start=9&skip_empty_col=20&version=2.0.5`
   - *row_definition* : 定義行番号
   - *row_data_start* : データ行の開始行番号
   - *skip_empty_col* : 定義行に値のない列がある場合、その先を読み込む列数
