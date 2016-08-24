@@ -57,6 +57,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/.px_execute.php' ,
 			'/' ,
 		] );
+		// var_dump($output);
 
 		clearstatcache();
 		$mtime_csv = filemtime( $this->path_sitemap.'sitemap.csv' );// CSVは復活しているはず。
@@ -108,12 +109,28 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_1'], 'test1' );
 		$this->assertEquals( $sitemapAry['/index.html']['test_custom_column_xlsx_2'], 'test2' );
 
+		// 外部リンクを確認
 		$this->assertEquals( $sitemapAry['alias28:http://pickles2.pxt.jp/']['path'], 'alias28:http://pickles2.pxt.jp/' );
 		$this->assertEquals( $sitemapAry['alias29://pickles2.pxt.jp/']['path'], 'alias29://pickles2.pxt.jp/' );
 		$this->assertEquals( $sitemapAry['alias30:http://pickles2.pxt.jp/index.html']['path'], 'alias30:http://pickles2.pxt.jp/index.html' );
 		$this->assertEquals( $sitemapAry['alias31://pickles2.pxt.jp/index.html']['path'], 'alias31://pickles2.pxt.jp/index.html' );
 		$this->assertEquals( $sitemapAry['alias32:http://pickles2.pxt.jp/abc.html']['path'], 'alias32:http://pickles2.pxt.jp/abc.html' );
 		$this->assertEquals( $sitemapAry['alias33://pickles2.pxt.jp/abc.html']['path'], 'alias33://pickles2.pxt.jp/abc.html' );
+
+		// セルフォーマットの処理を確認
+		// var_dump($sitemapAry['/index.html']);
+		// var_dump($sitemapAry['/sample_pages/index.html']);
+		$this->assertEquals( $sitemapAry['/index.html']['cell_formats'], '2000/06/12' );
+		$this->assertEquals( $sitemapAry['/sample_pages/index.html']['cell_formats'], '2001/09/08 1:50' );
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/index.html']['cell_formats'], 37143.0769675347); // Excel上では '平成13年09月09日' だが、未対応なので Float のまま置き換えられる。
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/units/index.html']['cell_formats'], 'Sep-01' );
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/parts/index.html']['cell_formats'], '09"月"11"日"' ); // Excel上では '09月11日'
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/statics/index.html']['cell_formats'], '12-Sep-01' );
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/boxes/index.html']['cell_formats'], '13-Sep' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page1/1.html']['cell_formats'], '10.00%' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page1/2.html']['cell_formats'], '955-9900' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page1/3.html']['cell_formats'], '955-9900' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page2/index.html']['cell_formats'], '2001/09/18 1:50' );
 
 
 		// 後始末

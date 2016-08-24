@@ -126,6 +126,16 @@ class pxplugin_sitemapExcel_daos_import{
 				$tmp_col_name = @$table_definition['col_define'][$row['key']]['col'];
 				if(strlen($tmp_col_name)){
 					$tmp_page_info[$row['key']] = $objSheet->getCell($tmp_col_name.$xlsx_row)->getCalculatedValue();
+
+					// ユーザーが設定したセルフォーマットに従って文字列を復元する
+					$cell_format = $objSheet->getStyle($tmp_col_name.$xlsx_row)->getNumberFormat()->getFormatCode();
+					if( $cell_format !== 'General' ){
+						$tmp_cell_value = \PHPExcel_Style_NumberFormat::toFormattedString( $tmp_page_info[$row['key']], $cell_format );
+						if( !is_null($tmp_cell_value) ){
+							$tmp_page_info[$row['key']] = $tmp_cell_value;
+						}
+					}
+					unset($cell_format, $tmp_cell_value);
 				}else{
 					$tmp_page_info[$row['key']] = '';
 				}
@@ -253,7 +263,7 @@ class pxplugin_sitemapExcel_daos_import{
 					}
 					$page_info['id'] = $this->generate_auto_page_id();
 					$page_info['title'] = $row;
-					var_dump($page_info['title']);
+					// var_dump($page_info['title']);
 
 					array_push( $sitemap, $page_info );
 
