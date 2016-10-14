@@ -121,7 +121,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 エクセルファイルは、このリポジトリに同梱されている [sitemap.xlsx](./tests/testData/standard/px-files/sitemaps/sitemap.xlsx) をサンプルに作成してみてください。
 
-編集したファイルは、あなたの Pickles2 のサイトマップディレクトリ(通常は `./px-files/sitemaps`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
+編集したファイルは、あなたの Pickles 2 のサイトマップディレクトリ(通常は `./px-files/sitemaps/`) に置きます。次回、ブラウザでアクセスした最初に、同名のCSVファイル(`sitemap.xlsx` なら、`sitemap.csv`)が自動的に更新されます。その後も、エクセルのタイムスタンプが更新されるたびに、CSVファイルは自動更新されます。
 
 逆に、XLSXファイルよりも新しいCSVファイルがある場合は、XLSXファイルがCSVファイルの内容に従って更新されます。
 
@@ -130,7 +130,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ### px2-sitemapexcel 2.0.6 (2016年??月??日)
 
-- ????????????????????????????????
+- サイトマップ形式変換中にプロセスをロックするようになった。
 
 ### px2-sitemapexcel 2.0.5 (2016年8月24日)
 

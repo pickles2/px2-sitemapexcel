@@ -9,7 +9,11 @@ namespace tomk79\pickles2\sitemap_excel;
  */
 class pxplugin_sitemapExcel_daos_import{
 
-	private $px, $plugin;
+	/** Picklesオブジェクト */
+	private $px;
+	/** sitemapExcelオブジェクト */
+	private $plugin;
+
 	private $path_xlsx, $path_csv;
 
 
@@ -291,7 +295,7 @@ class pxplugin_sitemapExcel_daos_import{
 
 		clearstatcache();
 		return $this;
-	}// import_xlsx2sitemap()
+	}// import()
 
 	/**
 	 * サイトマップCSVの定義を取得する

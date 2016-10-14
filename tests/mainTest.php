@@ -28,6 +28,8 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
 		$this->fs = new \tomk79\filesystem();
 		mb_internal_encoding('utf-8');
+		@date_default_timezone_set('Asia/Tokyo');
+
 	}
 
 	/**
