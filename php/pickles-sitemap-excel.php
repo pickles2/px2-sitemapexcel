@@ -8,10 +8,12 @@ namespace tomk79\pickles2\sitemap_excel;
  * pickles-sitemap-excel.php
  */
 class pickles_sitemap_excel{
+	/** Picklesオブジェクト */
 	private $px;
 
 	/**
 	 * entry
+	 * @param object $px Picklesオブジェクト
 	 */
 	static public function exec($px){
 		new self($px);
@@ -36,19 +38,24 @@ class pickles_sitemap_excel{
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.0.5';
+		return '2.0.6-alpha.1+nb';
 	}
 
 	/**
 	 * constructor
+	 * @param object $px Picklesオブジェクト
 	 */
 	public function __construct( $px ){
 		require_once( __DIR__.'/daos/import.php' );
 		require_once( __DIR__.'/daos/export.php' );
+		require_once( __DIR__.'/lock.php' );
 		$this->px = $px;
 
 		$path_base = $this->px->get_path_homedir().'sitemaps/';
 		$sitemap_files = $this->px->fs()->ls( $path_base );
+
+		$locker = new pxplugin_sitemapExcel_lock($this->px, $this);
+
 		foreach( $sitemap_files as $filename ){
 			if( preg_match( '/^\\~\\$/', $filename ) ){
 				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
@@ -64,14 +71,20 @@ class pickles_sitemap_excel{
 				// case 'xls':
 				case 'xlsx':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
-						$import = @(new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
-						touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
+						if( $locker->lock() ){
+							$import = @(new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
+							touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
+							$locker->unlock();
+						}
 					}
 					break;
 				case 'csv':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
-						$export = @(new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
-						touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
+						if( $locker->lock() ){
+							$export = @(new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
+							touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
+							$locker->unlock();
+						}
 					}
 					break;
 				default:

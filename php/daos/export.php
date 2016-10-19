@@ -9,7 +9,11 @@ namespace tomk79\pickles2\sitemap_excel;
  */
 class pxplugin_sitemapExcel_daos_export{
 
-	private $px, $plugin;
+	/** Picklesオブジェクト */
+	private $px;
+	/** sitemapExcelオブジェクト */
+	private $plugin;
+
 	private $path_xlsx, $path_csv;
 	private $site;
 	private $default_cell_style_boarder = array();// 罫線の一括指定
@@ -212,7 +216,7 @@ class pxplugin_sitemapExcel_daos_export{
 
 		clearstatcache();
 
-		return is_file($path_xlsx);
+		return $this;
 	}
 
 	/**
