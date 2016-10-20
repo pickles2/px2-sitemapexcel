@@ -128,7 +128,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### px2-sitemapexcel 2.0.6 (2016年??月??日)
+### px2-sitemapexcel 2.0.6 (2016年10月20日)
 
 - サイトマップ形式変換中にプロセスをロックするようになった。
 
