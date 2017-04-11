@@ -10,6 +10,8 @@ namespace tomk79\pickles2\sitemap_excel;
 class pickles_sitemap_excel{
 	/** Picklesオブジェクト */
 	private $px;
+	/** プラグイン設定 */
+	private $plugin_conf;
 
 	/**
 	 * entry
@@ -17,7 +19,7 @@ class pickles_sitemap_excel{
 	 * @param object $plugin_conf プラグイン設定
 	 */
 	static public function exec($px, $plugin_conf){
-		new self($px, $plugin_conf);
+		(new self($px, $plugin_conf))->convert_all();
 	}
 
 	/**
@@ -49,7 +51,13 @@ class pickles_sitemap_excel{
 	 */
 	public function __construct( $px, $plugin_conf ){
 		$this->px = $px;
+		$this->plugin_conf = $plugin_conf;
+	}
 
+	/**
+	 * すべてのファイルを変換する
+	 */
+	public function convert_all(){
 		$path_base = $this->px->get_path_homedir().'sitemaps/';
 		$sitemap_files = $this->px->fs()->ls( $path_base );
 
@@ -71,7 +79,7 @@ class pickles_sitemap_excel{
 				case 'xlsx':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
 						if( $locker->lock() ){
-							$import = @(new pxplugin_sitemapExcel_apis_xlsx2csv($this->px, $this))->convert( $path_base.$filename, $path_base.$basename.'.csv' );
+							$result = $this->xlsx2csv( $path_base.$filename, $path_base.$basename.'.csv' );
 							touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
 							$locker->unlock();
 						}
@@ -80,7 +88,7 @@ class pickles_sitemap_excel{
 				case 'csv':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
 						if( $locker->lock() ){
-							$export = @(new pxplugin_sitemapExcel_apis_csv2xlsx($this->px, $this))->convert( $path_base.$filename, $path_base.$basename.'.xlsx' );
+							$result = $this->csv2xlsx( $path_base.$filename, $path_base.$basename.'.xlsx' );
 							touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
 							$locker->unlock();
 						}
@@ -91,6 +99,23 @@ class pickles_sitemap_excel{
 					break;
 			}
 		}
+		return;
+	}
+
+	/**
+	 * サイトマップXLSX を サイトマップCSV に変換
+	 */
+	public function xlsx2csv($path_xlsx, $path_csv){
+		$result = @(new pxplugin_sitemapExcel_apis_xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
+		return $result;
+	}
+
+	/**
+	 * サイトマップCSV を サイトマップXLSX に変換
+	 */
+	public function csv2xlsx($path_csv, $path_xlsx){
+		$result = @(new pxplugin_sitemapExcel_apis_csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
+		return $result;
 	}
 
 	/**
