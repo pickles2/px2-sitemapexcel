@@ -48,9 +48,6 @@ class pickles_sitemap_excel{
 	 * @param object $plugin_conf プラグイン設定
 	 */
 	public function __construct( $px, $plugin_conf ){
-		require_once( __DIR__.'/daos/import.php' );
-		require_once( __DIR__.'/daos/export.php' );
-		require_once( __DIR__.'/lock.php' );
 		$this->px = $px;
 
 		$path_base = $this->px->get_path_homedir().'sitemaps/';
@@ -74,7 +71,7 @@ class pickles_sitemap_excel{
 				case 'xlsx':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
 						if( $locker->lock() ){
-							$import = @(new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
+							$import = @(new pxplugin_sitemapExcel_apis_xlsx2csv($this->px, $this))->convert( $path_base.$filename, $path_base.$basename.'.csv' );
 							touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
 							$locker->unlock();
 						}
@@ -83,7 +80,7 @@ class pickles_sitemap_excel{
 				case 'csv':
 					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
 						if( $locker->lock() ){
-							$export = @(new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
+							$export = @(new pxplugin_sitemapExcel_apis_csv2xlsx($this->px, $this))->convert( $path_base.$filename, $path_base.$basename.'.xlsx' );
 							touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
 							$locker->unlock();
 						}

@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * PX Plugin "sitemapExcel" export
  */
-class pxplugin_sitemapExcel_daos_export{
+class pxplugin_sitemapExcel_apis_csv2xlsx{
 
 	/** Picklesオブジェクト */
 	private $px;
@@ -47,7 +47,7 @@ class pxplugin_sitemapExcel_daos_export{
 	/**
 	 * 現在のサイトマップをxlsxに出力する。
 	 */
-	public function export( $path_csv, $path_xlsx ){
+	public function convert( $path_csv, $path_xlsx ){
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
 
@@ -216,7 +216,7 @@ class pxplugin_sitemapExcel_daos_export{
 		clearstatcache();
 
 		return $this;
-	}
+	}// convert()
 
 	/**
 	 * 設定文字列を作成する

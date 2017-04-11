@@ -28,8 +28,11 @@
     "autoload": {
         "files": [
             "php/pickles-sitemap-excel.php",
+            "php/apis/csv2xlsx.php",
+            "php/apis/xlsx2csv.php",
             "php/helper/PHPExcelHelper.php",
-            "php/helper/parseSitemapCsv.php"
+            "php/helper/parseSitemapCsv.php",
+            "php/lock.php"
         ]
     }
 

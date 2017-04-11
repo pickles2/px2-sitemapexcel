@@ -31,9 +31,9 @@ pickles2/px2-sitemapexcel
   </tbody>
 </table>
 
-*pickles2/px2-sitemapexcel* は、[Pickles2](http://pickles2.pxt.jp/) のサイトマップを、 Excel 形式 (`*.xlsx`) で編集できるようにするプラグインです。
+*pickles2/px2-sitemapexcel* は、[Pickles 2](http://pickles2.pxt.jp/) のサイトマップを、 Excel 形式 (`*.xlsx`) で編集できるようにするプラグインです。
 
-本来の Pickles2 のサイトマップは、CSV形式で管理されます。CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。
+本来の Pickles 2 のサイトマップは、CSV形式で記述されます。 CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。
 このプラグインを導入することで、より直感的でグラフィカルな Excel 形式 (`*.xlsx`) で編集することができるようになります。
 
 - Excel 形式 (`*.xlsx`)のサイトマップファイルを直接読み込むことができるようになります。
@@ -67,7 +67,7 @@ require の項目に、"pickles2/px2-sitemapexcel" を追加します。
 {
 	〜 中略 〜
     "require": {
-        "php": ">=5.3.0" ,
+        "php": ">=5.4.0" ,
         "pickles2/px-fw-2.x": "2.0.*",
         "pickles2/px2-sitemapexcel": "2.0.*"
     },
@@ -105,14 +105,14 @@ $ composer update
 	];
 ```
 
-Pickles2 の設定をJSON形式で編集している方は、config.json の該当箇所に追加してください。
+Pickles 2 の設定をJSON形式で編集している方は、`config.json` の該当箇所に追加してください。
 
 
 ### 3. サイトマップディレクトリのパーミッション設定
 
-Mac OSX や Linux系のOSではこの操作が必要な場合があります。
+macOS や Linux系 の OS ではこの操作が必要な場合があります。
 
-```
+```bash
 $ cd {$documentRoot}
 $ chmod -R 777 ./px-files/sitemaps
 ```
