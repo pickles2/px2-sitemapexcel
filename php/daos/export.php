@@ -55,12 +55,11 @@ class pxplugin_sitemapExcel_daos_export{
 		// 　sitemapExcel実行時点で、
 		// 　本物の$siteはスタンバイされていないので、
 		// 　偽物でエミュレートする必要があった。
-		require_once( __DIR__.'/../helper/parseSitemapCsv.php' );
 		$this->site = new pxplugin_sitemapExcel_helper_parseSitemapCsv( $this->px, $this->path_csv );
 
 		$table_definition = $this->get_table_definition();
 
-		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
+		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}

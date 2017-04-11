@@ -1,6 +1,6 @@
 <?php
 /**
- * test for tomk79\px2-sitemapexcel
+ * test for pickles2\px2-sitemapexcel
  */
 
 class mainTest extends PHPUnit_Framework_TestCase{

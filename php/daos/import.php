@@ -57,7 +57,7 @@ class pxplugin_sitemapExcel_daos_import{
 		// サイトマップCSVの定義を取得
 		$sitemap_definition = $this->get_sitemap_definition();
 
-		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
+		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}

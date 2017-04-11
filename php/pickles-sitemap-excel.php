@@ -14,9 +14,10 @@ class pickles_sitemap_excel{
 	/**
 	 * entry
 	 * @param object $px Picklesオブジェクト
+	 * @param object $plugin_conf プラグイン設定
 	 */
-	static public function exec($px){
-		new self($px);
+	static public function exec($px, $plugin_conf){
+		new self($px, $plugin_conf);
 	}
 
 	/**
@@ -44,8 +45,9 @@ class pickles_sitemap_excel{
 	/**
 	 * constructor
 	 * @param object $px Picklesオブジェクト
+	 * @param object $plugin_conf プラグイン設定
 	 */
-	public function __construct( $px ){
+	public function __construct( $px, $plugin_conf ){
 		require_once( __DIR__.'/daos/import.php' );
 		require_once( __DIR__.'/daos/export.php' );
 		require_once( __DIR__.'/lock.php' );
@@ -120,14 +122,5 @@ class pickles_sitemap_excel{
 		$rtn['role'] = array('num'=>$num++,'col'=>$col++,'key'=>'role','name'=>'ロール');
 		return $rtn;
 	}
-
-	/**
-	 * PHPExcelHelper を生成する
-	 */
-	public function factory_PHPExcelHelper(){
-		require_once( __DIR__.'/helper/PHPExcelHelper.php' );
-		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper($this->px);
-		return $phpExcelHelper;
-	}// factory_PHPExcelHelper()
 
 }
