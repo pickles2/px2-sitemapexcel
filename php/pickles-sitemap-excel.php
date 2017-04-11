@@ -49,7 +49,7 @@ class pickles_sitemap_excel{
 	 * @param object $px Picklesオブジェクト
 	 * @param object $plugin_conf プラグイン設定
 	 */
-	public function __construct( $px, $plugin_conf ){
+	public function __construct( $px, $plugin_conf = null ){
 		$this->px = $px;
 		$this->plugin_conf = $plugin_conf;
 	}
