@@ -12,6 +12,10 @@ class pickles_sitemap_excel{
 	private $px;
 	/** プラグイン設定 */
 	private $plugin_conf;
+	/** サイトマップフォルダのパス */
+	private $realpath_sitemap_dir;
+	/** アプリケーションロック */
+	private $locker;
 
 	/**
 	 * entry
@@ -52,16 +56,15 @@ class pickles_sitemap_excel{
 	public function __construct( $px, $plugin_conf = null ){
 		$this->px = $px;
 		$this->plugin_conf = $plugin_conf;
+		$this->realpath_sitemap_dir = $this->px->get_path_homedir().'sitemaps/';
+		$this->locker = new lock($this->px, $this);
 	}
 
 	/**
 	 * すべてのファイルを変換する
 	 */
 	public function convert_all(){
-		$path_base = $this->px->get_path_homedir().'sitemaps/';
-		$sitemap_files = $this->px->fs()->ls( $path_base );
-
-		$locker = new pxplugin_sitemapExcel_lock($this->px, $this);
+		$sitemap_files = $this->px->fs()->ls( $this->realpath_sitemap_dir );
 
 		foreach( $sitemap_files as $filename ){
 			if( preg_match( '/^\\~\\$/', $filename ) ){
@@ -75,22 +78,33 @@ class pickles_sitemap_excel{
 			$basename = $this->px->fs()->trim_extension($filename);
 			$extension = $this->px->fs()->get_extension($filename);
 			switch( strtolower($extension) ){
-				// case 'xls':
 				case 'xlsx':
-					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
-						if( $locker->lock() ){
-							$result = $this->xlsx2csv( $path_base.$filename, $path_base.$basename.'.csv' );
-							touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
-							$locker->unlock();
+					if( true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$filename, $this->realpath_sitemap_dir.$basename.'.csv' ) ){
+						if( $this->locker->lock() ){
+							$result = $this->xlsx2csv(
+								$this->realpath_sitemap_dir.$filename,
+								$this->realpath_sitemap_dir.$basename.'.csv'
+							);
+							touch(
+								$this->realpath_sitemap_dir.$basename.'.csv',
+								filemtime( $this->realpath_sitemap_dir.$filename )
+							);
+							$this->locker->unlock();
 						}
 					}
 					break;
 				case 'csv':
-					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
-						if( $locker->lock() ){
-							$result = $this->csv2xlsx( $path_base.$filename, $path_base.$basename.'.xlsx' );
-							touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
-							$locker->unlock();
+					if( true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$filename, $this->realpath_sitemap_dir.$basename.'.xlsx' ) ){
+						if( $this->locker->lock() ){
+							$result = $this->csv2xlsx(
+								$this->realpath_sitemap_dir.$filename,
+								$this->realpath_sitemap_dir.$basename.'.xlsx'
+							);
+							touch(
+								$this->realpath_sitemap_dir.$basename.'.xlsx',
+								filemtime( $this->realpath_sitemap_dir.$filename )
+							);
+							$this->locker->unlock();
 						}
 					}
 					break;
@@ -104,17 +118,25 @@ class pickles_sitemap_excel{
 
 	/**
 	 * サイトマップXLSX を サイトマップCSV に変換
+	 *
+	 * @param string $path_xlsx Excelファイルのパス
+	 * @param string $path_csv CSVファイルのパス
+	 * @return boolean 実行結果
 	 */
 	public function xlsx2csv($path_xlsx, $path_csv){
-		$result = @(new pxplugin_sitemapExcel_apis_xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
+		$result = @(new xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
 		return $result;
 	}
 
 	/**
 	 * サイトマップCSV を サイトマップXLSX に変換
+	 *
+	 * @param string $path_csv CSVファイルのパス
+	 * @param string $path_xlsx Excelファイルのパス
+	 * @return boolean 実行結果
 	 */
 	public function csv2xlsx($path_csv, $path_xlsx){
-		$result = @(new pxplugin_sitemapExcel_apis_csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
+		$result = @(new csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
 		return $result;
 	}
 

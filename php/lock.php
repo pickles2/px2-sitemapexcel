@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * lock.php
  */
-class pxplugin_sitemapExcel_lock{
+class lock{
 	/** Picklesオブジェクト */
 	private $px;
 	/** sitemapExcelオブジェクト */

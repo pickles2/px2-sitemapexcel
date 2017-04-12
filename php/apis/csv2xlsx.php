@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * PX Plugin "sitemapExcel" export
  */
-class pxplugin_sitemapExcel_apis_csv2xlsx{
+class csv2xlsx{
 
 	/** Picklesオブジェクト */
 	private $px;
