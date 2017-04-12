@@ -3,31 +3,31 @@ pickles2/px2-sitemapexcel
 
 <table class="def">
   <thead>
-    <tr>
-      <th></th>
-      <th>Linux</th>
-      <th>Windows</th>
-    </tr>
+	<tr>
+	  <th></th>
+	  <th>Linux</th>
+	  <th>Windows</th>
+	</tr>
   </thead>
   <tbody>
-    <tr>
-      <th>master</th>
-      <td align="center">
-        <a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=master"></a>
-      </td>
-      <td align="center">
-        <a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/master?svg=true"></a>
-      </td>
-    </tr>
-    <tr>
-      <th>develop</th>
-      <td align="center">
-        <a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=develop"></a>
-      </td>
-      <td align="center">
-        <a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/develop?svg=true"></a>
-      </td>
-    </tr>
+	<tr>
+	  <th>master</th>
+	  <td align="center">
+		<a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=master"></a>
+	  </td>
+	  <td align="center">
+		<a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/master?svg=true"></a>
+	  </td>
+	</tr>
+	<tr>
+	  <th>develop</th>
+	  <td align="center">
+		<a href="https://travis-ci.org/pickles2/px2-sitemapexcel"><img src="https://secure.travis-ci.org/pickles2/px2-sitemapexcel.svg?branch=develop"></a>
+	  </td>
+	  <td align="center">
+		<a href="https://ci.appveyor.com/project/tomk79/px2-sitemapexcel"><img src="https://ci.appveyor.com/api/projects/status/epre91g8iqfjni08/branch/develop?svg=true"></a>
+	  </td>
+	</tr>
   </tbody>
 </table>
 
@@ -39,6 +39,7 @@ pickles2/px2-sitemapexcel
 - Excel 形式 (`*.xlsx`)のサイトマップファイルを直接読み込むことができるようになります。
   - `*.xlsx` を更新すると、次のアクセス時に自動的に読み込まれ、 `*.csv` の内容が上書きされます。
   - `*.csv` を更新した場合は、逆に `*.xlsx` が上書きされます。タイムスタンプが新しい方を正として、古い方が上書きされます。
+  - この挙動は、 `master_format` オプション および `files_master_format` オプションで変更することができます。
 - ページの階層構造(`logical_path`)を、視覚的な階層構造で表現できます。
 - エクセルの 色付きセル や テキスト装飾 などの編集機能を使い、美しい表をアレンジできます。
 - セル値に Excel の計算式を使うことができます。
@@ -63,22 +64,18 @@ Excel ファイルの操作には、 [phpoffice/phpexcel](https://github.com/PHP
 
 require の項目に、"pickles2/px2-sitemapexcel" を追加します。
 
-```
+```json
 {
-	〜 中略 〜
-    "require": {
-        "php": ">=5.4.0" ,
-        "pickles2/px-fw-2.x": "2.0.*",
-        "pickles2/px2-sitemapexcel": "2.0.*"
-    },
-	〜 中略 〜
+	"require": {
+		"pickles2/px2-sitemapexcel": "2.0.*"
+	},
 }
 ```
 
 
 追加したら、`composer update` を実行して変更を反映することを忘れずに。
 
-```
+```bash
 $ composer update
 ```
 
@@ -88,7 +85,10 @@ $ composer update
 設定ファイル config.php (通常は `./px-files/config.php`) を編集します。
 `before_sitemap` のどこか(例では最後)に、`tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec` を追加します。
 
-```
+```php
+<?php
+	/* 中略 */
+
 	// funcs: Before sitemap
 	$conf->funcs->before_sitemap = [
 		 // PX=config
@@ -126,11 +126,43 @@ $ chmod -R 777 ./px-files/sitemaps
 逆に、XLSXファイルよりも新しいCSVファイルがある場合は、XLSXファイルがCSVファイルの内容に従って更新されます。
 
 
+## オプション - Options
+
+```php
+<?php
+	// funcs: Before sitemap
+	$conf->funcs->before_sitemap = [
+		// sitemapExcel
+		'tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec('.json_encode(array(
+			// `master_format`
+			// マスターにするファイルフォーマットを指定します。
+			//   - `timestamp` = タイムスタンプが新しい方をマスターにする(デフォルト)
+			//   - `xlsx` = XLSXをマスターにする
+			//   - `csv` = CSVをマスターにする
+			//   - `pass` = 変換しない
+			// のいずれかを指定します。
+			'master_format'=>'timestamp',
+
+			// `files_master_format`
+			// ファイル名ごとにマスターにするファイルフォーマットを指定します。
+			// ここに設定されていないファイルは、 `master_format` の設定に従います。
+			'files_master_format'=>array(
+				'timestamp_sitemap'=>'timestamp',
+				'csv_master_sitemap'=>'csv',
+				'xlsx_master_sitemap'=>'xlsx',
+				'no_convert'=>'pass',
+			)
+		)).')'
+	];
+```
+
+
 ## 更新履歴 - Change log
 
 ### px2-sitemapexcel 2.0.7 (2016年??月??日)
 
 - CSVの標準仕様に `proc_type` を追加。
+- プラグインオプション `master_format`, `files_master_format` を追加。
 
 ### px2-sitemapexcel 2.0.6 (2016年10月20日)
 
