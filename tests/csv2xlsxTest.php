@@ -33,8 +33,11 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
 		// $this->assertEquals( $toppage_info['path'], '/index.html' );
 
+		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
+
         $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
-        $px2_sitemapexcel->csv2xlsx( __DIR__.'/testData/files/test1.csv', __DIR__.'/testData/files/test1.dist.xlsx' );
+        $px2_sitemapexcel->csv2xlsx( __DIR__.'/testData/files/test1.csv', __DIR__.'/testData/files/dist/test1.xlsx' );
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/test1.xlsx' ) );
 
 
 		chdir($cd);
@@ -42,6 +45,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		unset($px);
 
 		// 後始末
+		$this->fs->rm(__DIR__.'/testData/files/dist/');
 		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );
 		clearstatcache();
 		// var_dump($output);
