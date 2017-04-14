@@ -3,7 +3,7 @@
  * test for pickles2\px2-sitemapexcel
  */
 
-class csv2xlsxTest extends PHPUnit_Framework_TestCase{
+class cleaningTest extends PHPUnit_Framework_TestCase{
 
 	/**
 	 * ファイルシステムユーティリティ
@@ -20,31 +20,21 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 	}
 
 	/**
-	 * *.xlsx to .csv 変換のテスト
+	 * 後始末
 	 */
-	public function testXlsx2CsvConvert(){
+	public function testClear(){
 
-		$cd = realpath('.');
-		chdir(__DIR__.'/testData/standard/');
+		// 後始末
+		$this->fs->rm(__DIR__.'/testData/files/dist/');
 
-		$px = new picklesFramework2\px('./px-files/');
-		$toppage_info = $px->site()->get_page_info('');
-		// var_dump($toppage_info);
-		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
-		// $this->assertEquals( $toppage_info['path'], '/index.html' );
+		// キャッシュ消去
+		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );
+		clearstatcache();
+		// var_dump($output);
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
+		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
 
-		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
-
-        $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
-        $px2_sitemapexcel->csv2xlsx( __DIR__.'/testData/files/test1.csv', __DIR__.'/testData/files/dist/test1.xlsx' );
-		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/test1.xlsx' ) );
-
-
-		chdir($cd);
-		$px->__destruct();// <- required on Windows
-		unset($px);
-
-	}//testXlsx2CsvConvert()
+	}//testClear()
 
 	/**
 	 * `.px_execute.php` を実行し、標準出力値を返す

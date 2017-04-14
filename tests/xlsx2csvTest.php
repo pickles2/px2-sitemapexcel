@@ -6,6 +6,16 @@
 class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 
 	/**
+	 * Current Directory
+	 */
+	private $cd;
+
+	/**
+	 * Pickles Framework
+	 */
+	private $px;
+
+	/**
 	 * ファイルシステムユーティリティ
 	 */
 	private $fs;
@@ -14,45 +24,67 @@ class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 	 * setup
 	 */
 	public function setup(){
-		$this->fs = new \tomk79\filesystem();
 		mb_internal_encoding('utf-8');
 		@date_default_timezone_set('Asia/Tokyo');
+		$this->fs = new \tomk79\filesystem();
+
+		$this->cd = realpath('.');
+		chdir(__DIR__.'/testData/standard/');
+
+		$this->px = new picklesFramework2\px('./px-files/');
+
+		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
 	}
 
 	/**
-	 * *.xlsx to .csv 変換のテスト
+	 * teardown
 	 */
-	public function testXlsx2CsvConvert(){
+	public function teardown(){
+		chdir($this->cd);
+		$this->px->__destruct();// <- required on Windows
+		unset($this->px);
+	}
 
-		$cd = realpath('.');
-		chdir(__DIR__.'/testData/standard/');
+	/**
+	 * ページIDのないエイリアスの変換テスト
+	 */
+	public function testAliasWithoutPageIdConvert(){
 
-		$px = new picklesFramework2\px('./px-files/');
-		$toppage_info = $px->site()->get_page_info('');
-		// var_dump($toppage_info);
-		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
-		// $this->assertEquals( $toppage_info['path'], '/index.html' );
+		$px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($this->px);
+		$px2_sitemapexcel->xlsx2csv( __DIR__.'/testData/files/alias_without_page_id.xlsx', __DIR__.'/testData/files/dist/alias_without_page_id.csv' );
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/alias_without_page_id.csv' ) );
+		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/alias_without_page_id.csv' );
+		// var_dump($csv);
+		$this->assertEquals( $csv[6][0], 'alias:/category2/index.html' );
+		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[6][3], 'Category 2 (Alias)' );
+		$this->assertEquals( $csv[7][0], '/category2/index.html' );
+		$this->assertEquals( $csv[7][2], '' );
+		$this->assertEquals( $csv[7][3], 'Category 2 Page 1' );
+		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_1' );
 
-		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
+	}//testAliasWithoutPageIdConvert()
 
-        $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
-        $px2_sitemapexcel->xlsx2csv( __DIR__.'/testData/files/test1.xlsx', __DIR__.'/testData/files/dist/test1.csv' );
-		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/test1.csv' ) );
+	/**
+	 * logcal_path 列を持ったXLSXの変換テスト
+	 */
+	public function testHasLogicalPathConvert(){
 
+		$px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($this->px);
+		$px2_sitemapexcel->xlsx2csv( __DIR__.'/testData/files/has_logical_path.xlsx', __DIR__.'/testData/files/dist/has_logical_path.csv' );
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/has_logical_path.csv' ) );
+		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/has_logical_path.csv' );
+		// var_dump($csv);
+		$this->assertEquals( $csv[6][0], 'alias:/category2/index.html' );
+		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[6][3], 'Category 2 (Alias)' );
+		$this->assertEquals( $csv[7][0], '/category2/index.html' );
+		$this->assertEquals( $csv[7][2], '' );
+		$this->assertEquals( $csv[7][3], 'Category 2 Page 1' );
+		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_1' );
 
-		chdir($cd);
-		$px->__destruct();// <- required on Windows
-		unset($px);
+	}//testHasLogicalPathConvert()
 
-		// 後始末
-		$this->fs->rm(__DIR__.'/testData/files/dist/');
-		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );
-		clearstatcache();
-		// var_dump($output);
-		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
-		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
-
-	}//testXlsx2CsvConvert()
 
 	/**
 	 * `.px_execute.php` を実行し、標準出力値を返す
