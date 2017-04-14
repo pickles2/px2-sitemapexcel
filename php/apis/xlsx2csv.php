@@ -153,11 +153,14 @@ class xlsx2csv{
 					$tmp_page_info[$row['key']] = '';
 				}
 			}
+
+			// --------------------
+			// 削除フラグ
 			if( @$tmp_page_info['**delete_flg'] ){
-				// 削除フラグ
 				continue;
 			}
 
+			// --------------------
 			// タイトルだけ特別
 			$col_title_col = @$col_title['start'];
 			$tmp_page_info['title'] = '';
@@ -188,15 +191,19 @@ class xlsx2csv{
 				$tmp_page_info['path'] = 'alias:/_tbd.html';//pathがなくてもtitleがあれば、仮の値を入れて通す。
 			}
 
+			// --------------------
+			// list_flgの処理
 			if( !array_key_exists('list_flg', $table_definition['col_define']) ){
 				// エクセルの定義にlist_flg列がなかったら、
 				// 全ページにlist_flg=1をセット。
 				$tmp_page_info['list_flg'] = 1;
 			}
 
+			// --------------------
 			// 読み込んだパスを正規化
 			$tmp_page_info['path'] = $this->regulize_path( $tmp_page_info['path'] );
 
+			// --------------------
 			// 省略されたIDを自動的に付与
 			if(!strlen($tmp_page_info['id'])){
 				if( $path_toppage != $tmp_page_info['path'] ){
@@ -216,6 +223,7 @@ class xlsx2csv{
 				$tmp_page_info['id'] = '';
 			}
 
+			// --------------------
 			// パンくずも特別
 			$tmp_breadcrumb = $last_breadcrumb;
 			if( $logical_path_last_depth === $logical_path_depth ){
@@ -232,12 +240,16 @@ class xlsx2csv{
 					$tmp_breadcrumb[$i] = $last_breadcrumb[$i];
 				}
 			}
-			$tmp_page_info['logical_path'] = '';
-			if( count($tmp_breadcrumb) >= 2 ){
-				$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
-				$tmp_page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $tmp_page_info['logical_path']);
+			if( @strlen($tmp_page_info['logical_path']) ){
+				// エクセルの定義にlogical_path列があったら、
+				// この値を優先して採用する。
+			}else{
+				$tmp_page_info['logical_path'] = '';
+				if( count($tmp_breadcrumb) >= 2 ){
+					$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
+					$tmp_page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $tmp_page_info['logical_path']);
+				}
 			}
-
 
 			// 今回のパンくずとパンくずの深さを記録
 			$logical_path_last_depth = $logical_path_depth;
@@ -247,12 +259,13 @@ class xlsx2csv{
 				$last_page_id = $tmp_page_info['id'];
 			}
 
+
+			// --------------------
+			// サイトマップにページを追加する
 			$page_info = array();
 			foreach($sitemap_definition as $row){
 				$page_info[$row['key']] = $tmp_page_info[$row['key']];
 			}
-
-			// サイトマップにページを追加する
 			if( count($alias_title_list) ){
 				// エイリアスが省略されている場合
 				$page_info_base = $page_info;

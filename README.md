@@ -164,6 +164,7 @@ $ chmod -R 777 ./px-files/sitemaps
 - CSVの標準仕様に `proc_type` を追加。
 - プラグインオプション `master_format`, `files_master_format` を追加。
 - xlsx から csv への変換時に自動発行されるページIDの命名規則を変更。
+- xlsxファイルに `logical_path` 列がある場合、この値を優先して適用するようになった。
 
 ### px2-sitemapexcel 2.0.6 (2016年10月20日)
 
