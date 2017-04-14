@@ -62,6 +62,14 @@ class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $csv[7][2], '' );
 		$this->assertEquals( $csv[7][3], 'Category 2 Page 1' );
 		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_alias_without_page_id-1' );
+		$this->assertEquals( $csv[10][0], 'alias:/category3/index.html' );
+		$this->assertEquals( $csv[10][2], 'sitemapExcel_auto_id_alias_without_page_id-2' );
+		$this->assertEquals( $csv[10][3], 'Category 3' );
+		$this->assertEquals( $csv[10][8], '' );
+		$this->assertEquals( $csv[11][0], '/category3/index.html' );
+		$this->assertEquals( $csv[11][2], 'sitemapExcel_auto_id_alias_without_page_id-3' );
+		$this->assertEquals( $csv[11][3], 'Category 3 Page 1' );
+		$this->assertEquals( $csv[11][8], 'sitemapExcel_auto_id_alias_without_page_id-2' );
 
 	}//testAliasWithoutPageIdConvert()
 
