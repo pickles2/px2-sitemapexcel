@@ -293,7 +293,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	private function passthru( $ary_command ){
 		$cmd = array();
 		foreach( $ary_command as $row ){
-			$param = '"'.addslashes($row).'"';
+			$param = escapeshellarg($row);
 			array_push( $cmd, $param );
 		}
 		$cmd = implode( ' ', $cmd );

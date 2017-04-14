@@ -24,8 +24,14 @@ class cleaningTest extends PHPUnit_Framework_TestCase{
 	 */
 	public function testClear(){
 
-		// 後始末
+		// 変換後ファイルの後始末
 		$this->fs->rm(__DIR__.'/testData/files/dist/');
+
+		// Pickles 2 設定ファイルをもとに戻す
+		$this->fs->copy(
+			__DIR__.'/testData/standard/px-files/test_plugin_option_files/default.json',
+			__DIR__.'/testData/standard/px-files/plugin_options.json'
+		);
 
 		// キャッシュ消去
 		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );

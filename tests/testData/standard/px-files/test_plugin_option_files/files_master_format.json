@@ -1,0 +1,8 @@
+{
+	"master_format": "timestamp",
+	"files_master_format": {
+		"xlsx_master": "xlsx",
+		"csv_master": "csv",
+		"pass_master": "pass"
+	}
+}

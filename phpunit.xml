@@ -2,6 +2,7 @@
 	<testsuites>
 		<testsuite>
 			<file>tests/mainTest.php</file>
+			<file>tests/optionsTest.php</file>
 			<file>tests/xlsx2csvTest.php</file>
 			<file>tests/csv2xlsxTest.php</file>
 			<file>tests/cleaningTest.php</file>
