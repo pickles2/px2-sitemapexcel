@@ -56,12 +56,12 @@ class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/alias_without_page_id.csv' );
 		// var_dump($csv);
 		$this->assertEquals( $csv[6][0], 'alias:/category2/index.html' );
-		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_alias_without_page_id-1' );
 		$this->assertEquals( $csv[6][3], 'Category 2 (Alias)' );
 		$this->assertEquals( $csv[7][0], '/category2/index.html' );
 		$this->assertEquals( $csv[7][2], '' );
 		$this->assertEquals( $csv[7][3], 'Category 2 Page 1' );
-		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_alias_without_page_id-1' );
 
 	}//testAliasWithoutPageIdConvert()
 
@@ -76,12 +76,12 @@ class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/has_logical_path.csv' );
 		// var_dump($csv);
 		$this->assertEquals( $csv[6][0], 'alias:/category2/index.html' );
-		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[6][2], 'sitemapExcel_auto_id_has_logical_path-1' );
 		$this->assertEquals( $csv[6][3], 'Category 2 (Alias)' );
 		$this->assertEquals( $csv[7][0], '/category2/index.html' );
 		$this->assertEquals( $csv[7][2], '' );
 		$this->assertEquals( $csv[7][3], 'Category 2 Page 1' );
-		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_1' );
+		$this->assertEquals( $csv[7][8], 'sitemapExcel_auto_id_has_logical_path-1' );
 
 	}//testHasLogicalPathConvert()
 

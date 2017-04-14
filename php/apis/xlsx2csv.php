@@ -13,8 +13,12 @@ class xlsx2csv{
 	private $px;
 	/** sitemapExcelオブジェクト */
 	private $plugin;
-
+	/** 出力先パス */
 	private $path_xlsx, $path_csv;
+	/** ページID自動発行のための通し番号 */
+	private $auto_id_num = 0;
+	/** ページID自動発行のためのファイル名 */
+	private $extless_basename = '';
 
 
 	/**
@@ -47,6 +51,11 @@ class xlsx2csv{
 	public function convert( $path_xlsx, $path_csv ){
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
+
+		// ページID自動発行のための情報をリセット
+		$this->auto_id_num = 0; // 通し番号をリセット
+		$this->extless_basename = $this->px->fs()->trim_extension(basename($path_xlsx));//ファイル名を記憶; 入力側のファイル名に準じる。
+
 
 		$path_toppage = '/';
 		if( strlen($this->px->conf()->path_top) ){
@@ -309,9 +318,8 @@ class xlsx2csv{
 	 * ページIDを自動生成する
 	 */
 	private function generate_auto_page_id(){
-		static $auto_id_num = 0;
-		$auto_id_num ++;
-		$rtn = 'sitemapExcel_auto_id_'.intval($auto_id_num);
+		$this->auto_id_num ++;
+		$rtn = 'sitemapExcel_auto_id_'.$this->extless_basename.'-'.intval($this->auto_id_num);
 		return $rtn;
 	}//generate_auto_page_id()
 
