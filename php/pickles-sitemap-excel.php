@@ -10,13 +10,20 @@ namespace tomk79\pickles2\sitemap_excel;
 class pickles_sitemap_excel{
 	/** Picklesオブジェクト */
 	private $px;
+	/** プラグイン設定 */
+	private $plugin_conf;
+	/** サイトマップフォルダのパス */
+	private $realpath_sitemap_dir;
+	/** アプリケーションロック */
+	private $locker;
 
 	/**
 	 * entry
 	 * @param object $px Picklesオブジェクト
+	 * @param object $plugin_conf プラグイン設定
 	 */
-	static public function exec($px){
-		new self($px);
+	static public function exec($px, $plugin_conf){
+		(new self($px, $plugin_conf))->convert_all();
 	}
 
 	/**
@@ -38,25 +45,36 @@ class pickles_sitemap_excel{
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.0.6';
+		return '2.0.7-alpha.1+nb';
 	}
 
 	/**
 	 * constructor
 	 * @param object $px Picklesオブジェクト
+	 * @param object $plugin_conf プラグイン設定
 	 */
-	public function __construct( $px ){
-		require_once( __DIR__.'/daos/import.php' );
-		require_once( __DIR__.'/daos/export.php' );
-		require_once( __DIR__.'/lock.php' );
+	public function __construct( $px, $plugin_conf = null ){
 		$this->px = $px;
+		$this->plugin_conf = $plugin_conf;
 
-		$path_base = $this->px->get_path_homedir().'sitemaps/';
-		$sitemap_files = $this->px->fs()->ls( $path_base );
+		// object から 連想配列に変換
+		$this->plugin_conf = json_decode( json_encode($this->plugin_conf), true );
+		if( !is_array($this->plugin_conf) ){ $this->plugin_conf = array(); }
+		if( !@strlen($this->plugin_conf['master_format']) ){ $this->plugin_conf['master_format'] = 'timestamp'; }
+		if( !@is_array($this->plugin_conf['files_master_format']) ){ $this->plugin_conf['files_master_format'] = array(); }
+		// var_dump($this->plugin_conf);
 
-		$locker = new pxplugin_sitemapExcel_lock($this->px, $this);
+		$this->realpath_sitemap_dir = $this->px->get_path_homedir().'sitemaps/';
+		$this->locker = new lock($this->px, $this);
+	}
 
-		foreach( $sitemap_files as $filename ){
+	/**
+	 * すべてのファイルを変換する
+	 */
+	public function convert_all(){
+		$sitemap_files = array();
+		$tmp_sitemap_files = $this->px->fs()->ls( $this->realpath_sitemap_dir );
+		foreach( $tmp_sitemap_files as $filename ){
 			if( preg_match( '/^\\~\\$/', $filename ) ){
 				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
 				continue;
@@ -65,33 +83,120 @@ class pickles_sitemap_excel{
 				// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
 				continue;
 			}
-			$basename = $this->px->fs()->trim_extension($filename);
+			$extless_basename = $this->px->fs()->trim_extension($filename);
 			$extension = $this->px->fs()->get_extension($filename);
-			switch( strtolower($extension) ){
-				// case 'xls':
-				case 'xlsx':
-					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.csv' ) ){
-						if( $locker->lock() ){
-							$import = @(new pxplugin_sitemapExcel_daos_import($this->px, $this))->import( $path_base.$filename, $path_base.$basename.'.csv' );
-							touch($path_base.$basename.'.csv', filemtime( $path_base.$filename ));
-							$locker->unlock();
-						}
-					}
-					break;
-				case 'csv':
-					if( true === $this->px->fs()->is_newer_a_than_b( $path_base.$filename, $path_base.$basename.'.xlsx' ) ){
-						if( $locker->lock() ){
-							$export = @(new pxplugin_sitemapExcel_daos_export($this->px, $this))->export( $path_base.$filename, $path_base.$basename.'.xlsx' );
-							touch($path_base.$basename.'.xlsx', filemtime( $path_base.$filename ));
-							$locker->unlock();
-						}
-					}
-					break;
-				default:
-					// 知らない拡張子はスルー
-					break;
+			$extension = strtolower($extension);
+
+			if( $extension != 'xlsx' && $extension != 'csv' ){
+				// 知らない拡張子はスキップ
+				continue;
 			}
+
+			if( !@is_array($sitemap_files[$extless_basename]) ){
+				$sitemap_files[$extless_basename] = array();
+			}
+			$sitemap_files[$extless_basename][$extension] = $filename;
 		}
+		// var_dump($sitemap_files);
+
+		foreach( $sitemap_files as $extless_basename=>$extensions ){
+			$master_format = $this->get_master_format_of($extless_basename);
+			// var_dump($master_format);
+			if( $master_format == 'pass' ){
+				// `pass` の場合は、変換を行わずスキップ。
+				continue;
+			}
+
+			// ファイルが既存しない場合、ファイル名がセットされていないので、
+			// 明示的にセットする。
+			if( !@strlen($extensions['xlsx']) ){
+				$extensions['xlsx'] = $extless_basename.'.xlsx';
+			}
+			if( !@strlen($extensions['csv']) ){
+				$extensions['csv'] = $extless_basename.'.csv';
+			}
+
+			if(
+				($master_format == 'timestamp' || $master_format == 'xlsx')
+				&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['xlsx'], $this->realpath_sitemap_dir.$extensions['csv'] )
+			){
+				// XLSX がマスターになる場合
+				if( $this->locker->lock() ){
+					$result = $this->xlsx2csv(
+						$this->realpath_sitemap_dir.$extensions['xlsx'],
+						$this->realpath_sitemap_dir.$extensions['csv']
+					);
+					touch(
+						$this->realpath_sitemap_dir.$extensions['csv'],
+						filemtime( $this->realpath_sitemap_dir.$extensions['xlsx'] )
+					);
+					$this->locker->unlock();
+				}
+
+			}elseif(
+				($master_format == 'timestamp' || $master_format == 'csv')
+				&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['csv'], $this->realpath_sitemap_dir.$extensions['xlsx'] )
+			){
+				// CSV がマスターになる場合
+				if( $this->locker->lock() ){
+					$result = $this->csv2xlsx(
+						$this->realpath_sitemap_dir.$extensions['csv'],
+						$this->realpath_sitemap_dir.$extensions['xlsx']
+					);
+					touch(
+						$this->realpath_sitemap_dir.$extensions['xlsx'],
+						filemtime( $this->realpath_sitemap_dir.$extensions['csv'] )
+					);
+					$this->locker->unlock();
+				}
+			}
+
+		}
+		return;
+	}
+
+	/**
+	 * ファイルの master format を調べる
+	 * @param  string $extless_basename 調べる対象の拡張子を含まないファイル名
+	 * @return string                   master format 名
+	 */
+	private function get_master_format_of( $extless_basename ){
+		$rtn = $this->plugin_conf['master_format'];
+		if( strlen(@$this->plugin_conf['files_master_format'][$extless_basename]) ){
+			$rtn = $this->plugin_conf['files_master_format'][$extless_basename];
+		}
+		$rtn = strtolower($rtn);
+		return $rtn;
+	}
+
+	/**
+	 * サイトマップXLSX を サイトマップCSV に変換
+	 *
+	 * このメソッドは、変換後のファイルを生成するのみです。
+	 * タイムスタンプの調整等は行いません。
+	 *
+	 * @param string $path_xlsx Excelファイルのパス
+	 * @param string $path_csv CSVファイルのパス
+	 * @return boolean 実行結果
+	 */
+	public function xlsx2csv($path_xlsx, $path_csv){
+		$result = @(new xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
+		return $result;
+	}
+
+	/**
+	 * サイトマップCSV を サイトマップXLSX に変換
+	 *
+	 * このメソッドは、変換後のファイルを生成するのみです。
+	 * タイムスタンプの調整等は行いません。
+	 *
+	 * @param string $path_csv CSVファイルのパス
+	 * @param string $path_xlsx Excelファイルのパス
+	 * @return boolean 実行結果
+	 */
+	public function csv2xlsx($path_csv, $path_xlsx){
+		$result = @(new csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
+		return $result;
 	}
 
 	/**
@@ -118,16 +223,8 @@ class pickles_sitemap_excel{
 		$rtn['description'] = array('num'=>$num++,'col'=>$col++,'key'=>'description','name'=>'metaディスクリプション');
 		$rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
 		$rtn['role'] = array('num'=>$num++,'col'=>$col++,'key'=>'role','name'=>'ロール');
+		$rtn['proc_type'] = array('num'=>$num++,'col'=>$col++,'key'=>'proc_type','name'=>'コンテンツの処理方法');
 		return $rtn;
 	}
-
-	/**
-	 * PHPExcelHelper を生成する
-	 */
-	public function factory_PHPExcelHelper(){
-		require_once( __DIR__.'/helper/PHPExcelHelper.php' );
-		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper($this->px);
-		return $phpExcelHelper;
-	}// factory_PHPExcelHelper()
 
 }

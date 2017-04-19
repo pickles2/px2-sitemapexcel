@@ -1,7 +1,7 @@
 {
     "name": "pickles2/px2-sitemapexcel",
-    "description": "Pickles2 に、サイトマップをグラフィカルなエクセル形式(xlsx)で編集できる機能を追加します。",
-    "keywords": ["pickles"],
+    "description": "Pickles 2 に、サイトマップをグラフィカルなエクセル形式(xlsx)で編集できる機能を追加します。",
+    "keywords": ["pickles2"],
     "license": "MIT",
     "authors": [
         {
@@ -18,8 +18,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "tomk79/filesystem": "1.*",
-        "phpoffice/phpexcel": "1.8.*"
+        "tomk79/filesystem": "^1.0",
+        "phpoffice/phpexcel": "^1.8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*" ,
@@ -27,7 +27,12 @@
     },
     "autoload": {
         "files": [
-            "php/pickles-sitemap-excel.php"
+            "php/pickles-sitemap-excel.php",
+            "php/apis/csv2xlsx.php",
+            "php/apis/xlsx2csv.php",
+            "php/helper/PHPExcelHelper.php",
+            "php/helper/parseSitemapCsv.php",
+            "php/lock.php"
         ]
     }
 

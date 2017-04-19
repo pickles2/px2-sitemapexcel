@@ -88,7 +88,7 @@ return call_user_func( function(){
 		'picklesFramework2\commands\clearcache::register' ,
 
 		// sitemapExcel
-		'tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec'
+		'tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec('.file_get_contents(__DIR__.'/plugin_options.json').')',
 	];
 
 	// funcs: Before content

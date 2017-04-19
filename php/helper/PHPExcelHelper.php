@@ -6,14 +6,10 @@ namespace tomk79\pickles2\sitemap_excel;
 
 class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 
-	private $px;
-
 	/**
 	 * コンストラクタ
-	 * @param $px = PxFWコアオブジェクト
 	 */
-	public function __construct( $px ){
-		$this->px = $px;
+	public function __construct(){
 	}
 
 	/**
@@ -29,8 +25,8 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 	 */
 	public function load( $path ){
 		if(!strlen($path)){ return false; }
-		if(!$this->px->fs()->is_file($path)){ return false; }
-		if(!$this->px->fs()->is_readable($path)){ return false; }
+		if(!is_file($path)){ return false; }
+		if(!is_readable($path)){ return false; }
 
 		$objPHPExcel = \PHPExcel_IOFactory::load($path);
 		return $objPHPExcel;
@@ -45,5 +41,3 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 	}
 
 }
-
-?>

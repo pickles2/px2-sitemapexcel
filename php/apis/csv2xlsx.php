@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * PX Plugin "sitemapExcel" export
  */
-class pxplugin_sitemapExcel_daos_export{
+class csv2xlsx{
 
 	/** Picklesオブジェクト */
 	private $px;
@@ -47,7 +47,7 @@ class pxplugin_sitemapExcel_daos_export{
 	/**
 	 * 現在のサイトマップをxlsxに出力する。
 	 */
-	public function export( $path_csv, $path_xlsx ){
+	public function convert( $path_csv, $path_xlsx ){
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
 
@@ -55,12 +55,11 @@ class pxplugin_sitemapExcel_daos_export{
 		// 　sitemapExcel実行時点で、
 		// 　本物の$siteはスタンバイされていないので、
 		// 　偽物でエミュレートする必要があった。
-		require_once( __DIR__.'/../helper/parseSitemapCsv.php' );
 		$this->site = new pxplugin_sitemapExcel_helper_parseSitemapCsv( $this->px, $this->path_csv );
 
 		$table_definition = $this->get_table_definition();
 
-		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
+		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}
@@ -217,7 +216,7 @@ class pxplugin_sitemapExcel_daos_export{
 		clearstatcache();
 
 		return $this;
-	}
+	}// convert()
 
 	/**
 	 * 設定文字列を作成する

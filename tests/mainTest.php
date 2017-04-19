@@ -1,6 +1,6 @@
 <?php
 /**
- * test for tomk79\px2-sitemapexcel
+ * test for pickles2\px2-sitemapexcel
  */
 
 class mainTest extends PHPUnit_Framework_TestCase{
@@ -205,9 +205,10 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$objSheet = $objPHPExcel->getActiveSheet();
 		$this->assertEquals( $objSheet->getCell('T8')->getCalculatedValue(), 'description' );
 		$this->assertEquals( $objSheet->getCell('V8')->getCalculatedValue(), 'role' );
-		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), '**delete_flg' );
-		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), 'test_custom_col_1' );
-		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_2' );
+		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'proc_type' );
+		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), '**delete_flg' );
+		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_1' );
+		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'test_custom_col_2' );
 		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
 
 		$this->assertEquals( $objSheet->getCell('C34')->getCalculatedValue(), 'ヘルプ' );
@@ -292,7 +293,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	private function passthru( $ary_command ){
 		$cmd = array();
 		foreach( $ary_command as $row ){
-			$param = '"'.addslashes($row).'"';
+			$param = escapeshellarg($row);
 			array_push( $cmd, $param );
 		}
 		$cmd = implode( ' ', $cmd );

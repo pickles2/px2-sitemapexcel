@@ -7,14 +7,18 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * PX Plugin "sitemapExcel" import
  */
-class pxplugin_sitemapExcel_daos_import{
+class xlsx2csv{
 
 	/** Picklesオブジェクト */
 	private $px;
 	/** sitemapExcelオブジェクト */
 	private $plugin;
-
+	/** 出力先パス */
 	private $path_xlsx, $path_csv;
+	/** ページID自動発行のための通し番号 */
+	private $auto_id_num = 0;
+	/** ページID自動発行のためのファイル名 */
+	private $extless_basename = '';
 
 
 	/**
@@ -44,9 +48,14 @@ class pxplugin_sitemapExcel_daos_import{
 	/**
 	 * xlsxからサイトマップCSVを出力する。
 	 */
-	public function import( $path_xlsx, $path_csv ){
+	public function convert( $path_xlsx, $path_csv ){
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
+
+		// ページID自動発行のための情報をリセット
+		$this->auto_id_num = 0; // 通し番号をリセット
+		$this->extless_basename = $this->px->fs()->trim_extension(basename($path_xlsx));//ファイル名を記憶; 入力側のファイル名に準じる。
+
 
 		$path_toppage = '/';
 		if( strlen($this->px->conf()->path_top) ){
@@ -57,7 +66,7 @@ class pxplugin_sitemapExcel_daos_import{
 		// サイトマップCSVの定義を取得
 		$sitemap_definition = $this->get_sitemap_definition();
 
-		$phpExcelHelper = $this->plugin->factory_PHPExcelHelper();
+		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}
@@ -144,11 +153,14 @@ class pxplugin_sitemapExcel_daos_import{
 					$tmp_page_info[$row['key']] = '';
 				}
 			}
+
+			// --------------------
+			// 削除フラグ
 			if( @$tmp_page_info['**delete_flg'] ){
-				// 削除フラグ
 				continue;
 			}
 
+			// --------------------
 			// タイトルだけ特別
 			$col_title_col = @$col_title['start'];
 			$tmp_page_info['title'] = '';
@@ -179,15 +191,19 @@ class pxplugin_sitemapExcel_daos_import{
 				$tmp_page_info['path'] = 'alias:/_tbd.html';//pathがなくてもtitleがあれば、仮の値を入れて通す。
 			}
 
+			// --------------------
+			// list_flgの処理
 			if( !array_key_exists('list_flg', $table_definition['col_define']) ){
 				// エクセルの定義にlist_flg列がなかったら、
 				// 全ページにlist_flg=1をセット。
 				$tmp_page_info['list_flg'] = 1;
 			}
 
+			// --------------------
 			// 読み込んだパスを正規化
 			$tmp_page_info['path'] = $this->regulize_path( $tmp_page_info['path'] );
 
+			// --------------------
 			// 省略されたIDを自動的に付与
 			if(!strlen($tmp_page_info['id'])){
 				if( $path_toppage != $tmp_page_info['path'] ){
@@ -207,6 +223,7 @@ class pxplugin_sitemapExcel_daos_import{
 				$tmp_page_info['id'] = '';
 			}
 
+			// --------------------
 			// パンくずも特別
 			$tmp_breadcrumb = $last_breadcrumb;
 			if( $logical_path_last_depth === $logical_path_depth ){
@@ -223,12 +240,16 @@ class pxplugin_sitemapExcel_daos_import{
 					$tmp_breadcrumb[$i] = $last_breadcrumb[$i];
 				}
 			}
-			$tmp_page_info['logical_path'] = '';
-			if( count($tmp_breadcrumb) >= 2 ){
-				$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
-				$tmp_page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $tmp_page_info['logical_path']);
+			if( @strlen($tmp_page_info['logical_path']) ){
+				// エクセルの定義にlogical_path列があったら、
+				// この値を優先して採用する。
+			}else{
+				$tmp_page_info['logical_path'] = '';
+				if( count($tmp_breadcrumb) >= 2 ){
+					$tmp_page_info['logical_path'] = implode('>', $tmp_breadcrumb);
+					$tmp_page_info['logical_path'] = preg_replace('/^(.*?)\\>/s', '', $tmp_page_info['logical_path']);
+				}
 			}
-
 
 			// 今回のパンくずとパンくずの深さを記録
 			$logical_path_last_depth = $logical_path_depth;
@@ -238,12 +259,13 @@ class pxplugin_sitemapExcel_daos_import{
 				$last_page_id = $tmp_page_info['id'];
 			}
 
+
+			// --------------------
+			// サイトマップにページを追加する
 			$page_info = array();
 			foreach($sitemap_definition as $row){
 				$page_info[$row['key']] = $tmp_page_info[$row['key']];
 			}
-
-			// サイトマップにページを追加する
 			if( count($alias_title_list) ){
 				// エイリアスが省略されている場合
 				$page_info_base = $page_info;
@@ -295,7 +317,7 @@ class pxplugin_sitemapExcel_daos_import{
 
 		clearstatcache();
 		return $this;
-	}// import()
+	}// convert()
 
 	/**
 	 * サイトマップCSVの定義を取得する
@@ -309,9 +331,8 @@ class pxplugin_sitemapExcel_daos_import{
 	 * ページIDを自動生成する
 	 */
 	private function generate_auto_page_id(){
-		static $auto_id_num = 0;
-		$auto_id_num ++;
-		$rtn = 'sitemapExcel_auto_id_'.intval($auto_id_num);
+		$this->auto_id_num ++;
+		$rtn = 'sitemapExcel_auto_id_'.$this->extless_basename.'-'.intval($this->auto_id_num);
 		return $rtn;
 	}//generate_auto_page_id()
 
