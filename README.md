@@ -159,7 +159,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### px2-sitemapexcel 2.0.7 (2016年??月??日)
+### px2-sitemapexcel 2.0.7 (2017年5月29日)
 
 - CSVの標準仕様に `proc_type` を追加。
 - プラグインオプション `master_format`, `files_master_format` を追加。
