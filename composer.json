@@ -34,6 +34,11 @@
             "php/helper/parseSitemapCsv.php",
             "php/lock.php"
         ]
+    },
+    "extra": {
+        "px2package": {
+            "name": "pickles2/px2-sitemapexcel",
+            "type": "processor"
+        }
     }
-
 }
