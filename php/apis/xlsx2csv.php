@@ -14,7 +14,7 @@ class xlsx2csv{
 	/** sitemapExcelオブジェクト */
 	private $plugin;
 	/** 出力先パス */
-	private $path_xlsx, $path_csv;
+	private $path_xlsx, $path_csv, $path_tmp_csv;
 	/** ページID自動発行のための通し番号 */
 	private $auto_id_num = 0;
 	/** ページID自動発行のためのファイル名 */
@@ -51,10 +51,14 @@ class xlsx2csv{
 	public function convert( $path_xlsx, $path_csv ){
 		$this->path_xlsx = $path_xlsx;
 		$this->path_csv = $path_csv;
+		$this->path_tmp_csv = $path_csv.'.tmp'.time();
+		do{
+			$this->path_tmp_csv = $path_csv.'.tmp'.time();
+		} while( is_file($this->path_tmp_csv) );
 
 		// ページID自動発行のための情報をリセット
 		$this->auto_id_num = 0; // 通し番号をリセット
-		$this->extless_basename = $this->px->fs()->trim_extension(basename($path_xlsx));//ファイル名を記憶; 入力側のファイル名に準じる。
+		$this->extless_basename = $this->px->fs()->trim_extension(basename($this->path_xlsx));//ファイル名を記憶; 入力側のファイル名に準じる。
 
 
 		$path_toppage = '/';
@@ -71,7 +75,7 @@ class xlsx2csv{
 			return false;
 		}
 		set_time_limit(0);
-		$objPHPExcel = $phpExcelHelper->load($path_xlsx);
+		$objPHPExcel = $phpExcelHelper->load($this->path_xlsx);
 
 		$table_definition = $this->parse_definition($objPHPExcel, 0);//xlsxの構造定義を読み解く
 		$col_title = array();
@@ -105,14 +109,11 @@ class xlsx2csv{
 		}
 
 
-
-		$sitemap = array();
-
 		$page_info = array();
 		foreach($sitemap_definition as $row){
 			$page_info[$row['key']] = '* '.$row['key'];
 		}
-		array_push( $sitemap, $page_info );
+		$this->output_csv_row( $page_info );
 
 		$last_breadcrumb = array();
 		$last_page_id = null;
@@ -270,7 +271,7 @@ class xlsx2csv{
 				// エイリアスが省略されている場合
 				$page_info_base = $page_info;
 				$page_info['path'] = 'alias:'.$page_info['path'];
-				array_push( $sitemap, $page_info );
+				$this->output_csv_row( $page_info );
 				$tmp_last_page_id = $page_info['id'];
 				foreach( $alias_title_list as $key=>$row ){
 					$page_info = $page_info_base;
@@ -291,7 +292,7 @@ class xlsx2csv{
 					$page_info['title'] = $row;
 					// var_dump($page_info['title']);
 
-					array_push( $sitemap, $page_info );
+					$this->output_csv_row( $page_info );
 
 					$tmp_last_page_id = $page_info['id'];
 					$logical_path_last_depth ++;
@@ -304,20 +305,38 @@ class xlsx2csv{
 				continue;
 			}else{
 				// 通常のページの場合
-				array_push( $sitemap, $page_info );
+				$this->output_csv_row( $page_info );
 				continue;
 			}
 			continue;
 		}
 
-		$this->px->fs()->mkdir(dirname($path_csv));
-		$this->px->fs()->save_file($path_csv, $this->px->fs()->mk_csv($sitemap, array('charset'=>'UTF-8')) );
+		$this->px->fs()->mkdir(dirname($this->path_csv));
+		$this->px->fs()->rename($this->path_tmp_csv, $this->path_csv);
+		$this->px->fs()->chmod($this->path_csv, octdec( $this->px->conf()->file_default_permission ));
 
 		set_time_limit(30);
 
 		clearstatcache();
 		return $this;
 	}// convert()
+
+	/**
+	 * サイトマップの行を一時ファイルに出力する
+	 * @return boolean result
+	 */
+	private function output_csv_row( $row ){
+		$this->px->fs()->mkdir(dirname($this->path_tmp_csv));
+		file_put_contents(
+			$this->path_tmp_csv,
+			$this->px->fs()->mk_csv(
+				array($row),
+				array('charset'=>'UTF-8')
+			),
+			FILE_APPEND|LOCK_EX
+		);
+		return $res;
+	}
 
 	/**
 	 * サイトマップCSVの定義を取得する
