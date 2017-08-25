@@ -167,11 +167,12 @@ class xlsx2csv{
 			$tmp_page_info['title'] = '';
 			$logical_path_depth = 0;
 			$alias_title_list = array();
-			while( @strcmp( $col_title_col , $col_title['end'] ) ){
+			while( @strcmp( strtoupper($col_title_col) , strtoupper($col_title['end']) ) < 0 ){
+					// ↑ $col_title['end'] には、titleの終端の右の列の名前が入っている。 よって `strcmp()` の結果は最大で `-1` となる。
 				$tmp_page_info['title'] .= trim( $objSheet->getCell($col_title_col.$xlsx_row)->getCalculatedValue() );
 				if(strlen($tmp_page_info['title'])){
 					$col_title_col ++;
-					while( strlen( $tmp_alias_title = trim( $objSheet->getCell(($col_title_col).$xlsx_row)->getCalculatedValue() ) ) ){
+					while( @strcmp( strtoupper($col_title_col) , strtoupper($col_title['end']) ) < 0 && strlen( $tmp_alias_title = trim( $objSheet->getCell(($col_title_col).$xlsx_row)->getCalculatedValue() ) ) ){
 						array_push( $alias_title_list, $tmp_alias_title );
 						$col_title_col ++;
 					}
@@ -219,7 +220,7 @@ class xlsx2csv{
 				}
 			}
 
-			// トップページは空白でなければならない。
+			// トップページのIDは空白文字列でなければならない。
 			if( $path_toppage == $tmp_page_info['path'] ){
 				$tmp_page_info['id'] = '';
 			}
