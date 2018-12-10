@@ -33,6 +33,10 @@ class cleaningTest extends PHPUnit_Framework_TestCase{
 			__DIR__.'/testData/standard/px-files/plugin_options.json'
 		);
 
+		// マクロ付きのテストデータを削除する
+		@unlink( __DIR__.'/testData/standard/px-files/sitemaps/macros.csv' );
+		@unlink( __DIR__.'/testData/standard/px-files/sitemaps/macros.xlsm' );
+
 		// キャッシュ消去
 		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );
 		clearstatcache();
