@@ -159,52 +159,52 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### px2-sitemapexcel 2.0.9 (20??年??月??日)
+### pickles2/px2-sitemapexcel v2.0.9 (リリース日未定)
 
 - ????????????????????????????????????????????????
 
-### px2-sitemapexcel 2.0.8 (2017年9月14日)
+### pickles2/px2-sitemapexcel v2.0.8 (2017年9月14日)
 
 - xlsx->csv 変換時に消費するメモリ量を削減するように修正した。
 - title列のすぐ右の列に値が入っている場合に、エイリアスとして解釈されてしまう不具合を修正。
 
-### px2-sitemapexcel 2.0.7 (2017年5月29日)
+### pickles2/px2-sitemapexcel v2.0.7 (2017年5月29日)
 
 - CSVの標準仕様に `proc_type` を追加。
 - プラグインオプション `master_format`, `files_master_format` を追加。
 - xlsx から csv への変換時に自動発行されるページIDの命名規則を変更。
 - xlsxファイルに `logical_path` 列がある場合、この値を優先して適用するようになった。
 
-### px2-sitemapexcel 2.0.6 (2016年10月20日)
+### pickles2/px2-sitemapexcel v2.0.6 (2016年10月20日)
 
 - サイトマップ形式変換中にプロセスをロックするようになった。
 
-### px2-sitemapexcel 2.0.5 (2016年8月24日)
+### pickles2/px2-sitemapexcel v2.0.5 (2016年8月24日)
 
 - 日付やパーセントなどの特殊なセルフォーマットが設定されたセルで、可能な限りフォーマットが適用された値で置き換えるようになった。
 - サイトマップCSV に `http://〜〜` , `//〜〜` が含まれているときに、xlsx へ正常に変換できない不具合を修正。
 - サイトマップXLSX に `http://〜〜/` , `//〜〜/` が含まれているとき、CSVへの変換時に `index.html` を付加してしまう不具合を修正。
 - サイトマップからIDの登録エラーを検出した際に異常終了する不具合を修正。
 
-### px2-sitemapexcel 2.0.4 (2016年7月27日)
+### pickles2/px2-sitemapexcel v2.0.4 (2016年7月27日)
 
 - LibreOffice形式の一時ファイルをスキップするようになった。
 - ロール列(role)に対応。
 
-### px2-sitemapexcel 2.0.3 (2016年2月9日)
+### pickles2/px2-sitemapexcel v2.0.3 (2016年2月9日)
 
 - 簡易表現された扉ページに category_top_flg がセットされていた場合、最上位のエイリアスにのみ設定し、下層のフラグは削除するようになった。
 
-### px2-sitemapexcel 2.0.2 (2015年8月7日)
+### tomk79/px2-sitemapexcel v2.0.2 (2015年8月7日)
 
 - path, title ともに空白の行を見つけた場合、終了せずにスキップして次を探すようになった。
 - export時に、sitemap.csv に定義したカスタム列が捨てられてしまう不具合を修正。
 
-### pickles-sitemap-excel 2.0.1 (2015年3月19日)
+### tomk79/pickles-sitemap-excel-2 v2.0.1 (2015年3月19日)
 
 - タイムゾーンの設定がされていない場合に、エラーが出力されないように制御。
 
-### pickles-sitemap-excel 2.0.0 (2014年12月24日)
+### tomk79/pickles-sitemap-excel-2 v2.0.0 (2014年12月24日)
 
 - First release.
 
