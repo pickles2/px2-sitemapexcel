@@ -108,6 +108,7 @@ class xlsmTest extends PHPUnit_Framework_TestCase{
 
 
 		// 後始末
+		$this->assertTrue( unlink( $this->path_sitemap.'macros.csv' ) );
 		$this->assertTrue( unlink( $this->path_sitemap.'macros.xlsm' ) );
 		$output = $this->passthru( ['php', __DIR__.'/testData/standard/.px_execute.php', '/?PX=clearcache' ] );
 		clearstatcache();

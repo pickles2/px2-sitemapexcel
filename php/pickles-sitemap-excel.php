@@ -112,40 +112,51 @@ class pickles_sitemap_excel{
 
 				// ファイルが既存しない場合、ファイル名がセットされていないので、
 				// 明示的にセットする。
-				if( !array_key_exists('xlsx', $extensions) || !strlen($extensions['xlsx']) ){
+				if( !array_key_exists('xlsx', $extensions) && !array_key_exists('xlsm', $extensions) ){
+					// xlsx も xlsm も存在しない場合、xlsx をデフォルトとする。
 					$extensions['xlsx'] = $extless_basename.'.xlsx';
 				}
-				if( !array_key_exists('csv', $extensions) || !strlen($extensions['csv']) ){
+				if( !array_key_exists('csv', $extensions) ){
 					$extensions['csv'] = $extless_basename.'.csv';
 				}
 
+				$xlsx_ext = 'xlsx';
+				if( !array_key_exists('xlsx', $extensions) && array_key_exists('xlsm', $extensions) ){
+					// xlsm が存在し、かつ xlsx が存在しない場合、
+					// xlsx の代わりに xlsm を扱う。
+					$xlsx_ext = 'xlsm';
+				}
+
 				if(
-					($master_format == 'timestamp' || $master_format == 'xlsx' || $master_format == 'xlsm')
-					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['xlsx'], $this->realpath_sitemap_dir.$extensions['csv'] )
+					($master_format == 'timestamp' || $master_format == 'xlsx')
+					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions[$xlsx_ext], $this->realpath_sitemap_dir.$extensions['csv'] )
 				){
 					// XLSX または XLSM がマスターになる場合
 					$result = $this->xlsx2csv(
-						$this->realpath_sitemap_dir.$extensions['xlsx'],
+						$this->realpath_sitemap_dir.$extensions[$xlsx_ext],
 						$this->realpath_sitemap_dir.$extensions['csv']
 					);
 					touch(
 						$this->realpath_sitemap_dir.$extensions['csv'],
-						filemtime( $this->realpath_sitemap_dir.$extensions['xlsx'] )
+						filemtime( $this->realpath_sitemap_dir.$extensions[$xlsx_ext] )
 					);
 
 				}elseif(
 					($master_format == 'timestamp' || $master_format == 'csv')
-					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['csv'], $this->realpath_sitemap_dir.$extensions['xlsx'] )
+					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['csv'], $this->realpath_sitemap_dir.$extensions[$xlsx_ext] )
 				){
 					// CSV がマスターになる場合
-					$result = $this->csv2xlsx(
-						$this->realpath_sitemap_dir.$extensions['csv'],
-						$this->realpath_sitemap_dir.$extensions['xlsx']
-					);
-					touch(
-						$this->realpath_sitemap_dir.$extensions['xlsx'],
-						filemtime( $this->realpath_sitemap_dir.$extensions['csv'] )
-					);
+					if( $xlsx_ext == 'xlsx' ){
+						// xlsx以外の場合(=xlsmの場合) は、上書きしない。
+						$result = $this->csv2xlsx(
+							$this->realpath_sitemap_dir.$extensions['csv'],
+							$this->realpath_sitemap_dir.$extensions[$xlsx_ext]
+						);
+						touch(
+							$this->realpath_sitemap_dir.$extensions[$xlsx_ext],
+							filemtime( $this->realpath_sitemap_dir.$extensions['csv'] )
+						);
+					}
 				}
 
 			}
