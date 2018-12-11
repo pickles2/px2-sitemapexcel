@@ -50,13 +50,33 @@ class lock{
 			clearstatcache();
 		}
 
+		touch( $this->path_sitemap_cache_dir.'making_sitemap_cache.lock.txt' );
+		touch( $this->path_sitemap_cache_dir.'making_sitemapexcel.lock.txt' );
+
+		return $this->update();
+	}
+
+	/**
+	 * Update Lockfile
+	 */
+	public function update(){
+		if( !is_file( $this->path_sitemap_cache_dir.'making_sitemap_cache.lock.txt' )
+			|| !is_file( $this->path_sitemap_cache_dir.'making_sitemapexcel.lock.txt' ) ){
+			// ロックされていない場合、更新できない。
+			return false;
+		}
+
 		$lockfile_src = '';
 		$lockfile_src .= 'ProcessID='.getmypid()."\r\n";
 		$lockfile_src .= @date( 'Y-m-d H:i:s' , time() )."\r\n";
 		$lockfile_src .= '* pickles2/px2-sitemapexcel'."\r\n";
-		$this->px->fs()->save_file( $this->path_sitemap_cache_dir.'making_sitemap_cache.lock.txt', $lockfile_src );
-		$this->px->fs()->save_file( $this->path_sitemap_cache_dir.'making_sitemapexcel.lock.txt', $lockfile_src );
+		$res1 = $this->px->fs()->save_file( $this->path_sitemap_cache_dir.'making_sitemap_cache.lock.txt', $lockfile_src );
+		$res2 = $this->px->fs()->save_file( $this->path_sitemap_cache_dir.'making_sitemapexcel.lock.txt', $lockfile_src );
 
+		clearstatcache();
+		if( !$res1 || !$res2 ){
+			return false;
+		}
 		return true;
 	}
 

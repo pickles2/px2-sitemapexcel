@@ -61,6 +61,8 @@ class xlsmTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( $mtime_csv === $mtime_xlsx );
 
 		// CSV を古くしてみる。
+		// XLSM→CSV の変換は、タイムスタンプの設定の影響を受けて、 *.xlsx と同様の処理が通常通り行われる。
+		// ただし、 *.xlsm と *.xlsx の両方が存在する場合は、 *.xlsx を優先し、 *.xlsm は無視される。
 		clearstatcache();
 		$this->assertTrue( touch( $this->path_sitemap.'macros.csv', 1000 ) );
 		$this->assertTrue( touch( $this->path_sitemap.'macros.xlsm', $this->test_timestamp ) );
