@@ -159,7 +159,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### pickles2/px2-sitemapexcel v2.0.9 (リリース日未定)
+### pickles2/px2-sitemapexcel v2.0.9 (2019年1月11日)
 
 - lockファイル生成の処理を改善した。
 - xlsm 拡張子のファイルを読み込めるようになった。
