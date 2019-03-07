@@ -31,7 +31,7 @@ pickles2/px2-sitemapexcel
   </tbody>
 </table>
 
-*pickles2/px2-sitemapexcel* は、[Pickles 2](http://pickles2.pxt.jp/) のサイトマップを、 Excel 形式 (`*.xlsx`) で編集できるようにするプラグインです。
+*pickles2/px2-sitemapexcel* は、[Pickles 2](https://pickles2.pxt.jp/) のサイトマップを、 Excel 形式 (`*.xlsx`) で編集できるようにするプラグインです。
 
 本来の Pickles 2 のサイトマップは、CSV形式で記述されます。 CSVはもっとも単純で基本的なデータ形式の1つで、コンピューターが処理するには扱いやすいフォーマットですが、人間が編集するには不便なこともありました。
 このプラグインを導入することで、より直感的でグラフィカルな Excel 形式 (`*.xlsx`) で編集することができるようになります。
@@ -218,8 +218,8 @@ MIT License
 ## 作者 - Author
 
 - Tomoya Koyanagi <tomk79@gmail.com>
-- website: <http://www.pxt.jp/>
-- Twitter: @tomk79 <http://twitter.com/tomk79/>
+- website: <https://www.pxt.jp/>
+- Twitter: @tomk79 <https://twitter.com/tomk79/>
 
 
 ## 開発者向け情報 - for Developer

@@ -1,9 +1,9 @@
 "* path","* content","* id","* title","* title_breadcrumb","* title_h1","* title_label","* title_full","* logical_path","* list_flg","* layout","* orderby","* keywords","* description","* category_top_flg","* role","* proc_type","* **delete_flg","* test_custom_column_xlsx_2","* test_custom_column_xlsx_1","* cell_formats"
 "/index.html",,,"ホーム",,,,,,"1","top",,,,,,,,"test2","test1","2000/06/12"
 "/sample_pages/index.html",,"A-0","サンプルページ1",,,,,,"1",,,,"ページIDを明示するテスト。","1",,,,"test2","test1","2001/09/08 1:50"
-"/sample_pages/fess/index.html",,,"FESSスタイルガイド",,,,,"/sample_pages/index.html","1",,,,,,,,,"test2","test1","37143.0769675347"
+"/sample_pages/fess/index.html",,,"FESSスタイルガイド",,,,,"/sample_pages/index.html","1",,,,,,,,,"test2","test1","1112001年09月09日"
 "/sample_pages/fess/units/index.html",,,"ユニットモジュール",,,,,"/sample_pages/index.html>/sample_pages/fess/index.html","1",,,,,,,,,"test2","test1","Sep-01"
-"/sample_pages/fess/parts/index.html",,,"パーツモジュール",,,,,"/sample_pages/index.html>/sample_pages/fess/index.html","1",,,,,,,,,"test2","test1","09""月""11""日"""
+"/sample_pages/fess/parts/index.html",,,"パーツモジュール",,,,,"/sample_pages/index.html>/sample_pages/fess/index.html","1",,,,,,,,,"test2","test1","09月11日"
 "/sample_pages/fess/statics/index.html",,,"スタティックモジュール",,,,,"/sample_pages/index.html>/sample_pages/fess/index.html","1",,,,,,,,,"test2","test1","12-Sep-01"
 "/sample_pages/fess/boxes/index.html",,,"ボックスモジュール",,,,,"/sample_pages/index.html>/sample_pages/fess/index.html","1",,,,,,,,,"test2","test1","13-Sep"
 "/sample_pages/page1/1.html",,,"ページタイトル","ページタイトル(パンくずのラベル)","ページタイトル

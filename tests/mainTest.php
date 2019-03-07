@@ -124,9 +124,13 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump($sitemapAry['/sample_pages/index.html']);
 		$this->assertEquals( $sitemapAry['/index.html']['cell_formats'], '2000/06/12' );
 		$this->assertEquals( $sitemapAry['/sample_pages/index.html']['cell_formats'], '2001/09/08 1:50' );
-		$this->assertEquals( $sitemapAry['/sample_pages/fess/index.html']['cell_formats'], 37143.0769675347); // Excel上では '平成13年09月09日' だが、未対応なので Float のまま置き換えられる。
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/index.html']['cell_formats'], '1112001年09月09日');
+			// ↑ Excel上では '平成13年09月09日' だが、未対応なので Float のまま置き換えられる。
+			// ↑ phpExcel 1.8.2 で修正されたようだが、やっぱりおかしい。 `1112001年09月09日` となる。 1.8.1 までは、Float のまま '37143.0769675347' と変換されていた。
 		$this->assertEquals( $sitemapAry['/sample_pages/fess/units/index.html']['cell_formats'], 'Sep-01' );
-		$this->assertEquals( $sitemapAry['/sample_pages/fess/parts/index.html']['cell_formats'], '09"月"11"日"' ); // Excel上では '09月11日'
+		$this->assertEquals( $sitemapAry['/sample_pages/fess/parts/index.html']['cell_formats'], '09月11日' );
+			// ↑ Excel上では '09月11日'
+			// ↑ phpExcel 1.8.2 で修正された。 1.8.1 までは、 '09"月"11"日"' と変換されていた。
 		$this->assertEquals( $sitemapAry['/sample_pages/fess/statics/index.html']['cell_formats'], '12-Sep-01' );
 		$this->assertEquals( $sitemapAry['/sample_pages/fess/boxes/index.html']['cell_formats'], '13-Sep' );
 		$this->assertEquals( $sitemapAry['/sample_pages/page1/1.html']['cell_formats'], '10.00%' );
