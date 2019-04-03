@@ -75,31 +75,79 @@ class pickles_sitemap_excel{
 		$sitemap_files = array();
 		$tmp_sitemap_files = $this->px->fs()->ls( $this->realpath_sitemap_dir );
 
-		if( $this->locker->lock() ){
-			foreach( $tmp_sitemap_files as $filename ){
-				if( preg_match( '/^\\~\\$/', $filename ) ){
-					// エクセルの編集中のキャッシュファイルのファイル名だからスルー
-					continue;
-				}
-				if( preg_match( '/^\\.\\~lock\\./', $filename ) ){
-					// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
-					continue;
-				}
-				$extless_basename = $this->px->fs()->trim_extension($filename);
-				$extension = $this->px->fs()->get_extension($filename);
-				$extension = strtolower($extension);
-
-				if( $extension != 'xlsx' && $extension != 'xlsm' && $extension != 'csv' ){
-					// 知らない拡張子はスキップ
-					continue;
-				}
-
-				if( !array_key_exists($extless_basename, $sitemap_files) || !is_array($sitemap_files[$extless_basename]) ){
-					$sitemap_files[$extless_basename] = array();
-				}
-				$sitemap_files[$extless_basename][$extension] = $filename;
+		foreach( $tmp_sitemap_files as $filename ){
+			if( preg_match( '/^\\~\\$/', $filename ) ){
+				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
+				continue;
 			}
-			// var_dump($sitemap_files);
+			if( preg_match( '/^\\.\\~lock\\./', $filename ) ){
+				// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
+				continue;
+			}
+			$extless_basename = $this->px->fs()->trim_extension($filename);
+			$extension = $this->px->fs()->get_extension($filename);
+			$extension = strtolower($extension);
+
+			if( $extension != 'xlsx' && $extension != 'xlsm' && $extension != 'csv' ){
+				// 知らない拡張子はスキップ
+				continue;
+			}
+
+			if( !array_key_exists($extless_basename, $sitemap_files) || !is_array($sitemap_files[$extless_basename]) ){
+				$sitemap_files[$extless_basename] = array();
+			}
+			$sitemap_files[$extless_basename][$extension] = $filename;
+		}
+		// var_dump($sitemap_files);
+
+		$is_detect_update = false;
+		foreach( $sitemap_files as $extless_basename=>$extensions ){
+			$master_format = $this->get_master_format_of($extless_basename);
+			// var_dump($master_format);
+			if( $master_format == 'pass' ){
+				// `pass` の場合は、変換を行わずスキップ。
+				continue;
+			}
+
+			// ファイルが既存しない場合、ファイル名がセットされていないので、
+			// 明示的にセットする。
+			if( !array_key_exists('xlsx', $extensions) && !array_key_exists('xlsm', $extensions) ){
+				// xlsx も xlsm も存在しない場合、xlsx をデフォルトとする。
+				$extensions['xlsx'] = $extless_basename.'.xlsx';
+			}
+			if( !array_key_exists('csv', $extensions) ){
+				$extensions['csv'] = $extless_basename.'.csv';
+			}
+
+			$xlsx_ext = 'xlsx';
+			if( !array_key_exists('xlsx', $extensions) && array_key_exists('xlsm', $extensions) ){
+				// xlsm が存在し、かつ xlsx が存在しない場合、
+				// xlsx の代わりに xlsm を扱う。
+				$xlsx_ext = 'xlsm';
+			}
+
+			$detected_update = $this->detect_updates($master_format, $xlsx_ext, $extensions);
+			if( $detected_update == 'xlsx2csv' ){
+				// XLSX または XLSM がマスターになる場合
+				$is_detect_update = true;
+				break;
+			}elseif( $detected_update == 'csv2xlsx' ){
+				// CSV がマスターになる場合
+				if( $xlsx_ext == 'xlsx' ){
+					// xlsx以外の場合(=xlsmの場合) は、上書きしない。
+					$is_detect_update = true;
+					break;
+				}
+			}
+		}
+
+		if( !$is_detect_update ){
+			// ここで更新が検出されなければ、
+			// あとの処理は実行しない。
+			return;
+		}
+
+		if( $this->locker->lock() ){
 
 			foreach( $sitemap_files as $extless_basename=>$extensions ){
 				$this->locker->update();
@@ -127,10 +175,8 @@ class pickles_sitemap_excel{
 					$xlsx_ext = 'xlsm';
 				}
 
-				if(
-					($master_format == 'timestamp' || $master_format == 'xlsx')
-					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions[$xlsx_ext], $this->realpath_sitemap_dir.$extensions['csv'] )
-				){
+				$detected_update = $this->detect_updates($master_format, $xlsx_ext, $extensions);
+				if( $detected_update == 'xlsx2csv' ){
 					// XLSX または XLSM がマスターになる場合
 					$result = $this->xlsx2csv(
 						$this->realpath_sitemap_dir.$extensions[$xlsx_ext],
@@ -141,10 +187,7 @@ class pickles_sitemap_excel{
 						filemtime( $this->realpath_sitemap_dir.$extensions[$xlsx_ext] )
 					);
 
-				}elseif(
-					($master_format == 'timestamp' || $master_format == 'csv')
-					&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['csv'], $this->realpath_sitemap_dir.$extensions[$xlsx_ext] )
-				){
+				}elseif( $detected_update == 'csv2xlsx' ){
 					// CSV がマスターになる場合
 					if( $xlsx_ext == 'xlsx' ){
 						// xlsx以外の場合(=xlsmの場合) は、上書きしない。
@@ -164,6 +207,30 @@ class pickles_sitemap_excel{
 			$this->locker->unlock();
 		}
 		return;
+	}
+
+	/**
+	 * 適用待ちの更新があるかチェックする
+	 */
+	private function detect_updates( $master_format, $xlsx_ext, $extensions ){
+		$rtn = false;
+		if(
+			($master_format == 'timestamp' || $master_format == 'xlsx')
+			&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions[$xlsx_ext], $this->realpath_sitemap_dir.$extensions['csv'] )
+		){
+			// XLSX または XLSM がマスターになる場合
+			$rtn = 'xlsx2csv';
+
+		}elseif(
+			($master_format == 'timestamp' || $master_format == 'csv')
+			&& true === $this->px->fs()->is_newer_a_than_b( $this->realpath_sitemap_dir.$extensions['csv'], $this->realpath_sitemap_dir.$extensions[$xlsx_ext] )
+		){
+			// CSV がマスターになる場合
+			$rtn = 'csv2xlsx';
+
+		}
+
+		return $rtn;
 	}
 
 	/**
