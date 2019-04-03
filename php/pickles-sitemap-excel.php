@@ -102,31 +102,14 @@ class pickles_sitemap_excel{
 
 		$is_detect_update = false;
 		foreach( $sitemap_files as $extless_basename=>$extensions ){
-			$master_format = $this->get_master_format_of($extless_basename);
-			// var_dump($master_format);
+
+			list($master_format, $extensions, $xlsx_ext, $detected_update) = $this->preprocess_of_update_detection($extless_basename, $extensions);
+
 			if( $master_format == 'pass' ){
 				// `pass` の場合は、変換を行わずスキップ。
 				continue;
 			}
 
-			// ファイルが既存しない場合、ファイル名がセットされていないので、
-			// 明示的にセットする。
-			if( !array_key_exists('xlsx', $extensions) && !array_key_exists('xlsm', $extensions) ){
-				// xlsx も xlsm も存在しない場合、xlsx をデフォルトとする。
-				$extensions['xlsx'] = $extless_basename.'.xlsx';
-			}
-			if( !array_key_exists('csv', $extensions) ){
-				$extensions['csv'] = $extless_basename.'.csv';
-			}
-
-			$xlsx_ext = 'xlsx';
-			if( !array_key_exists('xlsx', $extensions) && array_key_exists('xlsm', $extensions) ){
-				// xlsm が存在し、かつ xlsx が存在しない場合、
-				// xlsx の代わりに xlsm を扱う。
-				$xlsx_ext = 'xlsm';
-			}
-
-			$detected_update = $this->detect_updates($master_format, $xlsx_ext, $extensions);
 			if( $detected_update == 'xlsx2csv' ){
 				// XLSX または XLSM がマスターになる場合
 				$is_detect_update = true;
@@ -151,31 +134,14 @@ class pickles_sitemap_excel{
 
 			foreach( $sitemap_files as $extless_basename=>$extensions ){
 				$this->locker->update();
-				$master_format = $this->get_master_format_of($extless_basename);
-				// var_dump($master_format);
+
+				list($master_format, $extensions, $xlsx_ext, $detected_update) = $this->preprocess_of_update_detection($extless_basename, $extensions);
+
 				if( $master_format == 'pass' ){
 					// `pass` の場合は、変換を行わずスキップ。
 					continue;
 				}
 
-				// ファイルが既存しない場合、ファイル名がセットされていないので、
-				// 明示的にセットする。
-				if( !array_key_exists('xlsx', $extensions) && !array_key_exists('xlsm', $extensions) ){
-					// xlsx も xlsm も存在しない場合、xlsx をデフォルトとする。
-					$extensions['xlsx'] = $extless_basename.'.xlsx';
-				}
-				if( !array_key_exists('csv', $extensions) ){
-					$extensions['csv'] = $extless_basename.'.csv';
-				}
-
-				$xlsx_ext = 'xlsx';
-				if( !array_key_exists('xlsx', $extensions) && array_key_exists('xlsm', $extensions) ){
-					// xlsm が存在し、かつ xlsx が存在しない場合、
-					// xlsx の代わりに xlsm を扱う。
-					$xlsx_ext = 'xlsm';
-				}
-
-				$detected_update = $this->detect_updates($master_format, $xlsx_ext, $extensions);
 				if( $detected_update == 'xlsx2csv' ){
 					// XLSX または XLSM がマスターになる場合
 					$result = $this->xlsx2csv(
@@ -211,6 +177,10 @@ class pickles_sitemap_excel{
 
 	/**
 	 * 適用待ちの更新があるかチェックする
+	 * @param  string $master_format マスターフォーマット名
+	 * @param  string $xlsx_ext      Excelファイルの拡張子 (xlsx, xlsm)
+	 * @param  string $extensions    拡張子ごとの実ファイル名一覧
+	 * @return string                適用待ちの更新メソッド名 (timestamp, csv2xlsx, または、更新待ちがない場合は boolean false)
 	 */
 	private function detect_updates( $master_format, $xlsx_ext, $extensions ){
 		$rtn = false;
@@ -231,6 +201,43 @@ class pickles_sitemap_excel{
 		}
 
 		return $rtn;
+	}
+
+	/**
+	 * 更新抽出のための前処理
+	 * @param  string $extless_basename 拡張子を除いたファイル名
+	 * @param  string $extensions       拡張子ごとの実ファイル名一覧
+	 * @return array 整理された各情報
+	 */
+	private function preprocess_of_update_detection($extless_basename, $extensions){
+		$master_format = $this->get_master_format_of($extless_basename);
+		// var_dump($master_format);
+
+		// ファイルが既存しない場合、ファイル名がセットされていないので、
+		// 明示的にセットする。
+		if( !array_key_exists('xlsx', $extensions) && !array_key_exists('xlsm', $extensions) ){
+			// xlsx も xlsm も存在しない場合、xlsx をデフォルトとする。
+			$extensions['xlsx'] = $extless_basename.'.xlsx';
+		}
+		if( !array_key_exists('csv', $extensions) ){
+			$extensions['csv'] = $extless_basename.'.csv';
+		}
+
+		$xlsx_ext = 'xlsx';
+		if( !array_key_exists('xlsx', $extensions) && array_key_exists('xlsm', $extensions) ){
+			// xlsm が存在し、かつ xlsx が存在しない場合、
+			// xlsx の代わりに xlsm を扱う。
+			$xlsx_ext = 'xlsm';
+		}
+
+		$detected_update = $this->detect_updates($master_format, $xlsx_ext, $extensions);
+
+		return array(
+			$master_format,
+			$extensions,
+			$xlsx_ext,
+			$detected_update,
+		);
 	}
 
 	/**
