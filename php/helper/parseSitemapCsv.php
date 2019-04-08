@@ -30,6 +30,9 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 	 */
 	private $dynamic_path_param = array();
 
+	/** パンくずの最大深度 */
+	private $max_depth = null;
+
 	/**
 	 * constructor
 	 * @param object $px Picklesオブジェクト
@@ -184,6 +187,30 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 			$this->sitemap_array[$tmp_array['path']] = $tmp_array;
 			$this->sitemap_id_map[$tmp_array['id']] = $tmp_array['path'];
+		}
+		unset($tmp_sitemap);
+
+		// logical_path から、親子関係を整理
+		foreach ($this->sitemap_array as $row_number=>$row) {
+			if( !strlen($row['id']) ){
+				continue;
+			}
+			if( array_key_exists('logical_path', $row) ){
+				$breadcrumb_ary = explode('>', $row['logical_path']);
+				$tmp_tree_key = $this->get_page_info($breadcrumb_ary[count($breadcrumb_ary)-1], 'path');
+				if( is_null($tmp_tree_key) ){
+					// 親がいない
+					continue;
+				}
+				if( !array_key_exists($tmp_tree_key, $this->sitemap_page_tree) ){
+					$this->sitemap_page_tree[$tmp_tree_key] = array();
+					$this->sitemap_page_tree[$tmp_tree_key]['children'] = array();
+					$this->sitemap_page_tree[$tmp_tree_key]['children_all'] = array();
+				}
+				array_push($this->sitemap_page_tree[$tmp_tree_key]['children'], $row['id']);
+				array_push($this->sitemap_page_tree[$tmp_tree_key]['children_all'], $row['id']);
+				// $tmp_array['logical_path']
+			}
 		}
 
 		// var_dump($this->sitemap_array);
@@ -367,79 +394,8 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			//  ページキャッシュツリーがすでに作られている場合
 			return $this->sitemap_page_tree[$page_info['path']]['children_all'];
 		}
+		return array();
 
-		$tmp_children_orderby_manual = array();
-		$tmp_children_orderby_auto = array();
-		$tmp_children_orderby_listed_manual = array();
-		$tmp_children_orderby_listed_auto = array();
-
-		// $current_layer = '';
-		// if( strlen( trim($page_info['id']) ) ){
-		// 	$tmp_breadcrumb = explode( '>', $page_info['logical_path'].'>'.$page_info['id'] );
-		// 	foreach( $tmp_breadcrumb as $tmp_path ){
-		// 		if( !strlen($tmp_path) ){continue;}
-		// 		$tmp_page_info = $this->get_page_info( trim($tmp_path) );
-		// 		$current_layer .= '>'.$tmp_page_info['id'];
-		// 	}
-		// }
-		// unset($tmp_breadcrumb,$tmp_path,$tmp_page_info);
-
-		foreach( $this->get_sitemap() as $row ){
-			if( !strlen($row['id']) ){
-				continue;
-			}
-			// if($filter){
-			// 	if( !$row['list_flg'] ){
-			// 		continue;
-			// 	}
-			// }
-
-			// $target_layer = '';
-			$parent_page_id = '';
-			if( strlen( trim($row['id']) ) ){
-				$tmp_breadcrumb = @explode( '>', $row['logical_path'] );
-				$tmp_page_info = $this->get_page_info( trim($tmp_breadcrumb[count($tmp_breadcrumb)-1]) );
-				$parent_page_id = trim($tmp_page_info['id']);
-
-				// foreach( $tmp_breadcrumb as $tmp_path ){
-				// 	if( !strlen($tmp_path) ){continue;}
-				// 	$tmp_page_info = $this->get_page_info( trim($tmp_path) );
-				// 	$target_layer .= '>'.$tmp_page_info['id'];
-				// }
-			}
-			unset($tmp_breadcrumb,$tmp_path,$tmp_page_info);
-
-			if( $page_info['id'] == $parent_page_id ){
-				if(@strlen($row['orderby'])){
-					array_push( $tmp_children_orderby_manual , $row['id'] );
-				}else{
-					array_push( $tmp_children_orderby_auto , $row['id'] );
-				}
-				if( $row['list_flg'] ){
-					if(@strlen($row['orderby'])){
-						array_push( $tmp_children_orderby_listed_manual , $row['id'] );
-					}else{
-						array_push( $tmp_children_orderby_listed_auto , $row['id'] );
-					}
-				}
-			}
-		}
-
-		//  ページキャッシュを作成しなおす
-		usort( $tmp_children_orderby_listed_manual , array( $this , 'usort_sitemap' ) );
-		$this->sitemap_page_tree[$page_info['path']]['children'] = array_merge( $tmp_children_orderby_listed_manual , $tmp_children_orderby_listed_auto );
-		usort( $tmp_children_orderby_manual , array( $this , 'usort_sitemap' ) );
-		$this->sitemap_page_tree[$page_info['path']]['children_all'] = array_merge( $tmp_children_orderby_manual , $tmp_children_orderby_auto );
-
-		//  return value
-		$rtn = null;
-		if($filter){
-			$rtn = $this->sitemap_page_tree[$page_info['path']]['children'];
-		}else{
-			$rtn = $this->sitemap_page_tree[$page_info['path']]['children_all'];
-		}
-
-		return $rtn;
 	}//get_children()
 
 	/**
@@ -483,6 +439,25 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * パンくずの最大の深さを計測
+	 */
+	public function get_max_depth(){
+		if( is_int($this->max_depth) ){
+			return $this->max_depth;
+		}
+
+		$this->max_depth = 0;
+		foreach( $this->get_sitemap() as $page_info ){
+			$tmp_breadcrumb = explode('>',$page_info['logical_path']);
+			if( $this->max_depth < count($tmp_breadcrumb) ){
+				$this->max_depth = count($tmp_breadcrumb);
+			}
+		}
+		$this->max_depth += 3;//ちょっぴり余裕を
+		return $this->max_depth;
 	}
 
 }

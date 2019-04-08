@@ -20,6 +20,8 @@ class csv2xlsx{
 	private $current_row = 1;
 	private $current_col = 'A';
 
+	private $max_depth = null;
+	private $table_definition = null;
 
 	/**
 	 * constructor
@@ -240,20 +242,11 @@ class csv2xlsx{
 	 * パンくずの最大の深さを計測
 	 */
 	private function get_max_depth(){
-		static $max_depth = null;
-		if( is_int($max_depth) ){
-			return $max_depth;
+		if( is_int($this->max_depth) ){
+			return $this->max_depth;
 		}
-
-		$max_depth = 0;
-		foreach( $this->site->get_sitemap() as $page_info ){
-			$tmp_breadcrumb = explode('>',$page_info['logical_path']);
-			if( $max_depth < count($tmp_breadcrumb) ){
-				$max_depth = count($tmp_breadcrumb);
-			}
-		}
-		$max_depth += 3;//ちょっぴり余裕を
-		return $max_depth;
+		$this->max_depth = $this->site->get_max_depth();
+		return $this->max_depth;
 	}
 
 	/**
@@ -431,8 +424,9 @@ class csv2xlsx{
 	 * 表の構造定義を得る
 	 */
 	private function get_table_definition(){
-		static $rtn = null;
-		if(is_array($rtn)){ return $rtn; }
+		if(is_array($this->table_definition)){
+			return $this->table_definition;
+		}
 
 		$rtn = array();
 		$rtn['row_definition'] = 8;
@@ -463,7 +457,8 @@ class csv2xlsx{
 			$rtn['col_define'][$def_row['key']]['col'] = ($current_col++);
 		}
 
-		return $rtn;
+		$this->table_definition = $rtn;
+		return $this->table_definition;
 	}
 
 	/**
