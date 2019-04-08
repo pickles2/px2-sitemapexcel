@@ -117,6 +117,7 @@ class pickles_sitemap_excel{
 			}elseif( $infos['detected_update'] == 'csv2xlsx' ){
 				// CSV がマスターになる場合
 				if( $infos['xlsx_ext'] == 'xlsx' ){
+					// xlsx以外の場合だけ上書きする。
 					// xlsx以外の場合(=xlsmの場合) は、上書きしない。
 					$is_detect_update = true;
 					break;
@@ -156,6 +157,7 @@ class pickles_sitemap_excel{
 				}elseif( $infos['detected_update'] == 'csv2xlsx' ){
 					// CSV がマスターになる場合
 					if( $infos['xlsx_ext'] == 'xlsx' ){
+						// xlsx以外の場合だけ上書きする。
 						// xlsx以外の場合(=xlsmの場合) は、上書きしない。
 						$result = $this->csv2xlsx(
 							$this->realpath_sitemap_dir.$infos['extensions']['csv'],

@@ -97,12 +97,13 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 			foreach ($tmp_sitemap_definition as $defrow) {
 				$tmp_array[$defrow['key']] = $row[$defrow['num']];
 			}
-			if( !preg_match( '/^(?:\/|alias\:|javascript\:|\#|[a-zA-Z0-9]+\:\/\/)/is' , $tmp_array['path'] ) ){
+			if( !preg_match( '/^(?:\/|alias\:|data\:|javascript\:|\#|[a-zA-Z0-9]+\:\/\/)/is' , $tmp_array['path'] ) ){
 				// 不正な形式のチェック
 				continue;
 			}
 			switch( $this->get_path_type( $tmp_array['path'] ) ){
 				case 'full_url':
+				case 'data':
 				case 'javascript':
 				case 'anchor':
 					// 直リンク系のパスをエイリアス扱いにする
@@ -253,6 +254,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 		}
 		switch( $this->get_path_type($path) ){
 			case 'full_url':
+			case 'data':
 			case 'javascript':
 			case 'anchor':
 				break;
@@ -285,6 +287,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 		switch( $this->get_path_type($path) ){
 			case 'full_url':
+			case 'data':
 			case 'javascript':
 			case 'anchor':
 				break;

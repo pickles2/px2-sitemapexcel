@@ -398,6 +398,7 @@ class csv2xlsx{
 		$tmp_path = preg_replace('/^alias\:\#/si','#',$tmp_path);
 		switch( $this->px->get_path_type($tmp_path) ){
 			case 'full_url':
+			case 'data':
 			case 'javascript':
 			case 'anchor':
 				break;

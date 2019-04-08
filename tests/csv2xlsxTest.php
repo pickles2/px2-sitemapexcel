@@ -20,7 +20,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 	}
 
 	/**
-	 * `*.xlsx` to `*.csv` 変換のテスト
+	 * `*.csv` to `*.xlsx` 変換のテスト
 	 */
 	public function testXlsx2CsvConvert(){
 
@@ -47,6 +47,8 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'custom2' );
 		$this->assertEquals( $objSheet->getCell('V9')->getCalculatedValue(), 'home-1' );
 		$this->assertEquals( $objSheet->getCell('W9')->getCalculatedValue(), 'home-2' );
+		$this->assertEquals( $objSheet->getCell('K13')->getCalculatedValue(), 'data:datascheme' );
+		$this->assertEquals( $objSheet->getCell('K14')->getCalculatedValue(), 'javascript:alert(123);' );
 
 		chdir($cd);
 		$px->__destruct();// <- required on Windows

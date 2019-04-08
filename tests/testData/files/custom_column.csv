@@ -3,3 +3,5 @@
 "/category1.html","Category 1","c1-c1","c1-c2"
 "/category2.html","Category 2","c2-c1","c2-c2"
 "/category3.html","Category 3","c3-c1","c3-c2"
+"data:datascheme","Data Scheme","data-1","data-2"
+"javascript:alert(123);","JavaScript Scheme","js-1","js-2"

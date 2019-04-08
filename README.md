@@ -162,6 +162,7 @@ $ chmod -R 777 ./px-files/sitemaps
 ### pickles2/px2-sitemapexcel v2.0.10 (リリース日未定)
 
 - 更新の必要があることを確認してから lock するようになった。
+- CSV -> XLSX の変換時に、 `data` スキーマを扱えるようになった。
 
 ### pickles2/px2-sitemapexcel v2.0.9 (2019年1月11日)
 
