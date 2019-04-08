@@ -454,7 +454,7 @@ class csv2xlsx{
 
 		$sitemap_definition = $this->get_sitemap_definition();
 		foreach($sitemap_definition as $def_row){
-			if($def_row['key'] == 'logical_path'){continue;}
+			// if($def_row['key'] == 'logical_path'){continue;} // v2.0.10 - logical_path の列自体は常に設けることにした。
 
 			$rtn['col_define'][$def_row['key']]['name'] = $def_row['name'];
 			$rtn['col_define'][$def_row['key']]['key'] = $def_row['key'];

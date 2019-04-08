@@ -207,12 +207,12 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$objPHPExcel = \PHPExcel_IOFactory::load( $this->path_sitemap.'sitemap.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
-		$this->assertEquals( $objSheet->getCell('T8')->getCalculatedValue(), 'description' );
-		$this->assertEquals( $objSheet->getCell('V8')->getCalculatedValue(), 'role' );
-		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'proc_type' );
-		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), '**delete_flg' );
-		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'test_custom_col_1' );
-		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'test_custom_col_2' );
+		$this->assertEquals( $objSheet->getCell('U8')->getCalculatedValue(), 'description' );
+		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'role' );
+		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), 'proc_type' );
+		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), '**delete_flg' );
+		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'test_custom_col_1' );
+		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'test_custom_col_2' );
 		$this->assertEquals( $objSheet->getCell('B9')->getCalculatedValue(), 'ホーム' );
 
 		$this->assertEquals( $objSheet->getCell('C34')->getCalculatedValue(), 'ヘルプ' );
