@@ -362,6 +362,7 @@ class xlsx2csv{
 	private function regulize_path($path){
 		switch( $this->px->get_path_type($path) ){
 			case 'full_url':
+			case 'data':
 			case 'javascript':
 			case 'anchor':
 				break;
