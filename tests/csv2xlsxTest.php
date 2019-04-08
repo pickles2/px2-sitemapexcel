@@ -84,6 +84,8 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'custom2' );
 		$this->assertEquals( $objSheet->getCell('Z9')->getCalculatedValue(), 'home-1' );
 		$this->assertEquals( $objSheet->getCell('AA9')->getCalculatedValue(), 'home-2' );
+		$this->assertEquals( $objSheet->getCell('B12')->getCalculatedValue(), 'Category 1-2' );
+		$this->assertEquals( $objSheet->getCell('N14')->getCalculatedValue(), '/category2.html' );
 		$this->assertEquals( $objSheet->getCell('A17')->getCalculatedValue(), 'EndOfData' );
 
 		chdir($cd);
@@ -91,6 +93,42 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		unset($px);
 
 	}//testHasNoParentConvert()
+
+	/**
+	 * トップページがないCSVの変換テスト
+	 */
+	public function testHasNoToppageConvert(){
+
+		$cd = realpath('.');
+		chdir(__DIR__.'/testData/standard/');
+
+		$px = new picklesFramework2\px('./px-files/');
+		$toppage_info = $px->site()->get_page_info('');
+		// var_dump($toppage_info);
+		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
+		// $this->assertEquals( $toppage_info['path'], '/index.html' );
+
+		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
+
+        $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
+        $px2_sitemapexcel->csv2xlsx( __DIR__.'/testData/files/has_no_toppage.csv', __DIR__.'/testData/files/dist/has_no_toppage.xlsx' );
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' ) );
+
+		// 値をチェック
+		$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' );
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objSheet = $objPHPExcel->getActiveSheet();
+		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom1' );
+		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'custom2' );
+		$this->assertEquals( $objSheet->getCell('B11')->getCalculatedValue(), 'Category 1-2' );
+		$this->assertEquals( $objSheet->getCell('N13')->getCalculatedValue(), '/category2.html' );
+		$this->assertEquals( $objSheet->getCell('A16')->getCalculatedValue(), 'EndOfData' );
+
+		chdir($cd);
+		$px->__destruct();// <- required on Windows
+		unset($px);
+
+	}//testHasNoToppageConvert()
 
 
 

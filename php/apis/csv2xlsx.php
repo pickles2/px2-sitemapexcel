@@ -512,7 +512,7 @@ class csv2xlsx{
 			$rtn['**delete_flg']['key'] = '**delete_flg';
 		}
 
-		$pageInfo = $this->site->get_page_info('');
+		$pageInfo = current($this->site->get_sitemap());
 		foreach( $rtn as $key=>$val ){
 			unset($pageInfo[$key]);
 		}
