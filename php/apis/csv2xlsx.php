@@ -196,7 +196,13 @@ class csv2xlsx{
 
 		// データ行を作成する
 		// var_dump( $this->site->get_sitemap() );
-		$this->mk_xlsx_body($objSheet);
+		$this->scan_sitemap_tree_recursive($objSheet);
+
+		// 親ページが見つからなかったページを追記
+		foreach( $this->site->get_sitemap() as $page_info ){
+			$this->mk_xlsx_body($objSheet, $page_info, false);
+			$this->current_row ++;
+		}
 
 		// データ行の終了を宣言
 		$this->current_row ++;
@@ -252,7 +258,7 @@ class csv2xlsx{
 	/**
 	 * サイトマップをスキャンして、xlsxのデータ部分を作成する
 	 */
-	private function mk_xlsx_body($objSheet, $page_id = ''){
+	private function scan_sitemap_tree_recursive($objSheet, $page_id = ''){
 		if(!is_string($page_id)){return false;}
 		$sitemap_definition = $this->get_sitemap_definition();
 		$table_definition = $this->get_table_definition();
@@ -265,6 +271,38 @@ class csv2xlsx{
 		// var_dump($page_info);
 
 		set_time_limit(30);
+
+		$this->mk_xlsx_body($objSheet, $page_info, true);
+		$this->current_row ++;
+
+		$children = $this->site->get_children($page_id, array('filter'=>false));
+		// var_dump($children);
+		foreach( $children as $child ){
+			$child_page_info = $this->site->get_page_info($child);
+			if(!strlen($child_page_info['id'])){
+				$this->px->error('ページIDがセットされていません。');
+				continue;
+			}
+			$this->scan_sitemap_tree_recursive($objSheet, $child_page_info['id']);
+		}
+
+		// 転記し終わったページに完了マークをつける
+		$this->site->done($page_id);
+
+		return true;
+	}// scan_sitemap_tree_recursive()
+
+	/**
+	 * サイトマップをスキャンして、xlsxのデータ部分を作成する
+	 */
+	private function mk_xlsx_body($objSheet, $page_info, $is_valid_parent = false){
+		if(!is_array($page_info)){
+			return false;
+		}
+		set_time_limit(30);
+
+		$sitemap_definition = $this->get_sitemap_definition();
+		$table_definition = $this->get_table_definition();
 
 		foreach( $table_definition['col_define'] as $def_row ){
 			$cellName = ($def_row['col']).$this->current_row;
@@ -307,6 +345,9 @@ class csv2xlsx{
 
 					if( !strlen($page_info['id']) ){
 						// トップページには細工をしない
+					}elseif( !$is_valid_parent ){
+						// サイトマップツリーが正常につながっていない場合
+						// トップページと同じ列に並べる
 					}elseif( !strlen($page_info['logical_path']) ){
 						// トップページ以外でパンくず欄が空白のものは、
 						// 第2階層
@@ -358,6 +399,14 @@ class csv2xlsx{
 					// 罫線の一括指定
 					$objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 					break;
+				case 'logical_path':
+					if( !$is_valid_parent ){
+						// サイトマップツリーが正常につながっていない場合だけ記述する
+						$objSheet->getCell($cellName)->setValue($cellValue);
+					}
+					// 罫線の一括指定
+					$objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
+					break;
 				default:
 					$objSheet->getCell($cellName)->setValue($cellValue);
 
@@ -366,18 +415,7 @@ class csv2xlsx{
 					break;
 			}
 		}
-		$this->current_row ++;
 
-		$children = $this->site->get_children($page_id, array('filter'=>false));
-		// var_dump($children);
-		foreach( $children as $child ){
-			$page_info = $this->site->get_page_info($child);
-			if(!strlen($page_info['id'])){
-				$this->px->error('ページIDがセットされていません。');
-				continue;
-			}
-			$this->mk_xlsx_body($objSheet, $page_info['id']);
-		}
 		return true;
 	}// mk_xlsx_body()
 

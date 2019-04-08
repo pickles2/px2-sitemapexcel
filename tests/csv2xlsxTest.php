@@ -84,7 +84,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'custom2' );
 		$this->assertEquals( $objSheet->getCell('Z9')->getCalculatedValue(), 'home-1' );
 		$this->assertEquals( $objSheet->getCell('AA9')->getCalculatedValue(), 'home-2' );
-		$this->assertEquals( $objSheet->getCell('A14')->getCalculatedValue(), 'EndOfData' );
+		$this->assertEquals( $objSheet->getCell('A17')->getCalculatedValue(), 'EndOfData' );
 
 		chdir($cd);
 		$px->__destruct();// <- required on Windows
