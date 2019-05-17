@@ -120,8 +120,6 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry['alias33://pickles2.pxt.jp/abc.html']['path'], 'alias33://pickles2.pxt.jp/abc.html' );
 
 		// セルフォーマットの処理を確認
-		// var_dump($sitemapAry['/index.html']);
-		// var_dump($sitemapAry['/sample_pages/index.html']);
 		$this->assertEquals( $sitemapAry['/index.html']['cell_formats'], '2000/06/12' );
 		$this->assertEquals( $sitemapAry['/sample_pages/index.html']['cell_formats'], '2001/09/08 1:50' );
 		$this->assertEquals( $sitemapAry['/sample_pages/fess/index.html']['cell_formats'], '1112001年09月09日');
@@ -137,6 +135,16 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry['/sample_pages/page1/2.html']['cell_formats'], '955-9900' );
 		$this->assertEquals( $sitemapAry['/sample_pages/page1/3.html']['cell_formats'], '955-9900' );
 		$this->assertEquals( $sitemapAry['/sample_pages/page2/index.html']['cell_formats'], '2001/09/18 1:50' );
+		$this->assertEquals( $sitemapAry['/sample_pages/page2/1.html']['cell_formats'], '12345678' );
+		$this->assertEquals( $sitemapAry["/sample_pages/page2/2.html"]['cell_formats'], "(45623.00000)" );
+		$this->assertEquals( $sitemapAry["alias16:/sample_pages/page3/1.html"]['cell_formats'], "1.00000" );
+		$this->assertEquals( $sitemapAry["/sample_pages/page3/1.html"]['cell_formats'], "1.00000" );
+		$this->assertEquals( $sitemapAry["/sample_pages/page3/2.html"]['cell_formats'], "2.19998" );
+		$this->assertEquals( $sitemapAry["alias19:/sample_pages/page4/index.html"]['cell_formats'], "123456123412344995840.00000" );
+		$this->assertEquals( $sitemapAry["/sample_pages/page4/index.html"]['cell_formats'], "123456123412344995840.00000" );
+		$this->assertEquals( $sitemapAry["alias20:/sample_pages/page5/index.html"]['cell_formats'], "¥10,000" );
+		$this->assertEquals( $sitemapAry["/sample_pages/page5/index.html"]['cell_formats'], "¥10,000" );
+		$this->assertEquals( $sitemapAry["/sample_pages/page5/5-1-1-1-2.html"]['cell_formats'], "($10,000.00)" );
 
 
 		// 後始末
