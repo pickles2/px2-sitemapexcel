@@ -149,6 +149,20 @@ class xlsx2csv{
 							$tmp_page_info[$row['key']] = $tmp_cell_value;
 						}
 					}
+					switch($cell_format){
+						case 'General':
+						case '@':
+							// 標準 `General` と 文字列 `@` は、
+							// 前後に空白文字を表現したい場合がありそうなので、そのままにする。
+							break;
+						default:
+							// その他のフォーマットでは、
+							// 前後に空白文字を表現したい場合はなさそうなので、trim() する。
+							if( is_string($tmp_page_info[$row['key']]) ){
+								$tmp_page_info[$row['key']] = trim($tmp_page_info[$row['key']]);
+							}
+							break;
+					}
 					unset($cell_format, $tmp_cell_value);
 				}else{
 					$tmp_page_info[$row['key']] = '';

@@ -159,6 +159,10 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### pickles2/px2-sitemapexcel v2.0.11 (リリース日未定)
+
+- 標準型 と 文字列型 以外のセルフォーマットのときに、 前後の空白文字を削除するようになった。
+
 ### pickles2/px2-sitemapexcel v2.0.10 (2019年4月19日)
 
 - 更新の必要があることを確認してから lock するようになった。

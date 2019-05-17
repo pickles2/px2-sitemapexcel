@@ -142,9 +142,10 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals( $sitemapAry["/sample_pages/page3/2.html"]['cell_formats'], "2.19998" );
 		$this->assertEquals( $sitemapAry["alias19:/sample_pages/page4/index.html"]['cell_formats'], "123456123412344995840.00000" );
 		$this->assertEquals( $sitemapAry["/sample_pages/page4/index.html"]['cell_formats'], "123456123412344995840.00000" );
-		$this->assertEquals( $sitemapAry["alias20:/sample_pages/page5/index.html"]['cell_formats'], "¥10,000" );
+		$this->assertEquals( $sitemapAry["alias21:/sample_pages/page5/index.html"]['cell_formats'], "¥10,000" );
 		$this->assertEquals( $sitemapAry["/sample_pages/page5/index.html"]['cell_formats'], "¥10,000" );
 		$this->assertEquals( $sitemapAry["/sample_pages/page5/5-1-1-1-2.html"]['cell_formats'], "($10,000.00)" );
+		$this->assertEquals( $sitemapAry["/sample_pages/help/index.html"]['cell_formats'], "    a string    " );
 
 
 		// 後始末
