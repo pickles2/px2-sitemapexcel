@@ -213,7 +213,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/sitemap.array' ) );
 
 		// 値をチェック
-		$objPHPExcel = \PHPExcel_IOFactory::load( $this->path_sitemap.'sitemap.xlsx' );
+		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( $this->path_sitemap.'sitemap.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
 		$this->assertEquals( $objSheet->getCell('U8')->getCalculatedValue(), 'description' );
