@@ -219,7 +219,7 @@ class csv2xlsx{
 
 		$objPHPExcel->setActiveSheetIndex(0);//メインのセルを選択しなおし。
 
-		$phpExcelHelper->save($objPHPExcel, $path_xlsx, 'Excel2007');
+		$phpExcelHelper->save($objPHPExcel, $path_xlsx, 'Xlsx');
 
 		clearstatcache();
 
