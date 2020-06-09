@@ -71,13 +71,13 @@ class csv2xlsx{
 		$objSheet = $objPHPExcel->getActiveSheet();
 
 		// フォント
-		$objSheet->getDefaultStyle()->getFont()->setName('メイリオ');
+		$objSheet->getParent()->getDefaultStyle()->getFont()->setName('メイリオ');
 
 		// フォントサイズ
-		$objSheet->getDefaultStyle()->getFont()->setSize(12);
+		$objSheet->getParent()->getDefaultStyle()->getFont()->setSize(12);
 
 		// 背景色指定(準備)
-		$objSheet->getDefaultStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+		$objSheet->getParent()->getDefaultStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
 
 		// ウィンドウ枠を固定
 		$objSheet->freezePane('B'.$table_definition['row_data_start']);

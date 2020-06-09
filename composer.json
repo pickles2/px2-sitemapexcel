@@ -10,10 +10,19 @@
         }
     ],
     "scripts":{
+        "start": [
+            "php -S 127.0.0.1:8088 -t ./"
+        ],
+        "preview": [
+            "open http://127.0.0.1:8088/tests/testdata/standard/.px_execute.php"
+        ],
         "test": [
             "php ./vendor/phpunit/phpunit/phpunit"
         ]
     } ,
+    "config": {
+        "process-timeout": 0
+    },
     "repositories": [
     ],
     "require": {

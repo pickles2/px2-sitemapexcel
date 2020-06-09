@@ -35,7 +35,7 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 	/**
 	 * 保存する
 	 */
-	public function save( $objPHPExcel, $path, $type = 'Excel2007' ){
+	public function save( $objPHPExcel, $path, $type = 'Xlsx' ){
 		$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $type);
 		return $objWriter->save($path);
 	}
