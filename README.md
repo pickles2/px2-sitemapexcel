@@ -159,6 +159,11 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### pickles2/px2-sitemapexcel v2.1.0 (リリース日未定)
+
+- Excelファイルの解析ライブラリを PHPExcel から PhpSpreadsheet へ移行した。
+- PhpSpreadsheet に合わせて、システム要件を更新。 PHP 7.1.x 以下が対象外となり、いくつかのPHP拡張が要件に追加された。
+
 ### pickles2/px2-sitemapexcel v2.0.11 (2019年5月21日)
 
 - 標準型 と 文字列型 以外のセルフォーマットのときに、 前後の空白文字を削除するようになった。
