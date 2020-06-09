@@ -77,17 +77,17 @@ class csv2xlsx{
 		$objSheet->getDefaultStyle()->getFont()->setSize(12);
 
 		// 背景色指定(準備)
-		$objSheet->getDefaultStyle()->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID);
+		$objSheet->getDefaultStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
 
 		// ウィンドウ枠を固定
 		$objSheet->freezePane('B'.$table_definition['row_data_start']);
 
 		$this->default_cell_style_boarder = array(// 罫線の一括指定
 			'borders' => array(
-				'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-				'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-				'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-				'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN)
+				'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+				'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+				'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+				'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
 			)
 		);
 
@@ -325,18 +325,18 @@ class csv2xlsx{
 					for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
 						$tmp_border_style = array(
 							'borders' => array(
-								'top'     => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-								'bottom'  => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-								'left'    => array('style' => \PHPExcel_Style_Border::BORDER_THIN),
-								'right'   => array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
+								'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+								'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+								'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+								'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
 							)
 						);
 						if($i != 0){
-							$tmp_border_style['borders']['left']['style'] = \PHPExcel_Style_Border::BORDER_THIN;
+							$tmp_border_style['borders']['left']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
 							$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');
 						}
 						if($i == $this->get_max_depth()){
-							$tmp_border_style['borders']['right']['style'] = \PHPExcel_Style_Border::BORDER_THIN;
+							$tmp_border_style['borders']['right']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
 						}
 						$objSheet->getStyle($tmp_col.$this->current_row)->applyFromArray( $tmp_border_style );
 						$tmp_col ++;

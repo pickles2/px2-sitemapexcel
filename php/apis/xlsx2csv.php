@@ -144,7 +144,7 @@ class xlsx2csv{
 					// ユーザーが設定したセルフォーマットに従って文字列を復元する
 					$cell_format = $objSheet->getStyle($tmp_col_name.$xlsx_row)->getNumberFormat()->getFormatCode();
 					if( $cell_format !== 'General' ){
-						$tmp_cell_value = \PHPExcel_Style_NumberFormat::toFormattedString( $tmp_page_info[$row['key']], $cell_format );
+						$tmp_cell_value = \PhpOffice\PhpSpreadsheet\Style\NumberFormat::toFormattedString( $tmp_page_info[$row['key']], $cell_format, null );
 						if( !is_null($tmp_cell_value) ){
 							$tmp_page_info[$row['key']] = $tmp_cell_value;
 						}
@@ -402,7 +402,7 @@ class xlsx2csv{
 
 		$rtn['tbl_highest_row'] = $objSheet->getHighestRow(); // e.g. 10
 		$rtn['tbl_highest_col_name'] = $objSheet->getHighestColumn(); // e.g 'F'
-		$rtn['tbl_highest_col'] = \PHPExcel_Cell::columnIndexFromString( $rtn['tbl_highest_col_name'] ); // e.g. 5
+		$rtn['tbl_highest_col'] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString( $rtn['tbl_highest_col_name'] ); // e.g. 5
 
 		$rtn['row_definition'] = @intval($rtn['row_definition']);
 		$rtn['row_data_start'] = @intval($rtn['row_data_start']);

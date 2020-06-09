@@ -16,7 +16,7 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 	 * 新規ファイルを作成
 	 */
 	public function create(){
-		$objPHPExcel = new \PHPExcel();
+		$objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 		return $objPHPExcel;
 	}
 
@@ -28,7 +28,7 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 		if(!is_file($path)){ return false; }
 		if(!is_readable($path)){ return false; }
 
-		$objPHPExcel = \PHPExcel_IOFactory::load($path);
+		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load($path);
 		return $objPHPExcel;
 	}
 
