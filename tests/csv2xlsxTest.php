@@ -40,7 +40,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/custom_column.xlsx' ) );
 
 		// 値をチェック
-		$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/custom_column.xlsx' );
+		@$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/custom_column.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
 		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'custom1' );
@@ -77,7 +77,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/has_no_parent.xlsx' ) );
 
 		// 値をチェック
-		$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/has_no_parent.xlsx' );
+		@$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/has_no_parent.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
 		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom1' );
@@ -115,7 +115,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' ) );
 
 		// 値をチェック
-		$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' );
+		@$objPHPExcel = \PHPExcel_IOFactory::load( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
 		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom1' );
