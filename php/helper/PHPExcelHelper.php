@@ -28,7 +28,7 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 		if(!is_file($path)){ return false; }
 		if(!is_readable($path)){ return false; }
 
-		$objPHPExcel = \PHPExcel_IOFactory::load($path);
+		$objPHPExcel = @\PHPExcel_IOFactory::load($path);
 		return $objPHPExcel;
 	}
 
@@ -36,7 +36,7 @@ class pxplugin_sitemapExcel_helper_PHPExcelHelper{
 	 * 保存する
 	 */
 	public function save( $objPHPExcel, $path, $type = 'Excel2007' ){
-		$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, $type);
+		$objWriter = @\PHPExcel_IOFactory::createWriter($objPHPExcel, $type);
 		return $objWriter->save($path);
 	}
 
