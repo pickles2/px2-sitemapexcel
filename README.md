@@ -159,6 +159,10 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### pickles2/px2-sitemapexcel v2.0.12 (2020年6月21日)
+
+- PHP 7.4 系で起きる PHPExcel の Warning を非表示にした。
+
 ### pickles2/px2-sitemapexcel v2.0.11 (2019年5月21日)
 
 - 標準型 と 文字列型 以外のセルフォーマットのときに、 前後の空白文字を削除するようになった。
