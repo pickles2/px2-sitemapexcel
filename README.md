@@ -64,19 +64,8 @@ Excel ファイルの操作には、 [phpoffice/phpexcel](https://github.com/PHP
 
 require の項目に、"pickles2/px2-sitemapexcel" を追加します。
 
-```json
-{
-	"require": {
-		"pickles2/px2-sitemapexcel": "2.0.*"
-	},
-}
 ```
-
-
-追加したら、`composer update` を実行して変更を反映することを忘れずに。
-
-```bash
-$ composer update
+$ composer require pickles2/px2-sitemapexcel;
 ```
 
 
