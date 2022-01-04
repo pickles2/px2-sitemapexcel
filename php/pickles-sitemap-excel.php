@@ -45,7 +45,7 @@ class pickles_sitemap_excel{
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.1.0';
+		return '2.2.0-alpha.1';
 	}
 
 	/**
@@ -60,7 +60,7 @@ class pickles_sitemap_excel{
 		// object から 連想配列に変換
 		$this->plugin_conf = json_decode( json_encode($this->plugin_conf), true );
 		if( !is_array($this->plugin_conf) ){ $this->plugin_conf = array(); }
-		if( !@strlen($this->plugin_conf['master_format']) ){ $this->plugin_conf['master_format'] = 'timestamp'; }
+		if( !@strlen(''.$this->plugin_conf['master_format']) ){ $this->plugin_conf['master_format'] = 'timestamp'; }
 		if( !@is_array($this->plugin_conf['files_master_format']) ){ $this->plugin_conf['files_master_format'] = array(); }
 		// var_dump($this->plugin_conf);
 
@@ -234,7 +234,7 @@ class pickles_sitemap_excel{
 	 */
 	private function get_master_format_of( $extless_basename ){
 		$rtn = $this->plugin_conf['master_format'];
-		if( strlen(@$this->plugin_conf['files_master_format'][$extless_basename]) ){
+		if( strlen(''.@$this->plugin_conf['files_master_format'][$extless_basename]) ){
 			$rtn = $this->plugin_conf['files_master_format'][$extless_basename];
 		}
 		$rtn = strtolower($rtn);

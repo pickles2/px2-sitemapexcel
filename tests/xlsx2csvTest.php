@@ -39,7 +39,7 @@ class xlsx2csvTest extends PHPUnit\Framework\TestCase{
 	/**
 	 * teardown
 	 */
-	public function teardown(){
+	public function tearDown() : void{
 		chdir($this->cd);
 		$this->px->__destruct();// <- required on Windows
 		unset($this->px);
