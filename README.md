@@ -148,6 +148,11 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### pickles2/px2-sitemapexcel v2.2.0 (リリース日未定)
+
+- サポートするPHPのバージョンを `>=7.3.0` に変更。
+- PHP 8.1 に対応した。
+
 ### pickles2/px2-sitemapexcel v2.1.0 (2020年6月21日)
 
 - Excelファイルの解析ライブラリを PHPExcel から PhpSpreadsheet へ移行した。

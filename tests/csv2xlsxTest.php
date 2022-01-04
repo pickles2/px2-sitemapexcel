@@ -3,7 +3,7 @@
  * test for pickles2\px2-sitemapexcel
  */
 
-class csv2xlsxTest extends PHPUnit_Framework_TestCase{
+class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 
 	/**
 	 * ファイルシステムユーティリティ
@@ -13,7 +13,7 @@ class csv2xlsxTest extends PHPUnit_Framework_TestCase{
 	/**
 	 * setup
 	 */
-	public function setup(){
+	public function setup() : void{
 		$this->fs = new \tomk79\filesystem();
 		mb_internal_encoding('utf-8');
 		@date_default_timezone_set('Asia/Tokyo');

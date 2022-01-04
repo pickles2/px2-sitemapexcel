@@ -3,7 +3,7 @@
  * test for pickles2\px2-sitemapexcel
  */
 
-class xlsx2csvTest extends PHPUnit_Framework_TestCase{
+class xlsx2csvTest extends PHPUnit\Framework\TestCase{
 
 	/**
 	 * Current Directory
@@ -23,7 +23,7 @@ class xlsx2csvTest extends PHPUnit_Framework_TestCase{
 	/**
 	 * setup
 	 */
-	public function setup(){
+	public function setup() : void{
 		mb_internal_encoding('utf-8');
 		@date_default_timezone_set('Asia/Tokyo');
 		$this->fs = new \tomk79\filesystem();

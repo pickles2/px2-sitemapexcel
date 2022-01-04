@@ -26,13 +26,13 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "tomk79/filesystem": "^1.0",
         "phpoffice/phpspreadsheet": "^1.13"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.0" ,
-        "pickles2/px-fw-2.x": "^2.0"
+        "phpunit/phpunit": "~9.5" ,
+        "pickles2/px-fw-2.x": "^2.1"
     },
     "autoload": {
         "files": [

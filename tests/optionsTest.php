@@ -3,7 +3,7 @@
  * test for pickles2\px2-sitemapexcel
  */
 
-class optionsTest extends PHPUnit_Framework_TestCase{
+class optionsTest extends PHPUnit\Framework\TestCase{
 
 	/**
 	 * サイトマップディレクトリのパス
@@ -23,7 +23,7 @@ class optionsTest extends PHPUnit_Framework_TestCase{
 	/**
 	 * setup
 	 */
-	public function setup(){
+	public function setup() : void{
 		$this->test_timestamp = @mktime(0, 0, 0, 1, 1, 2000);
 		$this->path_sitemap = __DIR__.'/testData/standard/px-files/sitemaps/';
 		$this->fs = new \tomk79\filesystem();
