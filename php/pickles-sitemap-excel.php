@@ -45,7 +45,7 @@ class pickles_sitemap_excel{
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.2.0-alpha.1';
+		return '2.2.0';
 	}
 
 	/**
