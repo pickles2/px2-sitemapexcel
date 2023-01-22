@@ -491,7 +491,7 @@ class csv2xlsx{
 			$rtn['col_define'][$def_row['key']]['name'] = $def_row['name'];
 			$rtn['col_define'][$def_row['key']]['key'] = $def_row['key'];
 
-			if(strlen(@$rtn['col_define'][$def_row['key']]['col'])){continue;}
+			if(strlen($rtn['col_define'][$def_row['key']]['col'] ?? '')){continue;}
 			$rtn['col_define'][$def_row['key']]['col'] = ($current_col++);
 		}
 

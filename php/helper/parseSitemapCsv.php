@@ -118,7 +118,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 					$tmp_array['path'] = preg_replace( '/\/((?:\?|\#).*)?$/si' , '/'.$this->px->get_directory_index_primary().'$1' , $tmp_array['path'] );
 					break;
 			}
-			if( !strlen( $tmp_array['id'] ) ){
+			if( !strlen( $tmp_array['id'] ?? '' ) ){
 				//ページID文字列を自動生成
 				$tmp_id = ':auto_page_id.'.($num_auto_pid);
 				$tmp_array['id'] = $tmp_id;
@@ -170,7 +170,7 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 				unset($tmp_path_original);
 			}
 
-			if( !strlen( $tmp_array['content'] ) ){
+			if( !strlen( $tmp_array['content'] ?? '' ) ){
 				$tmp_array['content'] = $tmp_array['path'];
 				$tmp_array['content'] = preg_replace('/(?:\?|\#).*$/s','',$tmp_array['content']);
 				$tmp_array['content'] = preg_replace('/\/$/s','/'.$this->px->get_directory_index_primary(), $tmp_array['content']);

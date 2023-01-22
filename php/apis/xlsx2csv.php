@@ -137,8 +137,8 @@ class xlsx2csv{
 			$page_info = array();
 			$tmp_page_info = array();
 			foreach($sitemap_definition as $key=>$row){
-				$tmp_col_name = @$table_definition['col_define'][$row['key']]['col'];
-				if(strlen($tmp_col_name)){
+				$tmp_col_name = $table_definition['col_define'][$row['key']]['col'] ?? null;
+				if(strlen($tmp_col_name ?? '')){
 					$tmp_page_info[$row['key']] = $objSheet->getCell($tmp_col_name.$xlsx_row)->getCalculatedValue();
 
 					// ユーザーが設定したセルフォーマットに従って文字列を復元する
@@ -183,10 +183,10 @@ class xlsx2csv{
 			$alias_title_list = array();
 			while( @strcmp( strtoupper($col_title_col) , strtoupper($col_title['end']) ) < 0 ){
 					// ↑ $col_title['end'] には、titleの終端の右の列の名前が入っている。 よって `strcmp()` の結果は最大で `-1` となる。
-				$tmp_page_info['title'] .= trim( $objSheet->getCell($col_title_col.$xlsx_row)->getCalculatedValue() );
+				$tmp_page_info['title'] .= trim( $objSheet->getCell($col_title_col.$xlsx_row)->getCalculatedValue() ?? '' );
 				if(strlen($tmp_page_info['title'])){
 					$col_title_col ++;
-					while( @strcmp( strtoupper($col_title_col) , strtoupper($col_title['end']) ) < 0 && strlen( $tmp_alias_title = trim( $objSheet->getCell(($col_title_col).$xlsx_row)->getCalculatedValue() ) ) ){
+					while( strcmp( strtoupper($col_title_col ?? '') , strtoupper($col_title['end'] ?? '') ) < 0 && strlen( $tmp_alias_title = trim( $objSheet->getCell(($col_title_col).$xlsx_row)->getCalculatedValue() ?? '' ) ) ){
 						array_push( $alias_title_list, $tmp_alias_title );
 						$col_title_col ++;
 					}
@@ -221,7 +221,7 @@ class xlsx2csv{
 
 			// --------------------
 			// 省略されたIDを自動的に付与
-			if(!strlen($tmp_page_info['id'])){
+			if(!strlen($tmp_page_info['id'] ?? '')){
 				if( $path_toppage != $tmp_page_info['path'] ){
 					// トップページは空白でなければならない。
 					if( preg_match( '/^alias\\:/', $tmp_page_info['path'] ) ){
@@ -350,7 +350,7 @@ class xlsx2csv{
 			),
 			FILE_APPEND|LOCK_EX
 		);
-		return $res;
+		return;
 	}
 
 	/**
@@ -384,7 +384,7 @@ class xlsx2csv{
 				$parsed_url = parse_url($path);
 				$path_path = preg_replace( '/(?:\?|\#).*$/', '', $path);
 				$path_path = preg_replace( '/\/$/s', '/'.$this->px->get_directory_index_primary(), $path_path);
-				$path = $path_path.(strlen(@$parsed_url['query'])?'?'.@$parsed_url['query']:'').(strlen(@$parsed_url['fragment'])?'#'.@$parsed_url['fragment']:'');
+				$path = $path_path.(strlen($parsed_url['query'] ?? '')?'?'.($parsed_url['query'] ?? ''):'').(strlen($parsed_url['fragment'] ?? '')?'#'.($parsed_url['fragment'] ?? ''):'');
 				break;
 		}
 		return $path;
@@ -426,7 +426,7 @@ class xlsx2csv{
 		$skip_count = 0;
 		while(1){
 			$def_key = $objSheet->getCell($col.$rtn['row_definition'])->getCalculatedValue();
-			if(!strlen($def_key)){
+			if(!strlen($def_key ?? '')){
 				$skip_count ++;
 				$col ++;
 				if( $skip_count > $rtn['skip_empty_col'] ){
