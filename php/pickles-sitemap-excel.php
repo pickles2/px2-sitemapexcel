@@ -59,10 +59,15 @@ class pickles_sitemap_excel{
 
 		// object から 連想配列に変換
 		$this->plugin_conf = json_decode( json_encode($this->plugin_conf), true );
-		if( !is_array($this->plugin_conf) ){ $this->plugin_conf = array(); }
-		if( !@strlen(''.$this->plugin_conf['master_format']) ){ $this->plugin_conf['master_format'] = 'timestamp'; }
-		if( !@is_array($this->plugin_conf['files_master_format']) ){ $this->plugin_conf['files_master_format'] = array(); }
-		// var_dump($this->plugin_conf);
+		if( !is_array($this->plugin_conf) ){
+			$this->plugin_conf = array();
+		}
+		if( !strlen($this->plugin_conf['master_format'] ?? '') ){
+			$this->plugin_conf['master_format'] = 'timestamp';
+		}
+		if( !is_array($this->plugin_conf['files_master_format'] ?? null) ){
+			$this->plugin_conf['files_master_format'] = array();
+		}
 
 		$this->realpath_sitemap_dir = $this->px->get_path_homedir().'sitemaps/';
 		$this->locker = new lock($this->px, $this);
@@ -234,7 +239,7 @@ class pickles_sitemap_excel{
 	 */
 	private function get_master_format_of( $extless_basename ){
 		$rtn = $this->plugin_conf['master_format'];
-		if( strlen(''.@$this->plugin_conf['files_master_format'][$extless_basename]) ){
+		if( strlen($this->plugin_conf['files_master_format'][$extless_basename] ?? '') ){
 			$rtn = $this->plugin_conf['files_master_format'][$extless_basename];
 		}
 		$rtn = strtolower($rtn);
@@ -252,7 +257,7 @@ class pickles_sitemap_excel{
 	 * @return boolean 実行結果
 	 */
 	public function xlsx2csv($path_xlsx, $path_csv){
-		$result = @(new xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
+		$result = (new xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
 		return $result;
 	}
 
@@ -267,7 +272,7 @@ class pickles_sitemap_excel{
 	 * @return boolean 実行結果
 	 */
 	public function csv2xlsx($path_csv, $path_xlsx){
-		$result = @(new csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
+		$result = (new csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
 		return $result;
 	}
 
