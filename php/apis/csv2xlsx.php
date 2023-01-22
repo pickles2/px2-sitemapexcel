@@ -518,7 +518,9 @@ class csv2xlsx{
 				unset($pageInfo[$key]);
 			}
 		}
-		unset($pageInfo['**delete_flg']);
+		if( isset($pageInfo['**delete_flg']) ){
+			unset($pageInfo['**delete_flg']);
+		}
 		if( is_array($pageInfo) ){
 			foreach( array_keys($pageInfo) as $key ){
 				$rtn[$key]['key'] = $key;
