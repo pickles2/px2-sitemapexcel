@@ -514,7 +514,9 @@ class csv2xlsx{
 
 		$pageInfo = current($this->site->get_sitemap());
 		foreach( $rtn as $key=>$val ){
-			unset($pageInfo[$key]);
+			if( isset($pageInfo[$key]) ){
+				unset($pageInfo[$key]);
+			}
 		}
 		unset($pageInfo['**delete_flg']);
 		if( is_array($pageInfo) ){
