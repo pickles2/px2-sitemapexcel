@@ -8,7 +8,7 @@ class optionsTest extends PHPUnit\Framework\TestCase{
 	/**
 	 * サイトマップディレクトリのパス
 	 */
-	private $path_sitemaps;
+	private $path_sitemap;
 
 	/**
 	 * テスト用のファイル更新日タイムスタンプ
