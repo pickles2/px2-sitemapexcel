@@ -386,11 +386,11 @@ class pxplugin_sitemapExcel_helper_parseSitemapCsv{
 
 		$page_info = $this->get_page_info( $path );
 
-		if( $filter && is_array( @$this->sitemap_page_tree[$page_info['path']]['children'] ) ){
+		if( $filter && is_array( $this->sitemap_page_tree[$page_info['path']]['children'] ?? null ) ){
 			//  ページキャッシュツリーがすでに作られている場合
 			return $this->sitemap_page_tree[$page_info['path']]['children'];
 		}
-		if( !$filter && is_array( @$this->sitemap_page_tree[$page_info['path']]['children_all'] ) ){
+		if( !$filter && is_array( $this->sitemap_page_tree[$page_info['path']]['children_all'] ?? null ) ){
 			//  ページキャッシュツリーがすでに作られている場合
 			return $this->sitemap_page_tree[$page_info['path']]['children_all'];
 		}

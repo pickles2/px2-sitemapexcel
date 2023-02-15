@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * PX Plugin "sitemapExcel" import
  */
-class xlsx2csv{
+class xlsx2csv {
 
 	/** Picklesオブジェクト */
 	private $px;
@@ -38,6 +38,7 @@ class xlsx2csv{
 	private function get_realpath_xlsx(){
 		return $this->path_xlsx;
 	}
+
 	/**
 	 * 出力先CSVのパスを取得
 	 */
@@ -198,13 +199,13 @@ class xlsx2csv{
 			unset($col_title_col);
 			unset($tmp_alias_title);
 
-			if(!@strlen( $tmp_page_info['path'] )){
-				if(!@strlen( $tmp_page_info['title'] )){
+			if( !strlen( $tmp_page_info['path'] ?? '' ) ){
+				if( !strlen( $tmp_page_info['title'] ?? '' ) ){
 					// pathもtitleも空白なら終わったものと思う。
 					// 	→スキップする に変更
 					continue;
 				}
-				$tmp_page_info['path'] = 'alias:/_tbd.html';//pathがなくてもtitleがあれば、仮の値を入れて通す。
+				$tmp_page_info['path'] = 'alias:/_tbd.html'; // pathがなくてもtitleがあれば、仮の値を入れて通す。
 			}
 
 			// --------------------
@@ -256,7 +257,7 @@ class xlsx2csv{
 					$tmp_breadcrumb[$i] = $last_breadcrumb[$i];
 				}
 			}
-			if( @strlen($tmp_page_info['logical_path']) ){
+			if( strlen($tmp_page_info['logical_path'] ?? '') ){
 				// エクセルの定義にlogical_path列があったら、
 				// この値を優先して採用する。
 			}else{
@@ -334,7 +335,7 @@ class xlsx2csv{
 
 		clearstatcache();
 		return $this;
-	}// convert()
+	}
 
 	/**
 	 * サイトマップの行を一時ファイルに出力する
@@ -368,7 +369,7 @@ class xlsx2csv{
 		$this->auto_id_num ++;
 		$rtn = 'sitemapExcel_auto_id_'.$this->extless_basename.'-'.intval($this->auto_id_num);
 		return $rtn;
-	}//generate_auto_page_id()
+	}
 
 	/**
 	 * パス文字列の正規化
@@ -388,7 +389,7 @@ class xlsx2csv{
 				break;
 		}
 		return $path;
-	}//regulize_path()
+	}
 
 	/**
 	 * xlsxの構造定義設定を解析する
@@ -442,7 +443,7 @@ class xlsx2csv{
 				// 'name'=>$def_name,
 			);
 
-			if( @strlen($mergeInfo[$col]) ){
+			if( strlen($mergeInfo[$col] ?? '') ){
 				$mergeStartCol = $mergeInfo[$col];
 				while( strcmp($mergeStartCol, $col) ){
 					$col ++;
@@ -453,6 +454,6 @@ class xlsx2csv{
 		}
 
 		return $rtn;
-	}// parse_definition()
+	}
 
 }

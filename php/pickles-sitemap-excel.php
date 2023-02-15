@@ -103,7 +103,6 @@ class pickles_sitemap_excel{
 			}
 			$sitemap_files[$extless_basename][$extension] = $filename;
 		}
-		// var_dump($sitemap_files);
 
 		$is_detect_update = false;
 		foreach( $sitemap_files as $extless_basename=>$extensions ){
@@ -190,7 +189,6 @@ class pickles_sitemap_excel{
 	 */
 	private function preprocess_of_update_detection($extless_basename, $extensions){
 		$master_format = $this->get_master_format_of($extless_basename);
-		// var_dump($master_format);
 
 		// ファイルが既存しない場合、ファイル名がセットされていないので、
 		// 明示的にセットする。
@@ -235,7 +233,7 @@ class pickles_sitemap_excel{
 	/**
 	 * ファイルの master format を調べる
 	 * @param  string $extless_basename 調べる対象の拡張子を含まないファイル名
-	 * @return string                   master format 名
+	 * @return string master format 名
 	 */
 	private function get_master_format_of( $extless_basename ){
 		$rtn = $this->plugin_conf['master_format'];

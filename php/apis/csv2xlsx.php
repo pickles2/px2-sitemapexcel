@@ -217,14 +217,14 @@ class csv2xlsx{
 
 
 
-		$objPHPExcel->setActiveSheetIndex(0);//メインのセルを選択しなおし。
+		$objPHPExcel->setActiveSheetIndex(0); // メインのセルを選択しなおし。
 
 		$phpExcelHelper->save($objPHPExcel, $path_xlsx, 'Xlsx');
 
 		clearstatcache();
 
 		return $this;
-	}// convert()
+	}
 
 	/**
 	 * 設定文字列を作成する
@@ -262,13 +262,10 @@ class csv2xlsx{
 		if(!is_string($page_id)){return false;}
 		$sitemap_definition = $this->get_sitemap_definition();
 		$table_definition = $this->get_table_definition();
-		// var_dump($this->site->get_sitemap());
 		$page_info = $this->site->get_page_info($page_id);
 		if(!is_array($page_info)){
 			return false;
 		}
-		// var_dump($page_id);
-		// var_dump($page_info);
 
 		set_time_limit(30);
 
@@ -276,7 +273,6 @@ class csv2xlsx{
 		$this->current_row ++;
 
 		$children = $this->site->get_children($page_id, array('filter'=>false));
-		// var_dump($children);
 		foreach( $children as $child ){
 			$child_page_info = $this->site->get_page_info($child);
 			if(!strlen($child_page_info['id'])){
@@ -290,7 +286,7 @@ class csv2xlsx{
 		$this->site->done($page_id);
 
 		return true;
-	}// scan_sitemap_tree_recursive()
+	}
 
 	/**
 	 * サイトマップをスキャンして、xlsxのデータ部分を作成する
@@ -417,7 +413,7 @@ class csv2xlsx{
 		}
 
 		return true;
-	}// mk_xlsx_body()
+	}
 
 	/**
 	 * 加工されたパスを戻す
@@ -486,8 +482,6 @@ class csv2xlsx{
 
 		$sitemap_definition = $this->get_sitemap_definition();
 		foreach($sitemap_definition as $def_row){
-			// if($def_row['key'] == 'logical_path'){continue;} // v2.0.10 - logical_path の列自体は常に設けることにした。
-
 			$rtn['col_define'][$def_row['key']]['name'] = $def_row['name'];
 			$rtn['col_define'][$def_row['key']]['key'] = $def_row['key'];
 
@@ -503,10 +497,9 @@ class csv2xlsx{
 	 * サイトマップ定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		// $rtn = $this->site->get_sitemap_definition();
 		$rtn = $this->plugin->get_sitemap_definition();
 
-		if( !is_array(@$rtn['**delete_flg']) ){
+		if( !is_array($rtn['**delete_flg'] ?? null) ){
 			$rtn['**delete_flg'] = array();
 			$rtn['**delete_flg']['name'] = '削除フラグ';
 			$rtn['**delete_flg']['key'] = '**delete_flg';
