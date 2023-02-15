@@ -176,26 +176,25 @@ class csv2xlsx{
 				$objSheet->getColumnDimension($tmp_col)->setWidth(3);
 			}
 		}
-		$objSheet->getColumnDimension(@$table_definition['col_define']['title_h1']['col'])->setWidth(2);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['title_label']['col'])->setWidth(2);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['title_breadcrumb']['col'])->setWidth(2);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['title_full']['col'])->setWidth(2);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['path']['col'])->setWidth(40);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['content']['col'])->setWidth(20);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['list_flg']['col'])->setWidth(3);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['layout']['col'])->setWidth(9);
-		// $objSheet->getColumnDimension(@$table_definition['col_define']['extension']['col'])->setWidth(9);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['description']['col'])->setWidth(30);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['keywords']['col'])->setWidth(30);
-		// $objSheet->getColumnDimension(@$table_definition['col_define']['auth_level']['col'])->setWidth(3);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['orderby']['col'])->setWidth(3);
-		$objSheet->getColumnDimension(@$table_definition['col_define']['category_top_flg']['col'])->setWidth(3);
+		$objSheet->getColumnDimension($table_definition['col_define']['title_h1']['col'] ?? null)->setWidth(2);
+		$objSheet->getColumnDimension($table_definition['col_define']['title_label']['col'] ?? null)->setWidth(2);
+		$objSheet->getColumnDimension($table_definition['col_define']['title_breadcrumb']['col'] ?? null)->setWidth(2);
+		$objSheet->getColumnDimension($table_definition['col_define']['title_full']['col'] ?? null)->setWidth(2);
+		$objSheet->getColumnDimension($table_definition['col_define']['path']['col'] ?? null)->setWidth(40);
+		$objSheet->getColumnDimension($table_definition['col_define']['content']['col'] ?? null)->setWidth(20);
+		$objSheet->getColumnDimension($table_definition['col_define']['list_flg']['col'] ?? null)->setWidth(3);
+		$objSheet->getColumnDimension($table_definition['col_define']['layout']['col'] ?? null)->setWidth(9);
+		// $objSheet->getColumnDimension($table_definition['col_define']['extension']['col'] ?? null)->setWidth(9);
+		$objSheet->getColumnDimension($table_definition['col_define']['description']['col'] ?? null)->setWidth(30);
+		$objSheet->getColumnDimension($table_definition['col_define']['keywords']['col'] ?? null)->setWidth(30);
+		// $objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'] ?? null)->setWidth(3);
+		$objSheet->getColumnDimension($table_definition['col_define']['orderby']['col'] ?? null)->setWidth(3);
+		$objSheet->getColumnDimension($table_definition['col_define']['category_top_flg']['col'] ?? null)->setWidth(3);
 
 		// 行移動
 		$this->current_row = $table_definition['row_data_start'];
 
 		// データ行を作成する
-		// var_dump( $this->site->get_sitemap() );
 		$this->scan_sitemap_tree_recursive($objSheet);
 
 		// 親ページが見つからなかったページを追記
@@ -214,7 +213,6 @@ class csv2xlsx{
 		}
 		$objSheet->getRowDimension($this->current_row)->setRowHeight(5);
 		$this->current_row ++;
-
 
 
 		$objPHPExcel->setActiveSheetIndex(0); // メインのセルを選択しなおし。
@@ -259,11 +257,13 @@ class csv2xlsx{
 	 * サイトマップをスキャンして、xlsxのデータ部分を作成する
 	 */
 	private function scan_sitemap_tree_recursive($objSheet, $page_id = ''){
-		if(!is_string($page_id)){return false;}
+		if( !is_string($page_id) ){
+			return false;
+		}
 		$sitemap_definition = $this->get_sitemap_definition();
 		$table_definition = $this->get_table_definition();
 		$page_info = $this->site->get_page_info($page_id);
-		if(!is_array($page_info)){
+		if( !is_array($page_info) ){
 			return false;
 		}
 
@@ -292,7 +292,7 @@ class csv2xlsx{
 	 * サイトマップをスキャンして、xlsxのデータ部分を作成する
 	 */
 	private function mk_xlsx_body($objSheet, $page_info, $is_valid_parent = false){
-		if(!is_array($page_info)){
+		if( !is_array($page_info) ){
 			return false;
 		}
 		set_time_limit(30);
@@ -302,7 +302,7 @@ class csv2xlsx{
 
 		foreach( $table_definition['col_define'] as $def_row ){
 			$cellName = ($def_row['col']).$this->current_row;
-			$cellValue = @$page_info[$def_row['key']];
+			$cellValue = $page_info[$def_row['key']] ?? null;
 			switch($def_row['key']){
 				case 'title_h1':
 				case 'title_label':

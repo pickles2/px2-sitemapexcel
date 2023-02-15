@@ -82,11 +82,11 @@ class xlsx2csv {
 		$col_title = array();
 		foreach($table_definition['col_define'] as $tmp_col_define){
 			if( isset( $col_title['start'] ) ){
-				$col_title['end'] = @$tmp_col_define['col'];
+				$col_title['end'] = $tmp_col_define['col'] ?? null;
 				break;
 			}
 			if( $tmp_col_define['key'] == 'title' ){
-				$col_title['start'] = @$tmp_col_define['col'];
+				$col_title['start'] = $tmp_col_define['col'] ?? null;
 			}
 		}
 		unset($tmp_col_define);
@@ -101,10 +101,12 @@ class xlsx2csv {
 			unset($xls_custom_column_definition[$tmp_row['key']]);
 			$tmp_last_elm_info = $tmp_row;
 		}
+		$tmp_last_elm_info['num'] = $tmp_last_elm_info['num'] ?? 0;
+		$tmp_last_elm_info['col'] = $tmp_last_elm_info['col'] ?? 0;
 		foreach( $xls_custom_column_definition as $tmp_key=>$tmp_row ){
-			@$tmp_last_elm_info['num']  ++;
-			@$tmp_last_elm_info['col']  ++;
-			$tmp_last_elm_info['key']  = $tmp_row['key'];
+			$tmp_last_elm_info['num'] ++;
+			$tmp_last_elm_info['col'] ++;
+			$tmp_last_elm_info['key'] = $tmp_row['key'];
 			$tmp_last_elm_info['name'] = $tmp_row['key'];
 			$sitemap_definition[$tmp_last_elm_info['key']] = $tmp_last_elm_info;
 		}
@@ -172,17 +174,17 @@ class xlsx2csv {
 
 			// --------------------
 			// 削除フラグ
-			if( @$tmp_page_info['**delete_flg'] ){
+			if( $tmp_page_info['**delete_flg'] ?? null ){
 				continue;
 			}
 
 			// --------------------
 			// タイトルだけ特別
-			$col_title_col = @$col_title['start'];
+			$col_title_col = $col_title['start'] ?? null;
 			$tmp_page_info['title'] = '';
 			$logical_path_depth = 0;
 			$alias_title_list = array();
-			while( @strcmp( strtoupper($col_title_col) , strtoupper($col_title['end']) ) < 0 ){
+			while( strcmp( strtoupper($col_title_col ?? ''), strtoupper($col_title['end'] ?? '') ) < 0 ){
 					// ↑ $col_title['end'] には、titleの終端の右の列の名前が入っている。 よって `strcmp()` の結果は最大で `-1` となる。
 				$tmp_page_info['title'] .= trim( $objSheet->getCell($col_title_col.$xlsx_row)->getCalculatedValue() ?? '' );
 				if(strlen($tmp_page_info['title'])){
@@ -405,9 +407,9 @@ class xlsx2csv {
 		$rtn['tbl_highest_col_name'] = $objSheet->getHighestColumn(); // e.g 'F'
 		$rtn['tbl_highest_col'] = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString( $rtn['tbl_highest_col_name'] ); // e.g. 5
 
-		$rtn['row_definition'] = @intval($rtn['row_definition']);
-		$rtn['row_data_start'] = @intval($rtn['row_data_start']);
-		if( !@strlen($rtn['skip_empty_col']) ){
+		$rtn['row_definition'] = intval($rtn['row_definition'] ?? null);
+		$rtn['row_data_start'] = intval($rtn['row_data_start'] ?? null);
+		if( !strlen($rtn['skip_empty_col'] ?? '') ){
 			// 省略されていた場合にデフォルト値を与える
 			$rtn['skip_empty_col'] = 20;
 		}
