@@ -150,6 +150,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ### pickles2/px2-sitemapexcel v2.3.0 (リリース日未定)
 
+- ブログに対応した。
 - 内部コードの細かい修正。
 
 ### pickles2/px2-sitemapexcel v2.2.2 (2023年3月11日)

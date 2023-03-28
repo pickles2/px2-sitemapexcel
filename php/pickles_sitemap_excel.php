@@ -14,6 +14,8 @@ class pickles_sitemap_excel {
 	private $plugin_conf;
 	/** サイトマップフォルダのパス */
 	private $realpath_sitemap_dir;
+	/** ブログマップフォルダのパス */
+	private $realpath_blogmap_dir;
 	/** アプリケーションロック */
 	private $locker;
 
@@ -45,7 +47,7 @@ class pickles_sitemap_excel {
 	 * @return string バージョン番号を示す文字列
 	 */
 	public function get_version(){
-		return '2.2.2';
+		return '2.3.0-alpha.1';
 	}
 
 	/**
@@ -70,13 +72,25 @@ class pickles_sitemap_excel {
 		}
 
 		$this->realpath_sitemap_dir = $this->px->get_path_homedir().'sitemaps/';
+		$this->realpath_blogmap_dir = $this->px->get_path_homedir().'blogs/';
 		$this->locker = new lock($this->px, $this);
 	}
 
 	/**
 	 * すべてのファイルを変換する
+	 * @return void
 	 */
 	public function convert_all(){
+		$this->convert_all_sitemaps();
+		$this->convert_all_blogmaps();
+		return;
+	}
+
+	/**
+	 * すべてのサイトマップファイルを変換する
+	 * @return void
+	 */
+	private function convert_all_sitemaps(){
 		$sitemap_files = array();
 		$tmp_sitemap_files = $this->px->fs()->ls( $this->realpath_sitemap_dir );
 
@@ -178,6 +192,115 @@ class pickles_sitemap_excel {
 
 			$this->locker->unlock();
 		}
+		return;
+	}
+
+	/**
+	 * すべてのブログファイルを変換する
+	 * @return void
+	 */
+	private function convert_all_blogmaps(){
+		$blogmap_files = array();
+		$tmp_blogmap_files = $this->px->fs()->ls( $this->realpath_blogmap_dir );
+
+		foreach( $tmp_blogmap_files as $filename ){
+			if( preg_match( '/^\\~\\$/', $filename ) ){
+				// エクセルの編集中のキャッシュファイルのファイル名だからスルー
+				continue;
+			}
+			if( preg_match( '/^\\.\\~lock\\./', $filename ) ){
+				// Libre Office, Open Office の編集中のキャッシュファイルのファイル名だからスルー
+				continue;
+			}
+			$extless_basename = $this->px->fs()->trim_extension($filename);
+			$extension = $this->px->fs()->get_extension($filename);
+			$extension = strtolower($extension);
+
+			if( $extension != 'xlsx' && $extension != 'xlsm' && $extension != 'csv' ){
+				// 知らない拡張子はスキップ
+				continue;
+			}
+
+			if( !array_key_exists($extless_basename, $blogmap_files) || !is_array($blogmap_files[$extless_basename]) ){
+				$blogmap_files[$extless_basename] = array();
+			}
+			$blogmap_files[$extless_basename][$extension] = $filename;
+		}
+
+		// $is_detect_update = false;
+		// foreach( $blogmap_files as $extless_basename=>$extensions ){
+
+		// 	$infos = $this->preprocess_of_update_detection($extless_basename, $extensions);
+
+		// 	if( $infos['master_format'] == 'pass' ){
+		// 		// `pass` の場合は、変換を行わずスキップ。
+		// 		continue;
+		// 	}
+
+		// 	if( $infos['detected_update'] == 'xlsx2csv' ){
+		// 		// XLSX または XLSM がマスターになる場合
+		// 		$is_detect_update = true;
+		// 		break;
+		// 	}elseif( $infos['detected_update'] == 'csv2xlsx' ){
+		// 		// CSV がマスターになる場合
+		// 		if( $infos['xlsx_ext'] == 'xlsx' ){
+		// 			// xlsx以外の場合だけ上書きする。
+		// 			// xlsx以外の場合(=xlsmの場合) は、上書きしない。
+		// 			$is_detect_update = true;
+		// 			break;
+		// 		}
+		// 	}
+		// }
+
+		// if( !$is_detect_update ){
+		// 	// ここで更新が検出されなければ、
+		// 	// あとの処理は実行しない。
+		// 	return;
+		// }
+
+		// if( $this->locker->lock() ){
+
+		// 	foreach( $blogmap_files as $extless_basename=>$extensions ){
+		// 		$this->locker->update();
+
+		// 		$infos = $this->preprocess_of_update_detection($extless_basename, $extensions);
+
+		// 		if( $infos['master_format'] == 'pass' ){
+		// 			// `pass` の場合は、変換を行わずスキップ。
+		// 			continue;
+		// 		}
+
+		// 		if( $infos['detected_update'] == 'xlsx2csv' ){
+		// 			// XLSX または XLSM がマスターになる場合
+		// 			$result = $this->xlsx2csv(
+		// 				$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']],
+		// 				$this->realpath_blogmap_dir.$infos['extensions']['csv']
+		// 			);
+		// 			touch(
+		// 				$this->realpath_blogmap_dir.$infos['extensions']['csv'],
+		// 				filemtime( $this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']] )
+		// 			);
+
+		// 		}elseif( $infos['detected_update'] == 'csv2xlsx' ){
+		// 			// CSV がマスターになる場合
+		// 			if( $infos['xlsx_ext'] == 'xlsx' ){
+		// 				// xlsx以外の場合だけ上書きする。
+		// 				// xlsx以外の場合(=xlsmの場合) は、上書きしない。
+		// 				$result = $this->csv2xlsx(
+		// 					$this->realpath_blogmap_dir.$infos['extensions']['csv'],
+		// 					$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']]
+		// 				);
+		// 				touch(
+		// 					$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']],
+		// 					filemtime( $this->realpath_blogmap_dir.$infos['extensions']['csv'] )
+		// 				);
+		// 			}
+		// 		}
+
+		// 	}
+
+		// 	$this->locker->unlock();
+		// }
 		return;
 	}
 
