@@ -2,9 +2,9 @@
 /**
  * PX Plugin "sitemapExcel"
  */
-namespace tomk79\pickles2\sitemap_excel;
+namespace tomk79\pickles2\sitemap_excel\helper;
 
-class pxplugin_sitemapExcel_helper_PHPExcelHelper{
+class PHPExcelHelper {
 
 	/**
 	 * コンストラクタ

@@ -7,7 +7,7 @@ namespace tomk79\pickles2\sitemap_excel;
 /**
  * pickles-sitemap-excel.php
  */
-class pickles_sitemap_excel{
+class pickles_sitemap_excel {
 	/** Picklesオブジェクト */
 	private $px;
 	/** プラグイン設定 */
@@ -255,7 +255,7 @@ class pickles_sitemap_excel{
 	 * @return boolean 実行結果
 	 */
 	public function xlsx2csv($path_xlsx, $path_csv){
-		$result = (new xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
+		$result = (new apis\xlsx2csv($this->px, $this))->convert( $path_xlsx, $path_csv );
 		return $result;
 	}
 
@@ -270,7 +270,7 @@ class pickles_sitemap_excel{
 	 * @return boolean 実行結果
 	 */
 	public function csv2xlsx($path_csv, $path_xlsx){
-		$result = (new csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
+		$result = (new apis\csv2xlsx($this->px, $this))->convert( $path_csv, $path_xlsx );
 		return $result;
 	}
 

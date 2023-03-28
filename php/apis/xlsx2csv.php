@@ -2,7 +2,8 @@
 /**
  * PX Plugin "sitemapExcel" import
  */
-namespace tomk79\pickles2\sitemap_excel;
+namespace tomk79\pickles2\sitemap_excel\apis;
+use tomk79\pickles2\sitemap_excel\helper\PHPExcelHelper;
 
 /**
  * PX Plugin "sitemapExcel" import
@@ -71,7 +72,7 @@ class xlsx2csv {
 		// サイトマップCSVの定義を取得
 		$sitemap_definition = $this->get_sitemap_definition();
 
-		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
+		$phpExcelHelper = new PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}

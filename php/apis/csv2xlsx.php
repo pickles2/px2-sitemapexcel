@@ -2,12 +2,14 @@
 /**
  * PX Plugin "sitemapExcel" export
  */
-namespace tomk79\pickles2\sitemap_excel;
+namespace tomk79\pickles2\sitemap_excel\apis;
+use tomk79\pickles2\sitemap_excel\helper\PHPExcelHelper;
+use tomk79\pickles2\sitemap_excel\helper\parseSitemapCsv;
 
 /**
  * PX Plugin "sitemapExcel" export
  */
-class csv2xlsx{
+class csv2xlsx {
 
 	/** Picklesオブジェクト */
 	private $px;
@@ -57,11 +59,11 @@ class csv2xlsx{
 		// 　sitemapExcel実行時点で、
 		// 　本物の$siteはスタンバイされていないので、
 		// 　偽物でエミュレートする必要があった。
-		$this->site = new pxplugin_sitemapExcel_helper_parseSitemapCsv( $this->px, $this->path_csv );
+		$this->site = new parseSitemapCsv( $this->px, $this->path_csv );
 
 		$table_definition = $this->get_table_definition();
 
-		$phpExcelHelper = new pxplugin_sitemapExcel_helper_PHPExcelHelper();
+		$phpExcelHelper = new PHPExcelHelper();
 		if( !$phpExcelHelper ){
 			return false;
 		}
