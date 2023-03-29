@@ -163,6 +163,7 @@ $ chmod -R 777 ./px-files/sitemaps
 - ブログマップの変換に対応した。
 - オプション `files_master_format_blogs` を追加した。
 - 生成される xlsx ファイルのセルに罫線が表示されない不具合を修正した。
+- `xlsx2csv` が、`**delete_flg` 列を出力しないようになった。
 - その他、内部コードの修正。
 
 ### pickles2/px2-sitemapexcel v2.2.2 (2023年3月11日)

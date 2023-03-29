@@ -120,8 +120,12 @@ class xlsx2csv {
 		}
 
 
+		// 定義行を首都力
 		$page_info = array();
 		foreach($sitemap_definition as $row){
+			if( $row['key'] == '**delete_flg' ){
+				continue;
+			}
 			$page_info[$row['key']] = '* '.$row['key'];
 		}
 		$this->output_csv_row( $page_info );
@@ -291,6 +295,9 @@ class xlsx2csv {
 			// サイトマップにページを追加する
 			$page_info = array();
 			foreach($sitemap_definition as $row){
+				if( $row['key'] == '**delete_flg' ){
+					continue;
+				}
 				$page_info[$row['key']] = $tmp_page_info[$row['key']];
 			}
 			if( count($alias_title_list) ){
