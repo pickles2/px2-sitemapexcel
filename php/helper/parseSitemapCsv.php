@@ -153,7 +153,7 @@ class parseSitemapCsv {
 				}
 				preg_match_all('/\{(\$|\*)([a-zA-Z0-9\-\_]*)\}/',$tmp_array['path'],$pattern_map);
 				$tmp_path_original = $tmp_array['path'];
-				$tmp_array['path'] = preg_replace('/'.preg_quote('{','/').'(\$|\*)([a-zA-Z0-9\-\_]*)'.preg_quote('}','/').'/s','$2',$tmp_array['path']);
+				$tmp_array['path'] = preg_replace('/'.preg_quote('{','/').'(\$|\*)([a-zA-Z0-9\-\_]*)'.preg_quote('}','/').'/s', '$2', $tmp_array['path']??'');
 				array_push( $this->sitemap_dynamic_paths, array(
 					'path'=>$tmp_array['path'],
 					'path_original'=>$tmp_path_original,
@@ -172,18 +172,18 @@ class parseSitemapCsv {
 
 			if( !strlen( $tmp_array['content'] ?? '' ) ){
 				$tmp_array['content'] = $tmp_array['path'];
-				$tmp_array['content'] = preg_replace('/(?:\?|\#).*$/s','',$tmp_array['content']);
-				$tmp_array['content'] = preg_replace('/\/$/s','/'.$this->px->get_directory_index_primary(), $tmp_array['content']);
+				$tmp_array['content'] = preg_replace('/(?:\?|\#).*$/s', '', $tmp_array['content']??'');
+				$tmp_array['content'] = preg_replace('/\/$/s','/'.$this->px->get_directory_index_primary(), $tmp_array['content']??'');
 			}
-			$tmp_array['content'] = preg_replace( '/\/$/si' , '/'.$this->px->get_directory_index_primary() , $tmp_array['content'] );//index.htmlを付加する。
+			$tmp_array['content'] = preg_replace( '/\/$/si' , '/'.$this->px->get_directory_index_primary() , $tmp_array['content']??'' );//index.htmlを付加する。
 			if( preg_match( '/^alias\:/s' , $tmp_array['path'] ) ){
 				//エイリアスの値調整
 				$tmp_array['content'] = null;
-				$tmp_array['path'] = preg_replace( '/^alias\:/s' , 'alias'.$num_auto_pid.':' , $tmp_array['path'] );
+				$tmp_array['path'] = preg_replace( '/^alias\:/s' , 'alias'.$num_auto_pid.':' , $tmp_array['path'] ?? '' );
 			}
 
 			//  パンくず欄の先頭が > から始まっていた場合、削除
-			$tmp_array['logical_path'] = @preg_replace( '/^\>+/s' , '' , $tmp_array['logical_path'] );
+			$tmp_array['logical_path'] = preg_replace( '/^\>+/s' , '' , $tmp_array['logical_path'] ?? '' );
 
 			$this->sitemap_array[$tmp_array['path']] = $tmp_array;
 			$this->sitemap_id_map[$tmp_array['id']] = $tmp_array['path'];
@@ -212,11 +212,8 @@ class parseSitemapCsv {
 				// $tmp_array['logical_path']
 			}
 		}
-
-		// var_dump($this->sitemap_array);
-		// var_dump($this->sitemap_id_map);
 		return true;
-	}//load_sitemap_csv();
+	}
 
 	/**
 	 * サイトマップ配列(単品)を取得する
@@ -236,7 +233,7 @@ class parseSitemapCsv {
 	public function get_path_type( $path ) {
 		$path_type = $this->px->get_path_type($path);
 		return $path_type;
-	}//get_path_type()
+	}
 
 	/**
 	 * ページ情報を取得する。
@@ -275,7 +272,9 @@ class parseSitemapCsv {
 			// $path が相対パスで指定された場合
 			preg_match( '/(\/)$/s', $path, $tmp_matched );
 			$path = $this->px->fs()->get_realpath( dirname( $this->px->req()->get_request_file_path() ).'/'.$path );
-			if( @strlen($tmp_matched[1]) ){ $path .= $tmp_matched[1]; }
+			if( strlen($tmp_matched[1] ?? '') ){
+				$path .= $tmp_matched[1];
+			}
 			$path = $this->px->fs()->normalize_path($path);
 			unset( $tmp_matched );
 		}
@@ -286,12 +285,12 @@ class parseSitemapCsv {
 			case 'anchor':
 				break;
 			default:
-				$path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/si','/$1',$path);//directory_index を一旦省略
+				$path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'((?:\?|\#).*)?$/si', '/$1', $path); // directory_index を一旦省略
 				$tmp_path = $path;
-				if( !array_key_exists($path, $this->sitemap_id_map) || is_null( $this->sitemap_array[$path] ) ){
+				if( !array_key_exists($path, $this->sitemap_id_map) || is_null( $this->sitemap_array[$path] ?? null ) ){
 					foreach( $this->px->get_directory_index() as $index_file_name ){
-						$tmp_path = preg_replace('/\/((?:\?|\#).*)?$/si','/'.$index_file_name.'$1',$path);//省略された index.html を付加。
-						if( !is_null( @$this->sitemap_array[$tmp_path] ) ){
+						$tmp_path = preg_replace('/\/((?:\?|\#).*)?$/si','/'.$index_file_name.'$1', $path); // 省略された index.html を付加。
+						if( !is_null( $this->sitemap_array[$tmp_path] ?? null ) ){
 							break;
 						}
 					}
@@ -302,7 +301,7 @@ class parseSitemapCsv {
 				break;
 		}
 
-		if( is_null( @$this->sitemap_array[$path] ) ){
+		if( is_null( $this->sitemap_array[$path] ?? null ) ){
 			//  サイトマップにズバリなければ、
 			//  ダイナミックパスを検索する。
 			$sitemap_dynamic_path = $this->get_dynamic_path_info( $path );
@@ -319,18 +318,20 @@ class parseSitemapCsv {
 			case 'anchor':
 				break;
 			default:
-				$path = preg_replace( '/\/$/si' , '/'.$this->px->get_directory_index_primary() , $path );
+				$path = preg_replace( '/\/$/si' , '/'.$this->px->get_directory_index_primary(), $path );
 				break;
 		}
 
-		if( is_null( @$this->sitemap_array[$path] ) ){
+		if( is_null( $this->sitemap_array[$path] ?? null ) ){
 			//  サイトマップにズバリなければ、
 			//  引数からパラメータを外したパスだけで再検索
 			$path = @$parsed_url['path'];
 		}
 
-		$rtn = @$this->sitemap_array[$path];
-		if( !is_array($rtn) ){ return null; }
+		$rtn = $this->sitemap_array[$path] ?? null;
+		if( !is_array($rtn) ){
+			return null;
+		}
 		// if( !strlen( @$rtn['title_breadcrumb'] ) ){ $rtn['title_breadcrumb'] = $rtn['title']; }
 		// if( !strlen( @$rtn['title_h1'] ) ){ $rtn['title_h1'] = $rtn['title']; }
 		// if( !strlen( @$rtn['title_label'] ) ){ $rtn['title_label'] = $rtn['title']; }
@@ -382,7 +383,9 @@ class parseSitemapCsv {
 			$path = $this->px->req()->get_request_file_path();
 		}
 		$filter = true;
-		if(!is_null(@$opt['filter'])){ $filter = !empty($opt['filter']); }
+		if( !is_null( $opt['filter'] ?? null ) ){
+			$filter = !empty($opt['filter']);
+		}
 
 		$page_info = $this->get_page_info( $path );
 
@@ -396,7 +399,7 @@ class parseSitemapCsv {
 		}
 		return array();
 
-	}//get_children()
+	}
 
 	/**
 	 * ページ情報の配列を並び替える。
@@ -420,7 +423,7 @@ class parseSitemapCsv {
 			return	1;
 		}
 		return	0;
-	}//usort_sitemap()
+	}
 
 	/**
 	 * ダイナミックパス情報を得る。
