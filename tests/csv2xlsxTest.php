@@ -162,6 +162,44 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		unset($px);
 	}
 
+	/**
+	 * ブログマップCSVの変換テスト (列の欠損と追加)
+	 */
+	public function testBlogmapLessAndMoreConvert(){
+
+		$cd = realpath('.');
+		chdir(__DIR__.'/testData/standard/');
+
+		$px = new picklesFramework2\px('./px-files/');
+		$toppage_info = $px->site()->get_page_info('');
+		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
+		// $this->assertEquals( $toppage_info['path'], '/index.html' );
+
+		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
+
+        $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
+        $px2_sitemapexcel->csv2xlsx(
+			__DIR__.'/testData/files/blogmap_less_and_more.csv',
+			__DIR__.'/testData/files/dist/blogmap_less_and_more.xlsx',
+			array('target'=>'blogmap')
+		);
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/blogmap_less_and_more.xlsx' ) );
+
+		// 値をチェック
+		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/blogmap_less_and_more.xlsx' );
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objSheet = $objPHPExcel->getActiveSheet();
+		$this->assertEquals( $objSheet->getCell('A8')->getCalculatedValue(), 'title' );
+		$this->assertEquals( $objSheet->getCell('A9')->getCalculatedValue(), 'Page 0/10' );
+		$this->assertEquals( $objSheet->getCell('B15')->getCalculatedValue(), '/page/page_6_10.html' );
+		$this->assertEquals( $objSheet->getCell('C17')->getCalculatedValue(), '2023-01-09' );
+		$this->assertEquals( $objSheet->getCell('D12')->getCalculatedValue(), '2023-01-04' );
+
+		chdir($cd);
+		$px->__destruct();// <- required on Windows
+		unset($px);
+	}
+
 
 
 

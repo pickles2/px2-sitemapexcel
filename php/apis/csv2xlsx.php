@@ -66,7 +66,7 @@ class csv2xlsx {
 		// 　sitemapExcel実行時点で、
 		// 　本物の$siteはスタンバイされていないので、
 		// 　偽物でエミュレートする必要があった。
-		$this->site = new parseSitemapCsv( $this->px, $this->path_csv );
+		$this->site = new parseSitemapCsv( $this->px, $this->path_csv, $this->options );
 
 		$table_definition = $this->get_table_definition();
 
@@ -182,8 +182,8 @@ class csv2xlsx {
 			$objSheet->getColumnDimension($table_definition['col_define']['path']['col'] ?? null)->setWidth(40);
 			$objSheet->getColumnDimension($table_definition['col_define']['release_date']['col'] ?? null)->setWidth(14);
 			$objSheet->getColumnDimension($table_definition['col_define']['update_date']['col'] ?? null)->setWidth(14);
-			$objSheet->getColumnDimension($table_definition['col_define']['article_summary']['col'] ?? null)->setWidth(30);
 			$objSheet->getColumnDimension($table_definition['col_define']['article_keywords']['col'] ?? null)->setWidth(30);
+			$objSheet->getColumnDimension($table_definition['col_define']['article_summary']['col'] ?? null)->setWidth(30);
 		}else{
 			$objSheet->getColumnDimension($table_definition['col_define']['id']['col'])->setWidth(8);
 			$objSheet->getColumnDimension($table_definition['col_define']['title']['col'])->setWidth(3);
@@ -469,7 +469,7 @@ class csv2xlsx {
 	 * 加工されたページIDを戻す
 	 */
 	private function repair_page_id($page_id, $path){
-		$page_id = preg_replace('/^\:auto_page_id\.[0-9]+$/si', '', $page_id);
+		$page_id = preg_replace('/^\:auto_page_id\.[0-9]+$/si', '', $page_id??'');
 		$tmp_path = $path;
 		$tmp_path = preg_replace('/\/'.$this->px->get_directory_index_preg_pattern().'$/si', '/', $tmp_path);
 		$tmp_path = preg_replace('/\.(?:html)$/si', '', $tmp_path);
@@ -500,6 +500,12 @@ class csv2xlsx {
 
 		if( $this->options->target == 'blogmap' ){
 			// ブログ
+			$rtn['col_define']['title'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['path'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['release_date'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['update_date'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['article_keywords'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['article_summary'] = array( 'col'=>($current_col++) );
 		}else{
 			// サイトマップ
 			$rtn['col_define']['id'] = array( 'col'=>($current_col++) );
@@ -518,7 +524,9 @@ class csv2xlsx {
 			$rtn['col_define'][$def_row['key']]['name'] = $def_row['name'];
 			$rtn['col_define'][$def_row['key']]['key'] = $def_row['key'];
 
-			if(strlen($rtn['col_define'][$def_row['key']]['col'] ?? '')){continue;}
+			if( strlen($rtn['col_define'][$def_row['key']]['col'] ?? '') ){
+				continue;
+			}
 			$rtn['col_define'][$def_row['key']]['col'] = ($current_col++);
 		}
 
@@ -530,32 +538,29 @@ class csv2xlsx {
 	 * サイトマップ定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		$rtn = array();
-		if( $this->options->target == 'blogmap' ){
-			$rtn = $this->plugin->get_blogmap_definition();
-		}else{
-			$rtn = $this->plugin->get_sitemap_definition();
+		$rtn = $this->plugin->get_sitemap_definition();
 
-			if( !is_array($rtn['**delete_flg'] ?? null) ){
-				$rtn['**delete_flg'] = array();
-				$rtn['**delete_flg']['name'] = '削除フラグ';
-				$rtn['**delete_flg']['key'] = '**delete_flg';
-			}
+		if( !is_array($rtn['**delete_flg'] ?? null) ){
+			$rtn['**delete_flg'] = array();
+			$rtn['**delete_flg']['name'] = '削除フラグ';
+			$rtn['**delete_flg']['key'] = '**delete_flg';
+		}
 
-			$pageInfo = current($this->site->get_sitemap());
-			foreach( $rtn as $key=>$val ){
-				if( isset($pageInfo[$key]) ){
-					unset($pageInfo[$key]);
-				}
+		// $pageInfo = current($this->site->get_sitemap());
+		$sitemap_definition = $this->site->get_sitemap_definition();
+
+		foreach( $rtn as $key=>$val ){
+			if( isset($sitemap_definition[$key]) ){
+				unset($sitemap_definition[$key]);
 			}
-			if( isset($pageInfo['**delete_flg']) ){
-				unset($pageInfo['**delete_flg']);
-			}
-			if( is_array($pageInfo) ){
-				foreach( array_keys($pageInfo) as $key ){
-					$rtn[$key]['key'] = $key;
-					$rtn[$key]['name'] = $key;
-				}
+		}
+		if( isset($sitemap_definition['**delete_flg']) ){
+			unset($sitemap_definition['**delete_flg']);
+		}
+		if( is_array($sitemap_definition) ){
+			foreach( array_keys($sitemap_definition) as $key ){
+				$rtn[$key]['key'] = $key;
+				$rtn[$key]['name'] = $key;
 			}
 		}
 		return $rtn;
