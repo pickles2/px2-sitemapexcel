@@ -15,10 +15,12 @@ class csv2xlsx {
 	private $px;
 	/** sitemapExcelオブジェクト */
 	private $plugin;
+	/** オプション */
+	private $options;
 
 	private $path_xlsx, $path_csv;
 	private $site;
-	private $default_cell_style_boarder = array();// 罫線の一括指定
+	private $default_cell_style_boarder = array(); // 罫線の一括指定
 	private $current_row = 1;
 	private $current_col = 'A';
 
@@ -29,10 +31,13 @@ class csv2xlsx {
 	 * constructor
 	 * @param object $px Picklesオブジェクト
 	 * @param object $plugin プラグインオブジェクト
+	 * @param array|object $options オプション
+	 * @param string $options['target'] 対象 (`sitemap` | `blogmap`)
 	 */
-	public function __construct( $px, $plugin ){
+	public function __construct( $px, $plugin, $options ){
 		$this->px = $px;
 		$this->plugin = $plugin;
+		$this->options = (object) $options;
 	}
 
 	/**

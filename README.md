@@ -133,14 +133,24 @@ $ chmod -R 777 ./px-files/sitemaps
 			'master_format'=>'timestamp',
 
 			// `files_master_format`
-			// ファイル名ごとにマスターにするファイルフォーマットを指定します。
+			// サイトマップファイル名ごとにマスターにするファイルフォーマットを指定します。
 			// ここに設定されていないファイルは、 `master_format` の設定に従います。
 			'files_master_format'=>array(
 				'timestamp_sitemap'=>'timestamp',
 				'csv_master_sitemap'=>'csv',
 				'xlsx_master_sitemap'=>'xlsx',
 				'no_convert'=>'pass',
-			)
+			),
+
+			// `files_master_format_blogs`
+			// ブログファイル名ごとにマスターにするファイルフォーマットを指定します。
+			// ここに設定されていないファイルは、 `master_format` の設定に従います。
+			'files_master_format_blogs'=>array(
+				'timestamp_sitemap'=>'timestamp',
+				'csv_master_sitemap'=>'csv',
+				'xlsx_master_sitemap'=>'xlsx',
+				'no_convert'=>'pass',
+			),
 		)).')'
 	];
 ```

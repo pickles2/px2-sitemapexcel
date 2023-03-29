@@ -14,6 +14,9 @@ class xlsx2csv {
 	private $px;
 	/** sitemapExcelオブジェクト */
 	private $plugin;
+	/** オプション */
+	private $options;
+
 	/** 出力先パス */
 	private $path_xlsx, $path_csv, $path_tmp_csv;
 	/** ページID自動発行のための通し番号 */
@@ -26,10 +29,13 @@ class xlsx2csv {
 	 * constructor
 	 * @param object $px Picklesオブジェクト
 	 * @param object $plugin プラグインオブジェクト
+	 * @param array|object $options オプション
+	 * @param string $options['target'] 対象 (`sitemap` | `blogmap`)
 	 */
-	public function __construct( $px, $plugin ){
+	public function __construct( $px, $plugin, $options ){
 		$this->px = $px;
 		$this->plugin = $plugin;
+		$this->options = (object) $options;
 		// $this->path_import_data_dir = $this->plugin->get_path_import_data_dir();
 	}
 
@@ -60,7 +66,7 @@ class xlsx2csv {
 
 		// ページID自動発行のための情報をリセット
 		$this->auto_id_num = 0; // 通し番号をリセット
-		$this->extless_basename = $this->px->fs()->trim_extension(basename($this->path_xlsx));//ファイル名を記憶; 入力側のファイル名に準じる。
+		$this->extless_basename = $this->px->fs()->trim_extension(basename($this->path_xlsx)); // ファイル名を記憶; 入力側のファイル名に準じる。
 
 
 		$path_toppage = '/';
@@ -79,7 +85,7 @@ class xlsx2csv {
 		set_time_limit(0);
 		$objPHPExcel = $phpExcelHelper->load($this->path_xlsx);
 
-		$table_definition = $this->parse_definition($objPHPExcel, 0);//xlsxの構造定義を読み解く
+		$table_definition = $this->parse_definition($objPHPExcel, 0); // xlsxの構造定義を読み解く
 		$col_title = array();
 		foreach($table_definition['col_define'] as $tmp_col_define){
 			if( isset( $col_title['start'] ) ){
@@ -309,7 +315,6 @@ class xlsx2csv {
 					}
 					$page_info['id'] = $this->generate_auto_page_id();
 					$page_info['title'] = $row;
-					// var_dump($page_info['title']);
 
 					$this->output_csv_row( $page_info );
 
@@ -443,7 +448,6 @@ class xlsx2csv {
 			$rtn['col_define'][$def_key] = array(
 				'key'=>trim($def_key),
 				'col'=>$col,
-				// 'name'=>$def_name,
 			);
 
 			if( strlen($mergeInfo[$col] ?? '') ){
