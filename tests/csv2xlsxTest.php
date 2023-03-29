@@ -29,7 +29,6 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 
 		$px = new picklesFramework2\px('./px-files/');
 		$toppage_info = $px->site()->get_page_info('');
-		// var_dump($toppage_info);
 		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
 		// $this->assertEquals( $toppage_info['path'], '/index.html' );
 
@@ -53,8 +52,7 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		chdir($cd);
 		$px->__destruct();// <- required on Windows
 		unset($px);
-
-	}//testXlsx2CsvConvert()
+	}
 
 	/**
 	 * 親ページがないページの変換テスト
@@ -66,7 +64,6 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 
 		$px = new picklesFramework2\px('./px-files/');
 		$toppage_info = $px->site()->get_page_info('');
-		// var_dump($toppage_info);
 		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
 		// $this->assertEquals( $toppage_info['path'], '/index.html' );
 
@@ -91,8 +88,7 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		chdir($cd);
 		$px->__destruct();// <- required on Windows
 		unset($px);
-
-	}//testHasNoParentConvert()
+	}
 
 	/**
 	 * トップページがないCSVの変換テスト
@@ -104,7 +100,6 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 
 		$px = new picklesFramework2\px('./px-files/');
 		$toppage_info = $px->site()->get_page_info('');
-		// var_dump($toppage_info);
 		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
 		// $this->assertEquals( $toppage_info['path'], '/index.html' );
 
@@ -127,8 +122,45 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		chdir($cd);
 		$px->__destruct();// <- required on Windows
 		unset($px);
+	}
 
-	}//testHasNoToppageConvert()
+	/**
+	 * ブログマップCSVの変換テスト
+	 */
+	public function testBlogmapConvert(){
+
+		$cd = realpath('.');
+		chdir(__DIR__.'/testData/standard/');
+
+		$px = new picklesFramework2\px('./px-files/');
+		$toppage_info = $px->site()->get_page_info('');
+		// $this->assertEquals( $toppage_info['title'], '<HOME>' );
+		// $this->assertEquals( $toppage_info['path'], '/index.html' );
+
+		$this->fs->mkdir(__DIR__.'/testData/files/dist/');
+
+        $px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($px);
+        $px2_sitemapexcel->csv2xlsx(
+			__DIR__.'/testData/files/blogmap.csv',
+			__DIR__.'/testData/files/dist/blogmap.xlsx',
+			array('target'=>'blogmap')
+		);
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/blogmap.xlsx' ) );
+
+		// 値をチェック
+		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/blogmap.xlsx' );
+		$objPHPExcel->setActiveSheetIndex(0);
+		$objSheet = $objPHPExcel->getActiveSheet();
+		$this->assertEquals( $objSheet->getCell('A8')->getCalculatedValue(), 'title' );
+		$this->assertEquals( $objSheet->getCell('A9')->getCalculatedValue(), 'Page 0/10' );
+		$this->assertEquals( $objSheet->getCell('B15')->getCalculatedValue(), '/page/page_6_10.html' );
+		$this->assertEquals( $objSheet->getCell('C17')->getCalculatedValue(), '2023-01-09' );
+		$this->assertEquals( $objSheet->getCell('D12')->getCalculatedValue(), '2023-01-04' );
+
+		chdir($cd);
+		$px->__destruct();// <- required on Windows
+		unset($px);
+	}
 
 
 

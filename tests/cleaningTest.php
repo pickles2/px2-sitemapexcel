@@ -40,11 +40,9 @@ class cleaningTest extends PHPUnit\Framework\TestCase{
 		// キャッシュ消去
 		$output = $this->px_execute( '/standard/.px_execute.php', '/?PX=clearcache' );
 		clearstatcache();
-		// var_dump($output);
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/caches/p/' ) );
 		$this->assertTrue( !is_dir( __DIR__.'/testData/standard/px-files/_sys/ram/caches/sitemaps/' ) );
-
-	}//testClear()
+	}
 
 	/**
 	 * `.px_execute.php` を実行し、標準出力値を返す
