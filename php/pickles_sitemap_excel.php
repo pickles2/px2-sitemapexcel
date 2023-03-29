@@ -81,8 +81,13 @@ class pickles_sitemap_excel {
 	 * @return void
 	 */
 	public function convert_all(){
+
+		// サイトマップ
 		$this->convert_all_sitemaps();
+
+		// ブログ
 		$this->convert_all_blogmaps();
+
 		return;
 	}
 
@@ -208,6 +213,9 @@ class pickles_sitemap_excel {
 	private function convert_all_blogmaps(){
 		$blogmap_files = array();
 		$tmp_blogmap_files = $this->px->fs()->ls( $this->realpath_blogmap_dir );
+		if( !$tmp_blogmap_files ){
+			return;
+		}
 
 		foreach( $tmp_blogmap_files as $filename ){
 			if( preg_match( '/^\\~\\$/', $filename ) ){
