@@ -5,6 +5,7 @@
 namespace tomk79\pickles2\sitemap_excel\apis;
 use tomk79\pickles2\sitemap_excel\helper\PHPExcelHelper;
 use tomk79\pickles2\sitemap_excel\helper\parseSitemapCsv;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 /**
  * PX Plugin "sitemapExcel" export
@@ -90,12 +91,12 @@ class csv2xlsx {
 		// ウィンドウ枠を固定
 		$objSheet->freezePane('B'.$table_definition['row_data_start']);
 
-		$this->default_cell_style_boarder = array(// 罫線の一括指定
+		$this->default_cell_style_boarder = array( // 罫線の一括指定
 			'borders' => array(
-				'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-				'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-				'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-				'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
+				'top'     => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,),
+				'bottom'  => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,),
+				'left'    => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,),
+				'right'   => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,),
 			)
 		);
 
@@ -347,18 +348,18 @@ class csv2xlsx {
 						for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
 							$tmp_border_style = array(
 								'borders' => array(
-									'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-									'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-									'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-									'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
+									'top'     => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'bottom'  => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'left'    => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'right'   => array('borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
 								)
 							);
 							if($i != 0){
-								$tmp_border_style['borders']['left']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
+								$tmp_border_style['borders']['left']['borderStyle'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
 								$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');
 							}
 							if($i == $this->get_max_depth()){
-								$tmp_border_style['borders']['right']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
+								$tmp_border_style['borders']['right']['borderStyle'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
 							}
 							$objSheet->getStyle($tmp_col.$this->current_row)->applyFromArray( $tmp_border_style );
 							$tmp_col ++;
