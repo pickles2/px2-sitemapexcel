@@ -36,6 +36,7 @@ class xlsx2csv {
 		$this->px = $px;
 		$this->plugin = $plugin;
 		$this->options = (object) $options;
+		$this->options->target = $this->options->target ?? 'sitemap';
 		// $this->path_import_data_dir = $this->plugin->get_path_import_data_dir();
 	}
 
@@ -366,7 +367,12 @@ class xlsx2csv {
 	 * サイトマップCSVの定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		$rtn = $this->plugin->get_sitemap_definition();
+		$rtn = array();
+		if( $this->options->target == 'blogmap' ){
+			$rtn = $this->plugin->get_blogmap_definition();
+		}else{
+			$rtn = $this->plugin->get_sitemap_definition();
+		}
 		return $rtn;
 	}
 

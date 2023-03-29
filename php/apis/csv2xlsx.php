@@ -38,6 +38,7 @@ class csv2xlsx {
 		$this->px = $px;
 		$this->plugin = $plugin;
 		$this->options = (object) $options;
+		$this->options->target = $this->options->target ?? 'sitemap';
 	}
 
 	/**
@@ -117,8 +118,8 @@ class csv2xlsx {
 		$this->current_row ++;
 
 		// シートタイトルセル
-		$sheetTitle = '「'.$this->px->conf()->name.'」 サイトマップ';
-		$objSheet->setTitle('sitemap');//←文字数制限がある。超えると落ちる。
+		$sheetTitle = '['.($this->px->conf()->name ?? '').'] '.($this->options->target == 'blogmap' ? 'Blog' : 'Sitemap');
+		$objSheet->setTitle($this->options->target ?? 'sitemap'); // ←文字数制限がある。超えると落ちる。
 		$objSheet->getCell('A'.$this->current_row)->setValue($sheetTitle);
 		$objSheet->getStyle('A'.$this->current_row)->getFont()->setSize(24);
 		$this->current_row ++;
@@ -129,21 +130,23 @@ class csv2xlsx {
 		foreach( $table_definition['col_define'] as $def_row ){
 			// 論理名
 			$cellName = ($def_row['col']).$this->current_row;
-			$objSheet->getCell($cellName)->setValue($def_row['name']);
+			$objSheet->getCell($cellName)->setValue($def_row['name'] ?? '');
 			$objSheet->getStyle($cellName)->getFill()->getStartColor()->setRGB('cccccc');
 
 			// 罫線の一括指定
 			$objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 
 			// title列の整形
-			if( $def_row['key'] == 'title' ){
-				$tmp_col = $def_row['col'];
-				for($i = 0; $i < $this->get_max_depth(); $i ++){
-					$tmp_col ++;
-					$objSheet->getStyle(($tmp_col).$this->current_row)->applyFromArray( $this->default_cell_style_boarder );
+			if( $this->options->target == 'sitemap' ){
+				if( ($def_row['key'] ?? null) == 'title' ){
+					$tmp_col = $def_row['col'] ?? null;
+					for($i = 0; $i < $this->get_max_depth(); $i ++){
+						$tmp_col ++;
+						$objSheet->getStyle(($tmp_col).$this->current_row)->applyFromArray( $this->default_cell_style_boarder );
+					}
+					$objSheet->mergeCells($cellName.':'.($tmp_col).$this->current_row);
+					unset($tmp_col);
 				}
-				$objSheet->mergeCells($cellName.':'.($tmp_col).$this->current_row);
-				unset($tmp_col);
 			}
 
 		}
@@ -151,52 +154,62 @@ class csv2xlsx {
 		foreach( $table_definition['col_define'] as $def_row ){
 			// 物理名
 			$cellName = ($def_row['col']).$this->current_row;
-			$objSheet->getCell($cellName)->setValue($def_row['key']);
+			$objSheet->getCell($cellName)->setValue($def_row['key'] ?? '');
 			$objSheet->getStyle($cellName)->getFill()->getStartColor()->setRGB('dddddd');
 
 			// 罫線の一括指定
 			$objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 
 			// title列の整形
-			if( $def_row['key'] == 'title' ){
-				$tmp_col = $def_row['col'];
-				for($i = 0; $i < $this->get_max_depth(); $i ++){
-					$tmp_col ++;
-					$objSheet->getStyle(($tmp_col).$this->current_row)->applyFromArray( $this->default_cell_style_boarder );
+			if( $this->options->target == 'sitemap' ){
+				if( ($def_row['key'] ?? null) == 'title' ){
+					$tmp_col = $def_row['col'] ?? null;
+					for($i = 0; $i < $this->get_max_depth(); $i ++){
+						$tmp_col ++;
+						$objSheet->getStyle(($tmp_col).$this->current_row)->applyFromArray( $this->default_cell_style_boarder );
+					}
+					$objSheet->mergeCells($cellName.':'.($tmp_col).$this->current_row);
+					unset($tmp_col);
 				}
-				$objSheet->mergeCells($cellName.':'.($tmp_col).$this->current_row);
-				unset($tmp_col);
 			}
-
 		}
 
 
 		//セルの幅設定
-		$objSheet->getColumnDimension($table_definition['col_define']['id']['col'])->setWidth(8);
-		$objSheet->getColumnDimension($table_definition['col_define']['title']['col'])->setWidth(3);
-		$tmp_col = $table_definition['col_define']['title']['col'];
-		for($i = 0; $i < $this->get_max_depth(); $i ++){
-			$tmp_col ++;
-			if( $i+1 == $this->get_max_depth() ){
-				$objSheet->getColumnDimension($tmp_col)->setWidth(20);
-			}else{
-				$objSheet->getColumnDimension($tmp_col)->setWidth(3);
+		if( $this->options->target == 'blogmap' ){
+			$objSheet->getColumnDimension($table_definition['col_define']['title']['col'])->setWidth(40);
+			$objSheet->getColumnDimension($table_definition['col_define']['path']['col'] ?? null)->setWidth(40);
+			$objSheet->getColumnDimension($table_definition['col_define']['release_date']['col'] ?? null)->setWidth(14);
+			$objSheet->getColumnDimension($table_definition['col_define']['update_date']['col'] ?? null)->setWidth(14);
+			$objSheet->getColumnDimension($table_definition['col_define']['article_summary']['col'] ?? null)->setWidth(30);
+			$objSheet->getColumnDimension($table_definition['col_define']['article_keywords']['col'] ?? null)->setWidth(30);
+		}else{
+			$objSheet->getColumnDimension($table_definition['col_define']['id']['col'])->setWidth(8);
+			$objSheet->getColumnDimension($table_definition['col_define']['title']['col'])->setWidth(3);
+			$tmp_col = $table_definition['col_define']['title']['col'];
+			for($i = 0; $i < $this->get_max_depth(); $i ++){
+				$tmp_col ++;
+				if( $i+1 == $this->get_max_depth() ){
+					$objSheet->getColumnDimension($tmp_col)->setWidth(20);
+				}else{
+					$objSheet->getColumnDimension($tmp_col)->setWidth(3);
+				}
 			}
+			$objSheet->getColumnDimension($table_definition['col_define']['title_h1']['col'] ?? null)->setWidth(2);
+			$objSheet->getColumnDimension($table_definition['col_define']['title_label']['col'] ?? null)->setWidth(2);
+			$objSheet->getColumnDimension($table_definition['col_define']['title_breadcrumb']['col'] ?? null)->setWidth(2);
+			$objSheet->getColumnDimension($table_definition['col_define']['title_full']['col'] ?? null)->setWidth(2);
+			$objSheet->getColumnDimension($table_definition['col_define']['path']['col'] ?? null)->setWidth(40);
+			$objSheet->getColumnDimension($table_definition['col_define']['content']['col'] ?? null)->setWidth(20);
+			$objSheet->getColumnDimension($table_definition['col_define']['list_flg']['col'] ?? null)->setWidth(3);
+			$objSheet->getColumnDimension($table_definition['col_define']['layout']['col'] ?? null)->setWidth(9);
+			// $objSheet->getColumnDimension($table_definition['col_define']['extension']['col'] ?? null)->setWidth(9);
+			$objSheet->getColumnDimension($table_definition['col_define']['description']['col'] ?? null)->setWidth(30);
+			$objSheet->getColumnDimension($table_definition['col_define']['keywords']['col'] ?? null)->setWidth(30);
+			// $objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'] ?? null)->setWidth(3);
+			$objSheet->getColumnDimension($table_definition['col_define']['orderby']['col'] ?? null)->setWidth(3);
+			$objSheet->getColumnDimension($table_definition['col_define']['category_top_flg']['col'] ?? null)->setWidth(3);
 		}
-		$objSheet->getColumnDimension($table_definition['col_define']['title_h1']['col'] ?? null)->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_label']['col'] ?? null)->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_breadcrumb']['col'] ?? null)->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['title_full']['col'] ?? null)->setWidth(2);
-		$objSheet->getColumnDimension($table_definition['col_define']['path']['col'] ?? null)->setWidth(40);
-		$objSheet->getColumnDimension($table_definition['col_define']['content']['col'] ?? null)->setWidth(20);
-		$objSheet->getColumnDimension($table_definition['col_define']['list_flg']['col'] ?? null)->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['layout']['col'] ?? null)->setWidth(9);
-		// $objSheet->getColumnDimension($table_definition['col_define']['extension']['col'] ?? null)->setWidth(9);
-		$objSheet->getColumnDimension($table_definition['col_define']['description']['col'] ?? null)->setWidth(30);
-		$objSheet->getColumnDimension($table_definition['col_define']['keywords']['col'] ?? null)->setWidth(30);
-		// $objSheet->getColumnDimension($table_definition['col_define']['auth_level']['col'] ?? null)->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['orderby']['col'] ?? null)->setWidth(3);
-		$objSheet->getColumnDimension($table_definition['col_define']['category_top_flg']['col'] ?? null)->setWidth(3);
 
 		// 行移動
 		$this->current_row = $table_definition['row_data_start'];
@@ -309,8 +322,8 @@ class csv2xlsx {
 
 		foreach( $table_definition['col_define'] as $def_row ){
 			$cellName = ($def_row['col']).$this->current_row;
-			$cellValue = $page_info[$def_row['key']] ?? null;
-			switch($def_row['key']){
+			$cellValue = ($page_info[$def_row['key']??''] ?? null);
+			switch($def_row['key'] ?? null){
 				case 'title_h1':
 				case 'title_label':
 				case 'title_breadcrumb':
@@ -324,52 +337,59 @@ class csv2xlsx {
 					break;
 				case 'title':
 					// 罫線を引く
-					$tmp_col = $def_row['col'];
-					for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
-						$tmp_border_style = array(
-							'borders' => array(
-								'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-								'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-								'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
-								'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
-							)
-						);
-						if($i != 0){
-							$tmp_border_style['borders']['left']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
-							$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');
-						}
-						if($i == $this->get_max_depth()){
-							$tmp_border_style['borders']['right']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
-						}
-						$objSheet->getStyle($tmp_col.$this->current_row)->applyFromArray( $tmp_border_style );
-						$tmp_col ++;
-					}
-					unset($tmp_col);
+					if( $this->options->target == 'blogmap' ){
+						$objSheet->getCell($cellName)->setValue($cellValue);
 
-					if( !strlen($page_info['id']) ){
-						// トップページには細工をしない
-					}elseif( !$is_valid_parent ){
-						// サイトマップツリーが正常につながっていない場合
-						// トップページと同じ列に並べる
-					}elseif( !strlen($page_info['logical_path']) ){
-						// トップページ以外でパンくず欄が空白のものは、
-						// 第2階層
-						$def_row['col'] ++;
+						// 罫線の一括指定
+						$objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 					}else{
-						$tmp_breadcrumb = explode('>',$page_info['logical_path']);
-						for($i = 0; $i <= count($tmp_breadcrumb); $i ++ ){
-							$def_row['col'] ++;
+						$tmp_col = $def_row['col'];
+						for($i = 0; $i <= $this->get_max_depth(); $i ++ ){
+							$tmp_border_style = array(
+								'borders' => array(
+									'top'     => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'bottom'  => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'left'    => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
+									'right'   => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN, 'color'=>array('rgb'=>'dddddd')),
+								)
+							);
+							if($i != 0){
+								$tmp_border_style['borders']['left']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
+								$tmp_border_style['borders']['left']['color'] = array('rgb'=>'dddddd');
+							}
+							if($i == $this->get_max_depth()){
+								$tmp_border_style['borders']['right']['style'] = \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN;
+							}
+							$objSheet->getStyle($tmp_col.$this->current_row)->applyFromArray( $tmp_border_style );
+							$tmp_col ++;
 						}
+						unset($tmp_col);
+
+						if( !strlen($page_info['id'] ?? '') ){
+							// トップページには細工をしない
+						}elseif( !$is_valid_parent ){
+							// サイトマップツリーが正常につながっていない場合
+							// トップページと同じ列に並べる
+						}elseif( !strlen($page_info['logical_path'] ?? '') ){
+							// トップページ以外でパンくず欄が空白のものは、
+							// 第2階層
+							$def_row['col'] ++;
+						}else{
+							$tmp_breadcrumb = explode('>',$page_info['logical_path'] ?? '');
+							for($i = 0; $i <= count($tmp_breadcrumb); $i ++ ){
+								$def_row['col'] ++;
+							}
+						}
+						$cellName = ($def_row['col']).$this->current_row;
+
+						$objSheet->getCell($cellName)->setValue($cellValue);
+						$objSheet->getStyle($cellName)->applyFromArray( array('borders'=>array(
+							'left'=>array( 'color'=>array('rgb'=>'666666') ) ,
+						)) );
+
+						// 罫線の一括指定
+						// $objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 					}
-					$cellName = ($def_row['col']).$this->current_row;
-
-					$objSheet->getCell($cellName)->setValue($cellValue);
-					$objSheet->getStyle($cellName)->applyFromArray( array('borders'=>array(
-						'left'=>array( 'color'=>array('rgb'=>'666666') ) ,
-					)) );
-
-					// 罫線の一括指定
-					// $objSheet->getStyle($cellName)->applyFromArray( $this->default_cell_style_boarder );
 					break;
 				case 'content':
 					if($cellValue == $page_info['path']){
@@ -477,15 +497,20 @@ class csv2xlsx {
 
 		$current_col = 'A';
 
-		$rtn['col_define']['id'] = array( 'col'=>($current_col++) );
-		$rtn['col_define']['title'] = array( 'col'=>($current_col++) );
-		for($i = 0; $i<$this->get_max_depth(); $i++){
-			$current_col++;
+		if( $this->options->target == 'blogmap' ){
+			// ブログ
+		}else{
+			// サイトマップ
+			$rtn['col_define']['id'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['title'] = array( 'col'=>($current_col++) );
+			for($i = 0; $i<$this->get_max_depth(); $i++){
+				$current_col++;
+			}
+			$rtn['col_define']['title_h1'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['title_label'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['title_breadcrumb'] = array( 'col'=>($current_col++) );
+			$rtn['col_define']['title_full'] = array( 'col'=>($current_col++) );
 		}
-		$rtn['col_define']['title_h1'] = array( 'col'=>($current_col++) );
-		$rtn['col_define']['title_label'] = array( 'col'=>($current_col++) );
-		$rtn['col_define']['title_breadcrumb'] = array( 'col'=>($current_col++) );
-		$rtn['col_define']['title_full'] = array( 'col'=>($current_col++) );
 
 		$sitemap_definition = $this->get_sitemap_definition();
 		foreach($sitemap_definition as $def_row){
@@ -504,30 +529,34 @@ class csv2xlsx {
 	 * サイトマップ定義を取得する
 	 */
 	private function get_sitemap_definition(){
-		$rtn = $this->plugin->get_sitemap_definition();
+		$rtn = array();
+		if( $this->options->target == 'blogmap' ){
+			$rtn = $this->plugin->get_blogmap_definition();
+		}else{
+			$rtn = $this->plugin->get_sitemap_definition();
 
-		if( !is_array($rtn['**delete_flg'] ?? null) ){
-			$rtn['**delete_flg'] = array();
-			$rtn['**delete_flg']['name'] = '削除フラグ';
-			$rtn['**delete_flg']['key'] = '**delete_flg';
-		}
+			if( !is_array($rtn['**delete_flg'] ?? null) ){
+				$rtn['**delete_flg'] = array();
+				$rtn['**delete_flg']['name'] = '削除フラグ';
+				$rtn['**delete_flg']['key'] = '**delete_flg';
+			}
 
-		$pageInfo = current($this->site->get_sitemap());
-		foreach( $rtn as $key=>$val ){
-			if( isset($pageInfo[$key]) ){
-				unset($pageInfo[$key]);
+			$pageInfo = current($this->site->get_sitemap());
+			foreach( $rtn as $key=>$val ){
+				if( isset($pageInfo[$key]) ){
+					unset($pageInfo[$key]);
+				}
+			}
+			if( isset($pageInfo['**delete_flg']) ){
+				unset($pageInfo['**delete_flg']);
+			}
+			if( is_array($pageInfo) ){
+				foreach( array_keys($pageInfo) as $key ){
+					$rtn[$key]['key'] = $key;
+					$rtn[$key]['name'] = $key;
+				}
 			}
 		}
-		if( isset($pageInfo['**delete_flg']) ){
-			unset($pageInfo['**delete_flg']);
-		}
-		if( is_array($pageInfo) ){
-			foreach( array_keys($pageInfo) as $key ){
-				$rtn[$key]['key'] = $key;
-				$rtn[$key]['name'] = $key;
-			}
-		}
-
 		return $rtn;
 	}
 

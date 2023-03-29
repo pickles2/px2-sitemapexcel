@@ -165,7 +165,10 @@ class pickles_sitemap_excel {
 					// XLSX または XLSM がマスターになる場合
 					$result = $this->xlsx2csv(
 						$this->realpath_sitemap_dir.$infos['extensions'][$infos['xlsx_ext']],
-						$this->realpath_sitemap_dir.$infos['extensions']['csv']
+						$this->realpath_sitemap_dir.$infos['extensions']['csv'],
+						array(
+							'target' => 'sitemap',
+						)
 					);
 					touch(
 						$this->realpath_sitemap_dir.$infos['extensions']['csv'],
@@ -179,7 +182,10 @@ class pickles_sitemap_excel {
 						// xlsx以外の場合(=xlsmの場合) は、上書きしない。
 						$result = $this->csv2xlsx(
 							$this->realpath_sitemap_dir.$infos['extensions']['csv'],
-							$this->realpath_sitemap_dir.$infos['extensions'][$infos['xlsx_ext']]
+							$this->realpath_sitemap_dir.$infos['extensions'][$infos['xlsx_ext']],
+							array(
+								'target' => 'sitemap',
+							)
 						);
 						touch(
 							$this->realpath_sitemap_dir.$infos['extensions'][$infos['xlsx_ext']],
@@ -274,7 +280,10 @@ class pickles_sitemap_excel {
 					// XLSX または XLSM がマスターになる場合
 					$result = $this->xlsx2csv(
 						$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']],
-						$this->realpath_blogmap_dir.$infos['extensions']['csv']
+						$this->realpath_blogmap_dir.$infos['extensions']['csv'],
+						array(
+							'target' => 'blogmap',
+						)
 					);
 					touch(
 						$this->realpath_blogmap_dir.$infos['extensions']['csv'],
@@ -288,7 +297,10 @@ class pickles_sitemap_excel {
 						// xlsx以外の場合(=xlsmの場合) は、上書きしない。
 						$result = $this->csv2xlsx(
 							$this->realpath_blogmap_dir.$infos['extensions']['csv'],
-							$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']]
+							$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']],
+							array(
+								'target' => 'blogmap',
+							)
 						);
 						touch(
 							$this->realpath_blogmap_dir.$infos['extensions'][$infos['xlsx_ext']],
@@ -440,6 +452,23 @@ class pickles_sitemap_excel {
 		$rtn['category_top_flg'] = array('num'=>$num++,'col'=>$col++,'key'=>'category_top_flg','name'=>'カテゴリトップフラグ');
 		$rtn['role'] = array('num'=>$num++,'col'=>$col++,'key'=>'role','name'=>'ロール');
 		$rtn['proc_type'] = array('num'=>$num++,'col'=>$col++,'key'=>'proc_type','name'=>'コンテンツの処理方法');
+		return $rtn;
+	}
+
+	/**
+	 * ブログマップCSVの定義を取得する
+	 * @return array ブログマップCSV定義配列
+	 */
+	public function get_blogmap_definition(){
+		$col = 'A';
+		$num = 0;
+		$rtn = array();
+		$rtn['title'] = array('num'=>$num++,'col'=>$col++,'key'=>'title','name'=>'ページタイトル');
+		$rtn['path'] = array('num'=>$num++,'col'=>$col++,'key'=>'path','name'=>'ページのパス');
+		$rtn['release_date'] = array('num'=>$num++,'col'=>$col++,'key'=>'release_date','name'=>'公開日');
+		$rtn['update_date'] = array('num'=>$num++,'col'=>$col++,'key'=>'update_date','name'=>'更新日');
+		$rtn['article_keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'article_keywords','name'=>'記事キーワード');
+		$rtn['article_summary'] = array('num'=>$num++,'col'=>$col++,'key'=>'article_summary','name'=>'記事サマリ');
 		return $rtn;
 	}
 
