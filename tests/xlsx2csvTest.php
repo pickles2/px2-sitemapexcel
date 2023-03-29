@@ -153,4 +153,28 @@ class xlsx2csvTest extends PHPUnit\Framework\TestCase{
 		$this->assertEquals( $csv[5][3], '2023-01-05' );
 	}
 
+	/**
+	 * タイトル列終端の右のセルに値が入っている場合のテスト (列の欠損と追加)
+	 */
+	public function testBlogLessAndMoreConvert(){
+
+		$px2_sitemapexcel = new \tomk79\pickles2\sitemap_excel\pickles_sitemap_excel($this->px);
+		$px2_sitemapexcel->xlsx2csv(
+			__DIR__.'/testData/files/blogmap_less_and_more.xlsx',
+			__DIR__.'/testData/files/dist/blogmap_less_and_more.csv',
+			array('target'=>'blogmap')
+		);
+		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/blogmap_less_and_more.csv' ) );
+		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/blogmap_less_and_more.csv' );
+		$this->assertEquals( $csv[0][0], '* title' );
+		$this->assertEquals( $csv[0][6], '* article_flg' );
+		$this->assertEquals( $csv[0][8], '* keywords' );
+		$this->assertEquals( $csv[2][0], 'Page 1/10' );
+		$this->assertEquals( $csv[9][1], '/page/page_8_10.html' );
+		$this->assertEquals( $csv[5][2], '2023-01-05' );
+		$this->assertEquals( $csv[5][3], '2023-01-05' );
+		$this->assertEquals( $csv[10][6], '1' );
+		$this->assertEquals( $csv[10][8], 'keyword 09' );
+	}
+
 }

@@ -539,14 +539,18 @@ class csv2xlsx {
 	 */
 	private function get_sitemap_definition(){
 		$rtn = $this->plugin->get_sitemap_definition();
-
-		if( !is_array($rtn['**delete_flg'] ?? null) ){
-			$rtn['**delete_flg'] = array();
-			$rtn['**delete_flg']['name'] = '削除フラグ';
-			$rtn['**delete_flg']['key'] = '**delete_flg';
+		if( $this->options->target == 'blogmap' ){
+			$rtn = $this->plugin->get_blogmap_definition();
 		}
 
-		// $pageInfo = current($this->site->get_sitemap());
+		if( $this->options->target == 'sitemap' ){
+			if( !is_array($rtn['**delete_flg'] ?? null) ){
+				$rtn['**delete_flg'] = array();
+				$rtn['**delete_flg']['name'] = '削除フラグ';
+				$rtn['**delete_flg']['key'] = '**delete_flg';
+			}
+		}
+
 		$sitemap_definition = $this->site->get_sitemap_definition();
 
 		foreach( $rtn as $key=>$val ){

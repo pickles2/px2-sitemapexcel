@@ -1,11 +1,11 @@
 "* release_date","* title","* path","* article_flg","* update_date","* description","* keywords"
-2023-01-01,"Page 0/10","/page/page_0_10.html",1,2023-01-01,,
-2023-01-02,"Page 1/10","/page/page_1_10.html",1,2023-01-02,,
-2023-01-03,"Page 2/10","/page/page_2_10.html",1,2023-01-03,,
-2023-01-04,"Page 3/10","/page/page_3_10.html",1,2023-01-04,,
-2023-01-05,"Page 4/10","/page/page_4_10.html",1,2023-01-05,,
-2023-01-06,"Page 5/10","/page/page_5_10.html",1,2023-01-06,,
-2023-01-07,"Page 6/10","/page/page_6_10.html",1,2023-01-07,,
-2023-01-08,"Page 7/10","/page/page_7_10.html",1,2023-01-08,,
-2023-01-09,"Page 8/10","/page/page_8_10.html",1,2023-01-09,,
-2023-01-10,"Page 9/10","/page/page_9_10.html",1,2023-01-10,,
+2023-01-01,"Page 0/10","/page/page_0_10.html",1,2023-01-01,"Description 00","Keyword 00"
+2023-01-02,"Page 1/10","/page/page_1_10.html",1,2023-01-02,"Description 01","Keyword 01"
+2023-01-03,"Page 2/10","/page/page_2_10.html",1,2023-01-03,"Description 02","Keyword 02"
+2023-01-04,"Page 3/10","/page/page_3_10.html",1,2023-01-04,"Description 03","Keyword 03"
+2023-01-05,"Page 4/10","/page/page_4_10.html",1,2023-01-05,"Description 04","Keyword 04"
+2023-01-06,"Page 5/10","/page/page_5_10.html",1,2023-01-06,"Description 05","Keyword 05"
+2023-01-07,"Page 6/10","/page/page_6_10.html",1,2023-01-07,"Description 06","Keyword 06"
+2023-01-08,"Page 7/10","/page/page_7_10.html",1,2023-01-08,"Description 07","Keyword 07"
+2023-01-09,"Page 8/10","/page/page_8_10.html",1,2023-01-09,"Description 08","Keyword 08"
+2023-01-10,"Page 9/10","/page/page_9_10.html",1,2023-01-10,"Description 09","Keyword 09"

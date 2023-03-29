@@ -189,11 +189,16 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/blogmap_less_and_more.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
+		$this->assertEquals( $objSheet->getCell('A7')->getCalculatedValue(), 'ページタイトル' );
 		$this->assertEquals( $objSheet->getCell('A8')->getCalculatedValue(), 'title' );
+		$this->assertEquals( $objSheet->getCell('I7')->getCalculatedValue(), 'keywords' );
+		$this->assertEquals( $objSheet->getCell('I8')->getCalculatedValue(), 'keywords' );
 		$this->assertEquals( $objSheet->getCell('A9')->getCalculatedValue(), 'Page 0/10' );
 		$this->assertEquals( $objSheet->getCell('B15')->getCalculatedValue(), '/page/page_6_10.html' );
 		$this->assertEquals( $objSheet->getCell('C17')->getCalculatedValue(), '2023-01-09' );
 		$this->assertEquals( $objSheet->getCell('D12')->getCalculatedValue(), '2023-01-04' );
+		$this->assertEquals( $objSheet->getCell('G18')->getCalculatedValue(), '1' );
+		$this->assertEquals( $objSheet->getCell('I18')->getCalculatedValue(), 'Keyword 09' );
 
 		chdir($cd);
 		$px->__destruct();// <- required on Windows
