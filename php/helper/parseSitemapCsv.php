@@ -490,8 +490,8 @@ class parseSitemapCsv {
 	 */
 	public function done($path){
 		$page_info = $this->get_page_info($path);
-		unset($this->sitemap_array[$page_info['path']]);
-		unset($this->sitemap_id_map[$page_info['id']]);
+		unset($this->sitemap_array[$page_info['path'] ?? null]);
+		unset($this->sitemap_id_map[$page_info['id'] ?? null]);
 		return true;
 	}
 
