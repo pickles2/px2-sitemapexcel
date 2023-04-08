@@ -471,8 +471,8 @@ class pickles_sitemap_excel {
 		$col = 'A';
 		$num = 0;
 		$rtn = array();
-		$rtn['title'] = array('num'=>$num++,'col'=>$col++,'key'=>'title','name'=>'ページタイトル');
 		$rtn['path'] = array('num'=>$num++,'col'=>$col++,'key'=>'path','name'=>'ページのパス');
+		$rtn['title'] = array('num'=>$num++,'col'=>$col++,'key'=>'title','name'=>'ページタイトル');
 		$rtn['release_date'] = array('num'=>$num++,'col'=>$col++,'key'=>'release_date','name'=>'公開日');
 		$rtn['update_date'] = array('num'=>$num++,'col'=>$col++,'key'=>'update_date','name'=>'更新日');
 		$rtn['article_keywords'] = array('num'=>$num++,'col'=>$col++,'key'=>'article_keywords','name'=>'記事キーワード');

@@ -146,9 +146,9 @@ class xlsx2csvTest extends PHPUnit\Framework\TestCase{
 		);
 		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/blogmap.csv' ) );
 		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/blogmap.csv' );
-		$this->assertEquals( $csv[0][0], '* title' );
-		$this->assertEquals( $csv[2][0], 'Page 1/10' );
-		$this->assertEquals( $csv[9][1], '/page/page_8_10.html' );
+		$this->assertEquals( $csv[9][0], '/page/page_8_10.html' );
+		$this->assertEquals( $csv[0][1], '* title' );
+		$this->assertEquals( $csv[2][1], 'Page 1/10' );
 		$this->assertEquals( $csv[5][2], '2023-01-05' );
 		$this->assertEquals( $csv[5][3], '2023-01-05' );
 	}
@@ -166,11 +166,11 @@ class xlsx2csvTest extends PHPUnit\Framework\TestCase{
 		);
 		$this->assertTrue( is_file( __DIR__.'/testData/files/dist/blogmap_less_and_more.csv' ) );
 		$csv = $this->fs->read_csv( __DIR__.'/testData/files/dist/blogmap_less_and_more.csv' );
-		$this->assertEquals( $csv[0][0], '* title' );
+		$this->assertEquals( $csv[9][0], '/page/page_8_10.html' );
+		$this->assertEquals( $csv[0][1], '* title' );
 		$this->assertEquals( $csv[0][6], '* article_flg' );
 		$this->assertEquals( $csv[0][8], '* keywords' );
-		$this->assertEquals( $csv[2][0], 'Page 1/10' );
-		$this->assertEquals( $csv[9][1], '/page/page_8_10.html' );
+		$this->assertEquals( $csv[2][1], 'Page 1/10' );
 		$this->assertEquals( $csv[5][2], '2023-01-05' );
 		$this->assertEquals( $csv[5][3], '2023-01-05' );
 		$this->assertEquals( $csv[10][6], '1' );
