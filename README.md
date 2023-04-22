@@ -158,7 +158,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### pickles2/px2-sitemapexcel v2.3.0 (リリース日未定)
+### pickles2/px2-sitemapexcel v2.3.0 (2023年4月22日)
 
 - ブログマップの変換に対応した。
 - オプション `files_master_format_blogs` を追加した。
