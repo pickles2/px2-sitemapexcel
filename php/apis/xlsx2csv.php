@@ -24,6 +24,8 @@ class xlsx2csv {
 	/** ページID自動発行のためのファイル名 */
 	private $extless_basename = '';
 
+	/** CSVに書き込むデータの一時記憶領域 */
+	private $output_csv_stack = array();
 
 	/**
 	 * constructor
@@ -38,6 +40,7 @@ class xlsx2csv {
 		$this->options = (object) $options;
 		$this->options->target = $this->options->target ?? 'sitemap';
 		// $this->path_import_data_dir = $this->plugin->get_path_import_data_dir();
+		$this->output_csv_stack = array();
 	}
 
 	/**
@@ -334,14 +337,19 @@ class xlsx2csv {
 
 				unset($page_info_base);
 				unset($tmp_last_page_id);
-				continue;
 			}else{
 				// 通常のページの場合
 				$this->output_csv_row( $page_info );
-				continue;
 			}
+
+			if( $xlsx_row % 1000 === 0 ){
+				$this->output_csv_row_flush();
+			}
+
 			continue;
 		}
+
+		$this->output_csv_row_flush();
 
 		$this->px->fs()->mkdir(dirname($this->path_csv));
 		$this->px->fs()->rename($this->path_tmp_csv, $this->path_csv);
@@ -358,15 +366,26 @@ class xlsx2csv {
 	 * @return boolean result
 	 */
 	private function output_csv_row( $row ){
+		array_push($this->output_csv_stack, $row);
+		return;
+	}
+	/**
+	 * サイトマップの行を一時ファイルに出力する
+	 * @return boolean result
+	 */
+	private function output_csv_row_flush(){
 		$this->px->fs()->mkdir(dirname($this->path_tmp_csv));
 		file_put_contents(
 			$this->path_tmp_csv,
 			$this->px->fs()->mk_csv(
-				array($row),
+				$this->output_csv_stack,
 				array('charset'=>'UTF-8')
 			),
 			FILE_APPEND|LOCK_EX
 		);
+
+		// リセットする
+		$this->output_csv_stack = array();
 		return;
 	}
 
