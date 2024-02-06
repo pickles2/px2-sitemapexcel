@@ -79,25 +79,25 @@ return call_user_func( function(){
 	// funcs: Before sitemap
 	$conf->funcs->before_sitemap = [
 		 // PX=config
-		'picklesFramework2\commands\config::register' ,
+		picklesFramework2\commands\config::register(),
 
 		 // PX=phpinfo
-		'picklesFramework2\commands\phpinfo::register' ,
+		picklesFramework2\commands\phpinfo::register(),
 
 		// PX=clearcache
-		'picklesFramework2\commands\clearcache::register' ,
+		picklesFramework2\commands\clearcache::register(),
 
 		// sitemapExcel
-		'tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec('.file_get_contents(__DIR__.'/plugin_options.json').')',
+		tomk79\pickles2\sitemap_excel\pickles_sitemap_excel::exec(json_decode(file_get_contents(__DIR__.'/plugin_options.json'), true)),
 	];
 
 	// funcs: Before content
 	$conf->funcs->before_content = [
 		// PX=api
-		'picklesFramework2\commands\api::register' ,
+		picklesFramework2\commands\api::register(),
 
 		// PX=publish
-		'picklesFramework2\commands\publish::register' ,
+		picklesFramework2\commands\publish::register(),
 	];
 
 

@@ -24,7 +24,10 @@ class pickles_sitemap_excel {
 	 * @param object $px Picklesオブジェクト
 	 * @param object $plugin_conf プラグイン設定
 	 */
-	static public function exec($px, $plugin_conf){
+	static public function exec($px, $plugin_conf = null){
+		if( count(func_get_args()) <= 1 ){
+			return __CLASS__.'::'.__FUNCTION__.'('.( is_array($px) ? json_encode($px) : '' ).')';
+		}
 		(new self($px, $plugin_conf))->convert_all();
 	}
 
