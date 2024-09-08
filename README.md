@@ -158,6 +158,10 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
+### pickles2/px2-sitemapexcel v2.3.3 (リリース日未定)
+
+- 依存パッケージを更新した。
+
 ### pickles2/px2-sitemapexcel v2.3.2 (2024年2月18日)
 
 - 同梱のプラグインが、より直接的な表現で設定できるようになった。
