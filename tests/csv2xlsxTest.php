@@ -42,10 +42,10 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/custom_column.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
-		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'custom1' );
-		$this->assertEquals( $objSheet->getCell('X8')->getCalculatedValue(), 'custom2' );
-		$this->assertEquals( $objSheet->getCell('W9')->getCalculatedValue(), 'home-1' );
-		$this->assertEquals( $objSheet->getCell('X9')->getCalculatedValue(), 'home-2' );
+		$this->assertEquals( $objSheet->getCell('V8')->getCalculatedValue(), 'custom1' );
+		$this->assertEquals( $objSheet->getCell('W8')->getCalculatedValue(), 'custom2' );
+		$this->assertEquals( $objSheet->getCell('V9')->getCalculatedValue(), 'home-1' );
+		$this->assertEquals( $objSheet->getCell('W9')->getCalculatedValue(), 'home-2' );
 		$this->assertEquals( $objSheet->getCell('K13')->getCalculatedValue(), 'data:datascheme' );
 		$this->assertEquals( $objSheet->getCell('K14')->getCalculatedValue(), 'javascript:alert(123);' );
 
@@ -77,10 +77,10 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/has_no_parent.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
-		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom1' );
-		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'custom2' );
-		$this->assertEquals( $objSheet->getCell('Z9')->getCalculatedValue(), 'home-1' );
-		$this->assertEquals( $objSheet->getCell('AA9')->getCalculatedValue(), 'home-2' );
+		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'custom1' );
+		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom2' );
+		$this->assertEquals( $objSheet->getCell('Y9')->getCalculatedValue(), 'home-1' );
+		$this->assertEquals( $objSheet->getCell('Z9')->getCalculatedValue(), 'home-2' );
 		$this->assertEquals( $objSheet->getCell('B12')->getCalculatedValue(), 'Category 1-2' );
 		$this->assertEquals( $objSheet->getCell('N14')->getCalculatedValue(), '/category2.html' );
 		$this->assertEquals( $objSheet->getCell('A17')->getCalculatedValue(), 'EndOfData' );
@@ -113,8 +113,8 @@ class csv2xlsxTest extends PHPUnit\Framework\TestCase{
 		$objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load( __DIR__.'/testData/files/dist/has_no_toppage.xlsx' );
 		$objPHPExcel->setActiveSheetIndex(0);
 		$objSheet = $objPHPExcel->getActiveSheet();
-		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom1' );
-		$this->assertEquals( $objSheet->getCell('AA8')->getCalculatedValue(), 'custom2' );
+		$this->assertEquals( $objSheet->getCell('Y8')->getCalculatedValue(), 'custom1' );
+		$this->assertEquals( $objSheet->getCell('Z8')->getCalculatedValue(), 'custom2' );
 		$this->assertEquals( $objSheet->getCell('B11')->getCalculatedValue(), 'Category 1-2' );
 		$this->assertEquals( $objSheet->getCell('N13')->getCalculatedValue(), '/category2.html' );
 		$this->assertEquals( $objSheet->getCell('A16')->getCalculatedValue(), 'EndOfData' );

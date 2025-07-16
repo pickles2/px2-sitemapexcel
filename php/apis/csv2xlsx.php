@@ -543,23 +543,12 @@ class csv2xlsx {
 			$rtn = $this->plugin->get_blogmap_definition();
 		}
 
-		if( $this->options->target == 'sitemap' ){
-			if( !is_array($rtn['**delete_flg'] ?? null) ){
-				$rtn['**delete_flg'] = array();
-				$rtn['**delete_flg']['name'] = '削除フラグ';
-				$rtn['**delete_flg']['key'] = '**delete_flg';
-			}
-		}
-
 		$sitemap_definition = $this->site->get_sitemap_definition();
 
 		foreach( $rtn as $key=>$val ){
 			if( isset($sitemap_definition[$key]) ){
 				unset($sitemap_definition[$key]);
 			}
-		}
-		if( isset($sitemap_definition['**delete_flg']) ){
-			unset($sitemap_definition['**delete_flg']);
 		}
 		if( is_array($sitemap_definition) ){
 			foreach( array_keys($sitemap_definition) as $key ){

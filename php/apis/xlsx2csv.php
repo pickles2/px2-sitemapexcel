@@ -123,7 +123,7 @@ class xlsx2csv {
 		}
 
 
-		// 定義行を首都力
+		// 定義行を出力
 		$page_info = array();
 		foreach($sitemap_definition as $row){
 			if( $row['key'] == '**delete_flg' ){
