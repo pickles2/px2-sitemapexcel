@@ -158,7 +158,7 @@ $ chmod -R 777 ./px-files/sitemaps
 
 ## 更新履歴 - Change log
 
-### pickles2/px2-sitemapexcel v2.4.0 (リリース日未定)
+### pickles2/px2-sitemapexcel v2.4.0 (2025年7月29日)
 
 - `csv2xlsx` が、`**delete_flg` 列を出力しないようになった。
 
